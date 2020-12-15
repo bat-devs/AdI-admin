@@ -7,7 +7,7 @@
                 <span class="navbar-toggler-icon"></span>
             </navbar-toggle-button>
             <router-link class="navbar-brand" to="/">
-                <img src="../../assets/images/academiainvestimento.jpeg" class="navbar-brand-img" alt="...">
+                <img src="../../assets/images/adi-blue.png" class="navbar-brand-img" alt="Logo">
             </router-link>
 
             <slot name="mobile-right">
