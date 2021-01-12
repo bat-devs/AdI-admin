@@ -2,15 +2,18 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import DashboardLayout from '@/layout/DashboardLayout'
 import AuthLayout from '@/layout/AuthLayout'
+import fb from "firebase";
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   linkExactActiveClass: 'active',
   routes: [
     {
       path: '/',
       redirect: 'home',
       component: DashboardLayout,
+      meta: { requiresAuth: true },
+      props:true,
       children: [
         {
           path: '/home',
@@ -21,8 +24,8 @@ export default new Router({
           component: () => import(/* webpackChunkName: "demo" */ './views/Dashboard.vue')
         },
         {
-          path: '/adicionar-noticia',
-          name: 'AdicionarNoticia',
+          path: '/noticias/adicionar-noticia',
+          name: 'Adicionar-Noticia',
           component: () => import(/* webpackChunkName: "demo" */ './views/AdicionarNoticia.vue')
         },
         {
@@ -31,14 +34,19 @@ export default new Router({
           component: () => import(/* webpackChunkName: "demo" */ './views/UserProfile.vue')
         },
         {
-          path: '/listar-noticias',
-          name: 'ListarNoticias',
+          path: '/noticias',
+          name: 'Noticias',
           component: () => import(/* webpackChunkName: "demo" */ './views/ListarNoticias.vue')
+        },
+        {
+          path: '/usuarios',
+          name: 'Usuarios',
+          component: () => import(/* webpackChunkName: "demo" */ './views/Usuarios.vue')
         },
       ]
     },
     {
-      path: '/',
+      path: '/login',
       redirect: 'login',
       component: AuthLayout,
       children: [
@@ -54,5 +62,26 @@ export default new Router({
         }
       ]
     }
+    ,
+    {
+      path: '*',
+      name: 'NotFound',
+      component: () => import(/* webpackChunkName: "demo" */ './views/NotFound.vue')
+    }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+    const requiresAuth= to.matched.some(x => x.meta.requiresAuth);
+    const currentUser=fb.auth().currentUser
+    
+    if (requiresAuth && !currentUser) {
+      next('/login')
+    } else if(requiresAuth && currentUser) {
+      next()
+    }else{
+      next()
+    }
+})
+
+export default router
