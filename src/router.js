@@ -39,9 +39,14 @@ const router = new Router({
           component: () => import(/* webpackChunkName: "demo" */ './views/ListarNoticias.vue')
         },
         {
-          path: '/usuarios',
-          name: 'Usuarios',
-          component: () => import(/* webpackChunkName: "demo" */ './views/Usuarios.vue')
+          path: '/aplications',
+          name: 'Aplicações',
+          component: () => import(/* webpackChunkName: "demo" */ './views/Aplications.vue')
+        },
+        {
+          path: '/credits',
+          name: 'Créditos',
+          component: () => import(/* webpackChunkName: "demo" */ './views/Creditos.vue')
         },
       ]
     },
@@ -55,11 +60,6 @@ const router = new Router({
           name: 'login',
           component: () => import(/* webpackChunkName: "demo" */ './views/Login.vue')
         },
-        {
-          path: '/register',
-          name: 'register',
-          component: () => import(/* webpackChunkName: "demo" */ './views/Register.vue')
-        }
       ]
     }
     ,

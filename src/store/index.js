@@ -1,35 +1,53 @@
-import Vue from "vue"
-import Vuex from "vuex"
+import Vue from "vue";
+import Vuex from "vuex";
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
-const store= new Vuex.Store({
-    state:{
-        currentUserEmail:'',
-        noticias:[]
+const store = new Vuex.Store({
+  state: {
+    currentUserEmail: "",
+    noticias: [],
+    apliNegocio: 0,
+    apliSalario: "",
+    apliFamilia: "",
+    apliEstudante: "",
+    apliKandengue: "",
+    apliSomarPlus: "",
+    cofreTesouro: "",
+    credFacil: "",
+    credHabitcao: "",
+    credAutomovel: "",
+    credPessoal: "",
+    credFacilidadeTesouraria: "",
+    credEmpresarial: "",
+    adiantaSalario: "",
+  },
+  mutations: {
+    setcurrentUserEmail(state, payload) {
+      state.currentUserEmail = payload;
     },
-    mutations:{
-        setcurrentUserEmail(state,payload)
-        {
-            state.currentUserEmail=payload;
-        },
-        setNoticias(state,payload)
-        {
-            state.noticias=payload;
-        }
+    setapliNegocio(state, payload) {
+      state.apliNegocio = payload;
     },
-    actions:{},
-    modules:{},
-    getters:{
-        getcurrentUserEmail(state)
-        {
-            return state.currentUserEmail
-        },
-        getNoticias(state)
-        {
-            return state.currentUserEmail
-        }
-    }
-})
-export default store
-
+    setapliSalario(state, payload) {
+      state.apliSalario = payload;
+    },
+    setapliFapliEstudante(state, payload) {
+      state.apliEstudante = payload;
+    },
+  },
+  actions: {},
+  modules: {},
+  getters: {
+    getcurrentUserEmail(state) {
+      return state.currentUserEmail;
+    },
+    getNoticias(state) {
+      return state.noticias;
+    },
+    getapliNegocio(state) {
+        return state.apliNegocio;
+      },
+  },
+});
+export default store;

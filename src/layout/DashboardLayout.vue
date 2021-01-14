@@ -16,9 +16,9 @@
 
         <!--<sidebar-item  :link="{name: 'Adicionar Noticia', icon: 'ni ni-fat-add text-blue', path: '/adicionar-noticia'}"/>-->
         <sidebar-item :link="{name: 'Noticias', icon: 'ni ni-single-copy-04 text-orange', path: '/noticias'}"/>
-        <sidebar-item :link="{name: 'Usuarios', icon: 'ni ni-circle-08 text-yellow', path: '/usuarios'}"/>
-        <!--<sidebar-item :link="{name: 'User Profile', icon: 'ni ni-single-02 text-yellow', path: '/profile'}"/>
-        <sidebar-item :link="{name: 'Tables', icon: 'ni ni-bullet-list-67 text-red', path: '/tables'}"/>
+        <sidebar-item :link="{name: 'Aplicações', icon: 'fas fa-wallet text-yellow', path: '/aplications'}"/>
+        <sidebar-item :link="{name: 'Créditos', icon: 'fas fa-hand-holding-usd text-blue', path: '/credits'}"/>
+        <!--<sidebar-item :link="{name: 'Tables', icon: 'ni ni-bullet-list-67 text-red', path: '/tables'}"/>
         <sidebar-item :link="{name: 'Login', icon: 'ni ni-key-25 text-info', path: '/login'}"/>
         <sidebar-item :link="{name: 'Register', icon: 'ni ni-circle-08 text-pink', path: '/register'}"/>-->
 
