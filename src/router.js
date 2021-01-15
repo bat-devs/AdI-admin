@@ -25,7 +25,7 @@ const router = new Router({
         },
         {
           path: '/noticias/adicionar-noticia',
-          name: 'Adicionar-Noticia',
+          name: 'Adicionar Notícia',
           component: () => import(/* webpackChunkName: "demo" */ './views/AdicionarNoticia.vue')
         },
         {
@@ -35,8 +35,13 @@ const router = new Router({
         },
         {
           path: '/noticias',
-          name: 'Noticias',
+          name: 'Notícias',
           component: () => import(/* webpackChunkName: "demo" */ './views/ListarNoticias.vue')
+        },
+        {
+          path: '/gestao-de-contas',
+          name: 'Gestão de Contas',
+          component: () => import(/* webpackChunkName: "demo" */ './views/GestaoContas.vue')
         },
         {
           path: '/aplications',

@@ -6,7 +6,8 @@ export default {
   async beforeCreate() {
     
     const apliNegocio = await (
-      await firebase
+      await
+       firebase
         .firestore()
         .collection("simulation")
         .where("productName", "==", "Aplicação Negócio")

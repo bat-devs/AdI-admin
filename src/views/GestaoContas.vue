@@ -20,20 +20,18 @@
             </tr>
           </thead>
           <tbody class="list">
-            <tr v-for="(aplication, index) in aplications" :key="index">
+            <tr>
               <td class="budget">Milton Bernardo</td>
               <th scope="row">
                 <div class="media align-items-center">
                   <div class="media-body">
-                    <span class="name mb-0 text-sm">{{
-                      aplication.productName
-                    }}</span>
+                    <span class="name mb-0 text-sm"></span>
                   </div>
                 </div>
               </th>
-              <td class="budget">{{ aplication.capital }} AKZ</td>
-              <td class="budget">{{ aplication.duration }} meses</td>
-              <td class="budget">{{ aplication.result }} AKZ</td>
+              <td class="budget">AKZ</td>
+              <td class="budget">meses</td>
+              <td class="budget">AKZ</td>
             </tr>
           </tbody>
         </table>
@@ -42,25 +40,17 @@
   </div>
 </template>
 <script>
-import firebase from "firebase";
-const db = firebase.firestore();
 
 export default {
   data() {
     return {
-      aplications: [],
+      accounts: [],
     };
   },
   created() {
-      db.collection("simulation").where("type","==","Aplicação").onSnapshot(querySnapshot=>{
-        var aplicationsArray=[]
-        querySnapshot.forEach(doc=>{
-          let f=doc.data();
-          aplicationsArray.push(f);
-        })
-        this.aplications=aplicationsArray;
-      });
-      
+    
   },
 };
 </script>
+<style>
+</style>

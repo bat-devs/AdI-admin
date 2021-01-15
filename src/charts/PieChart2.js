@@ -1,5 +1,6 @@
 import { Doughnut } from "vue-chartjs";
 import firebase from "firebase";
+
 export default {
   extends: Doughnut,
   props: ["data", "options"],

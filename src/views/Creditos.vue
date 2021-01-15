@@ -31,9 +31,9 @@
                   </div>
                 </div>
               </th>
-              <td class="budget">{{ credit.capital }}</td>
+              <td class="budget">{{ credit.capital }} AKZ</td>
               <td class="budget">{{ credit.duration }} meses</td>
-              <td class="budget">{{ credit.result }} kz</td>
+              <td class="budget">{{ credit.result }} AKZ</td>
             </tr>
           </tbody>
         </table>
