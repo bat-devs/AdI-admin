@@ -21,7 +21,7 @@
           </thead>
           <tbody class="list">
             <tr v-for="(credit, index) in credits" :key="index">
-              <td class="budget">Milton Bernardo</td>
+              <td class="budget">{{ credit.name }}</td>
               <th scope="row">
                 <div class="media align-items-center">
                   <div class="media-body">
@@ -56,9 +56,12 @@ export default {
       .where("type", "==", "Crédito")
       .onSnapshot(querySnapshot => {
         var creditsArray = [];
-        querySnapshot.forEach((doc) => {
+        querySnapshot.forEach( async (doc) => {
           let f = doc.data();
-          creditsArray.push(f);
+           let name =await (await db.collection("users").doc(doc.data().uid).get()).data().name;
+          creditsArray.push({
+            ...f,
+            name: name});
         });
         this.credits = creditsArray;
       });

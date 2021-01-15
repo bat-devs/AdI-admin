@@ -21,7 +21,7 @@
           </thead>
           <tbody class="list">
             <tr v-for="(aplication, index) in aplications" :key="index">
-              <td class="budget">Milton Bernardo</td>
+              <td class="budget">{{ aplication.name }}</td>
               <th scope="row">
                 <div class="media align-items-center">
                   <div class="media-body">
@@ -54,9 +54,14 @@ export default {
   created() {
       db.collection("simulation").where("type","==","Aplicação").onSnapshot(querySnapshot=>{
         var aplicationsArray=[]
-        querySnapshot.forEach(doc=>{
+        querySnapshot.forEach( async doc=>{
           let f=doc.data();
-          aplicationsArray.push(f);
+          
+          let name =await (await db.collection("users").doc(doc.data().uid).get()).data().name;
+       
+          aplicationsArray.push({
+            ...f,
+            name: name});
         })
         this.aplications=aplicationsArray;
       });

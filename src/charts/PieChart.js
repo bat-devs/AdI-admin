@@ -1,56 +1,70 @@
 import { Doughnut } from "vue-chartjs";
 import firebase from "firebase";
+const db=firebase.firestore();
+let apliNegocio=0; 
+let apliSalario=0; 
+let apliFamilia=0;
+let apliEstudante=0;
+let apliKandengue=0;
+let apliSomarPlus=0;
+let cofreTesouro=0;
+
+
 export default {
   extends: Doughnut,
   props: ["data", "options"],
   async beforeCreate() {
     
+<<<<<<< HEAD
     const apliNegocio = await (
       await
        firebase
         .firestore()
+=======
+    
+       db
+>>>>>>> 87d96c123172ffc978ef703dfa816e181c1e5896
         .collection("simulation")
         .where("productName", "==", "Aplicação Negócio")
-        .get()
-    ).size;
-    let apliSalario = await (
-      await firebase
-        .firestore()
+        .onSnapshot( function(querySnapshot) {
+          
+          apliNegocio=  querySnapshot.size;
+          console.log("fize "+apliNegocio);
+        
+        });
+    
+     apliSalario = await (
+      await db
         .collection("simulation")
         .where("productName", "==", "Aplicação salário")
         .get()
     ).size;
-    let apliFamilia = await (
-      await firebase
-        .firestore()
+     apliFamilia = await (
+      await db
         .collection("simulation")
         .where("productName", "==", "Aplicação família")
         .get()
     ).size;
-    let apliEstudante = await (
-      await firebase
-        .firestore()
+     apliEstudante = await (
+      await db
         .collection("simulation")
         .where("productName", "==", "Aplicação Estudante")
         .get()
     ).size;
-    let apliKandengue = await (
-      await firebase
-        .firestore()
+    apliKandengue = await (
+      await db
         .collection("simulation")
         .where("productName", "==", "Aplicação kandengue")
         .get()
     ).size;
-    let apliSomarPlus = await (
-      await firebase
-        .firestore()
+     apliSomarPlus = await (
+      await db
         .collection("simulation")
         .where("productName", "==", "Aplicação Somar +")
         .get()
     ).size;
-    let cofreTesouro = await (
-      await firebase
-        .firestore()
+     cofreTesouro = await (
+      await db
         .collection("simulation")
         .where("productName", "==", "Cofre de Ouro")
         .get()
@@ -84,11 +98,12 @@ export default {
         },
       ],
     };
-
+  
     this.renderChart(chartData, {
       borderWidth: "10px",
       hoverBackgroundColor: "red",
       hoverBorderWidth: "10px",
     });
   },
+ 
 };
