@@ -6,23 +6,20 @@
     >
       <!-- Card stats -->
     </base-header>
-
-    <pie-chart
-      
-      :height="100"
-      
-    ></pie-chart>
-   
+    <keep-alive>
+      <pie-chart :height="100"></pie-chart>
+      <pie-chartt :height="100"></pie-chartt>
+    </keep-alive>
   </div>
 </template>
 <script>
 import PieChart from "../charts/PieChart";
-
+import PieChartt from "../charts/PieChart2";
 export default {
-  components: { PieChart },
+  components: { PieChart, PieChartt },
   data() {
     return {
-      
+      load: true,
     };
   },
 };

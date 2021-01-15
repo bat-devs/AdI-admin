@@ -47,7 +47,7 @@
                   </button>
                   <button
                     type="button"
-                    @click="deleteNew(noticia.id,index)"
+                    @click="deleteNew(noticia.id)"
                     class="btn btn-danger"
                   >
                     <i class="far fa-trash-alt"></i>
@@ -65,45 +65,28 @@
 import firebase from "firebase";
 import swal from "sweetalert2";
 const db = firebase.firestore();
-let noticias = [];
-const getnoticias = () => {
-  noticias = [];
-  db.collection("news")
-    .get()
-    .then(function (querySnapshot) {
-      querySnapshot.forEach(function (doc) {
-        noticias.push({
-          ...doc.data(),
-          id: doc.id,
-        });
-      });
-    });
-};
 export default {
   data() {
     return {
-      noticias: noticias,
+      noticias: [],
     };
   },
-  updated() {
-    getnoticias();
-  },
   beforeCreate() {
-    getnoticias();
-  },
-  beforeUpdate() {
-    getnoticias();
-  },
-  beforeDestroy() {
-    noticias = [];
-  },
-  watch:{
-    noticias:function(){
-      this.noticias
-    }
+
+    db.collection("news").onSnapshot(querySnapshot=>{
+      var noticiasfirebase = [];
+      querySnapshot.forEach(function (doc) {
+          let f = doc.data();
+          noticiasfirebase.push({
+            ...f,
+            id: doc.id,
+          });
+        });
+        this.noticias = noticiasfirebase;
+    })
   },
   methods: {
-    deleteNew(id,index) {
+    deleteNew(id) {
       swal
         .fire({
           title: "Tem a certeza que deseja apagar está notícia?",
@@ -123,9 +106,7 @@ export default {
               .doc(id)
               .delete()
               .then(function () {
-                noticias.splice(index,index);
                 swal.fire("Apagado!", "A sua notícia foi apagada!", "success");
-                
               })
               .catch((error) => {
                 swal.fire({

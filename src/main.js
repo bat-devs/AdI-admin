@@ -24,6 +24,7 @@ import firebase from 'firebase';
 import store from './store/index'
 
 
+
 var firebaseConfig = {
   apiKey: "AIzaSyCN1ArbazW6utDg8rjk3l6TKCW_m8TYAMQ",
   authDomain: "academiadeinvestimento-ba1c3.firebaseapp.com",

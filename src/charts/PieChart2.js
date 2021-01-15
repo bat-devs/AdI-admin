@@ -5,80 +5,80 @@ export default {
   props: ["data", "options"],
   async beforeCreate() {
     
-    const apliNegocio = await (
+    let credFacil = await (
       await firebase
         .firestore()
         .collection("simulation")
-        .where("productName", "==", "Aplicação Negócio")
+        .where("productName", "==", "Crédito Fácil")
         .get()
     ).size;
-    let apliSalario = await (
+    let credHabitcao = await (
       await firebase
         .firestore()
         .collection("simulation")
-        .where("productName", "==", "Aplicação salário")
+        .where("productName", "==", "Crédito Habitação")
         .get()
     ).size;
-    let apliFamilia = await (
+    let credAutomovel = await (
       await firebase
         .firestore()
         .collection("simulation")
-        .where("productName", "==", "Aplicação família")
+        .where("productName", "==", "Crédito Automóvel")
         .get()
     ).size;
-    let apliEstudante = await (
+    let credPessoal = await (
       await firebase
         .firestore()
         .collection("simulation")
-        .where("productName", "==", "Aplicação Estudante")
+        .where("productName", "==", "Crédito Pessoal")
         .get()
     ).size;
-    let apliKandengue = await (
+    let credFacilidadeTesouraria = await (
       await firebase
         .firestore()
         .collection("simulation")
-        .where("productName", "==", "Aplicação kandengue")
+        .where("productName", "==", "Crédito Facilidade de Tesouraria")
         .get()
     ).size;
-    let apliSomarPlus = await (
+    let credEmpresarial = await (
       await firebase
         .firestore()
         .collection("simulation")
-        .where("productName", "==", "Aplicação Somar +")
+        .where("productName", "==", "Crédito Empresarial")
         .get()
     ).size;
-    let cofreTesouro = await (
+    let adiantaSalario = await (
       await firebase
         .firestore()
         .collection("simulation")
-        .where("productName", "==", "Cofre de Ouro")
+        .where("productName", "==", "Adiantamento de Salário")
         .get()
     ).size;
-    
+
     let chartData = {
       hoverBackgroundColor: "red",
       hoverBorderWidth: 10,
       labels: [
-        "Aplicação Negócio",
-        "Aplicação salário",
-        "Aplicação família",
-        "Aplicação Estudante",
-        "Aplicação kandengue",
-        "Aplicação Somar +",
-        "Cofre de Ouro",
+        "Crédito Fácil",
+        "Crédito Habitação",
+        "Crédito Automóvel",
+        "Crédito Pessoal",
+        "Crédito Facilidade de Tesouraria",
+        "Crédito Empresarial",
+        "Adiantamento de Salário",
       ],
       datasets: [
         {
           label: "Data One",
           backgroundColor: ["#41B883", "#E46651", "#00D8FF"],
           data: [
-            apliNegocio,
-            apliSalario,
-            apliFamilia,
-            apliEstudante,
-            apliKandengue,
-            apliSomarPlus,
-            cofreTesouro,
+            credFacil,
+            credHabitcao,
+            credAutomovel,
+            credPessoal,
+            credFacilidadeTesouraria,
+            credEmpresarial,
+            adiantaSalario,
           ],
         },
       ],
