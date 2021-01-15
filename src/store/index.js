@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+//import firebase from "firebase";
 
 Vue.use(Vuex);
 
@@ -26,8 +27,8 @@ const store = new Vuex.Store({
     setcurrentUserEmail(state, payload) {
       state.currentUserEmail = payload;
     },
-    setapliNegocio(state, payload) {
-      state.apliNegocio = payload;
+    async setapliNegocio(state,payload) {
+      state.apliNegocio =payload;
     },
     setapliSalario(state, payload) {
       state.apliSalario = payload;
@@ -45,8 +46,11 @@ const store = new Vuex.Store({
     getNoticias(state) {
       return state.noticias;
     },
-    getapliNegocio(state) {
-        return state.apliNegocio;
+     getapliNegocio() {
+    /*  let a=await firebase.firestore().collection("simulation").where("productName", "==", "Aplicação Negócio").get();
+      
+      state.apliNegocio=a.size;*/
+        return 3;
       },
   },
 });
