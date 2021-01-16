@@ -39,24 +39,8 @@
               </h6>
               <div class="pl-lg-4">
                 <div class="row">
-                  <div class="col-md-12">
-                    <div class="Field_wrapper">
-                      <img
-                        v-bind:src="imagePreview"
-                        class="preview-image"
-                        alt="placeholder"
-                        @click="openUpload"
-                      />
-                      <input
-                        type="file"
-                        name="mainImage"
-                        id="file-field"
-                        v-on:change="updatePreview"
-                        style="display: none; width: 100%; height: 100%"
-                        class="input-filee"
-                      />
-                    </div>
-                  </div>
+             
+
                 </div>
               </div>
               <hr class="my-4" />
@@ -134,9 +118,14 @@ import BTooltipDirective from "bootstrap-vue/esm/directives/tooltip";
 import firebase from "firebase";
 import swal from "sweetalert2";
 
+
+
 const db = firebase.firestore();
 Vue.use(VueClipboard);
 export default {
+  components:{
+    
+  },
   directives: {
     "b-tooltip": BTooltipDirective,
   },
@@ -145,7 +134,6 @@ export default {
       noticia: {
         content: "",
         title: "",
-        imagePreview: "../assets/images/image-holder.png",
       },
       icons: [
         { name: "ni ni-active-40" },
@@ -282,39 +270,8 @@ export default {
       const task = storageRef.put(this.imagePreview);
       task.on("state_changed");*/
     },
-    openUpload() {
-      document.getElementById("file-field").click();
-    },
-    updatePreview(e) {
-      var reader,
-        files = e.target.files;
-
-      if (files.lenght === 0) {
-        console.log("empty");
-      }
-
-      reader = new FileReader();
-
-      reader.onload = (e) => {
-        this.imagePreview = e.target.result;
-      };
-
-      reader.readAsDataURL(files[0]);
-    },
   },
 };
 </script>
 <style>
-.Field_wrapper {
-  width: 202px;
-  height: 202px;
-  position: relative;
-  cursor: pointer;
-  background-image: url("../assets/images/image-holder.png");
-  background-position: center;
-}
-.preview-image {
-  width: 200px;
-  height: 202px;
-}
 </style>
