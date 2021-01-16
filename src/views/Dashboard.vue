@@ -10,6 +10,7 @@
       <pie-chart :height="100"></pie-chart>
       <pie-chartt :height="100"></pie-chartt>
     </keep-alive>
+
   </div>
 </template>
 <script>
@@ -20,6 +21,9 @@ export default {
   data() {
     return {
       load: true,
+      modals:{
+        modal:false
+      }
     };
   },
 };
