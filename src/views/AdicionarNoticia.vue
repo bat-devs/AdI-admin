@@ -37,12 +37,8 @@
               <h6 class="heading-small text-muted mb-4">
                 Imagem Principal da notícia
               </h6>
-              <div class="pl-lg-4">
-                <div class="row">
-             
 
-                </div>
-              </div>
+              <input type="file" @change="teste" />
               <hr class="my-4" />
               <!-- Address -->
               <h6 class="heading-small text-muted mb-4">
@@ -118,14 +114,10 @@ import BTooltipDirective from "bootstrap-vue/esm/directives/tooltip";
 import firebase from "firebase";
 import swal from "sweetalert2";
 
-
-
 const db = firebase.firestore();
 Vue.use(VueClipboard);
 export default {
-  components:{
-    
-  },
+  components: {},
   directives: {
     "b-tooltip": BTooltipDirective,
   },
@@ -134,6 +126,8 @@ export default {
       noticia: {
         content: "",
         title: "",
+        mainImage: null,
+        othersfiles: [],
       },
       icons: [
         { name: "ni ni-active-40" },
@@ -240,7 +234,11 @@ export default {
       ],
     };
   },
+
   methods: {
+    teste(event) {
+      alert(event.target.files);
+    },
     onCopy() {
       this.$notify({
         type: "success",
@@ -265,11 +263,22 @@ export default {
         .catch(function (error) {
           console.error("Error writing document: ", error);
         });
-
-      /*var storageRef = firebase.storage().ref(`news/"${this.imagePreview.name}`);
-      const task = storageRef.put(this.imagePreview);
-      task.on("state_changed");*/
     },
+    deleNew() {
+      //apagar
+      firebase
+        .firestore()
+        .collection("news")
+        .doc("id")
+        .delete()
+        .then(function () {
+          console.log("apagdao");
+        })
+        .catch(function (error) {
+          console.error("Erro ", error);
+        });
+    },
+    
   },
 };
 </script>

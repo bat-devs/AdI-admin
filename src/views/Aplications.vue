@@ -6,7 +6,22 @@
     >
       <!-- Card stats -->
     </base-header>
-    <div class="table-responsive">
+    <download-excel
+      :data="data.json_data"
+      :fields="data.json_fields"
+      style="width: 200px"
+    >
+      <button class="btn btn-primary">Baixar ficheiro excel</button>
+    </download-excel>
+    <div class="d-flex justify-content-center">
+      <half-circle-spinner
+        v-if="loader"
+        :animation-duration="1000"
+        :size="60"
+        color="#113855"
+      />
+    </div>
+    <div class="table-responsive" v-if="!loader">
       <div>
         <table class="table align-items-center table-light">
           <thead class="thead-light">
@@ -43,29 +58,67 @@
 </template>
 <script>
 import firebase from "firebase";
+import JsonExcel from "vue-json-excel";
+import { HalfCircleSpinner } from "epic-spinners";
 const db = firebase.firestore();
 
 export default {
+  components: {
+    HalfCircleSpinner,
+    downloadExcel: JsonExcel,
+  },
   data() {
     return {
       aplications: [],
+      loader: true,
+      data: {
+        json_fields: {
+          "Nome do cliente": "name",
+          "E-mail": "email",
+         " Telefone": "phone",
+          "Data de registo": "registDate",
+          "Abertura de conta": "accountOpening",
+          "Aplicação": "productName",
+          "Capital": "capital",
+          "Duração (meses)": "duration",
+          "Resultado": "result",
+        },
+        json_data: [],
+        json_meta: [
+          [
+            {
+              key: "charset",
+              value: "utf-8",
+            },
+          ],
+        ],
+      },
     };
   },
   created() {
-      db.collection("simulation").where("type","==","Aplicação").onSnapshot(querySnapshot=>{
-        var aplicationsArray=[]
-        querySnapshot.forEach( async doc=>{
-          let f=doc.data();
-          
-          let name =await (await db.collection("users").doc(doc.data().uid).get()).data().name;
-       
+    db.collection("simulation")
+      .where("type", "==", "Aplicação")
+      .onSnapshot((querySnapshot) => {
+        var aplicationsArray = [];
+        querySnapshot.forEach(async (doc) => {
+          let f = doc.data();
+
+          let name = await (
+            await db.collection("users").doc(doc.data().uid).get()
+          ).data().name;
+          let email = await (
+            await db.collection("users").doc(doc.data().uid).get()
+          ).data().email;
           aplicationsArray.push({
             ...f,
-            name: name});
-        })
-        this.aplications=aplicationsArray;
+            name: name,
+            email: email,
+          });
+        });
+        this.loader = false;
+        this.aplications = aplicationsArray;
+        this.data.json_data = aplicationsArray;
       });
-      
   },
 };
 </script>
