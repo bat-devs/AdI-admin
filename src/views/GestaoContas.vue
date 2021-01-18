@@ -25,7 +25,7 @@
     <div class="table-responsive">
       <div>
         
-        <table class="table align-items-center table-light">
+        <table class="table align-items-center table-light" v-if="!loader">
           <thead class="thead-light">
             <tr>
               <th scope="col" class="sort" data-sort="name">Número da conta</th>

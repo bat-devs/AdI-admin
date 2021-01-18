@@ -9,9 +9,11 @@
     <download-excel
       :data="data.json_data"
       :fields="data.json_fields"
-      style="width: 200px"
+      class="mt-3 ml-3 mb-3"
+      name="Simulações de aplicações.xls"
+      style="width: 230px"
     >
-      <button class="btn btn-primary">Baixar ficheiro excel</button>
+      <button class="btn btn-primary"><i class="fas fa-file-excel"></i> Baixar ficheiro excel</button>
     </download-excel>
     <div class="d-flex justify-content-center">
       <half-circle-spinner

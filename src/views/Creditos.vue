@@ -7,14 +7,16 @@
       <!-- Card stats -->
     </base-header>
     <download-excel :data="data.json_data"
-    :fields="data.json_fields" style="width:200px">
-      <button class="btn btn-primary">Baixar ficheiro excel</button>
+    :fields="data.json_fields" class="mt-3 ml-3 mb-3" style="width:230px"
+    name="Simulações de créditos.xls">
+      <button class="btn btn-primary"><i class="fas fa-file-excel"></i> Baixar ficheiro excel</button>
     </download-excel>
     <div class="d-flex justify-content-center">
       <half-circle-spinner
         v-if="loader"
         :animation-duration="1000"
         :size="60"
+        
         color="#113855"
       />
     </div>
