@@ -119,23 +119,16 @@ import VueClipboard from "vue-clipboard2";
 import BTooltipDirective from "bootstrap-vue/esm/directives/tooltip";
 import firebase from "firebase";
 import swal from "sweetalert2";
-<<<<<<< HEAD
 import facebookLogin from 'facebook-login-vuejs';
  
 
-=======
->>>>>>> 0010fdb1e1c8b69452516d586cad3d08de8fc388
 
 const db = firebase.firestore();
 Vue.use(VueClipboard);
 export default {
-<<<<<<< HEAD
   components: {
   facebookLogin
 },
-=======
-  components: {},
->>>>>>> 0010fdb1e1c8b69452516d586cad3d08de8fc388
   directives: {
     "b-tooltip": BTooltipDirective,
   },
