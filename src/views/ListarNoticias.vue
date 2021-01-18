@@ -11,9 +11,19 @@
         <i class="fas fa-plus"></i> Adicionar Notícia
       </router-link>
     </div>
+
+    <div class="d-flex justify-content-center">
+      <half-circle-spinner
+        v-if="loader"
+        :animation-duration="1000"
+        :size="60"
+        
+        color="#113855"
+      />
+    </div>
     <div class="table-responsive">
       <div>
-        <table class="table align-items-center table-light">
+        <table class="table align-items-center table-light" v-if="!loader">
           <thead class="thead-light">
             <tr>
               <th scope="col" class="sort" data-sort="name">Nome da notícia</th>
@@ -64,11 +74,14 @@
 <script>
 import firebase from "firebase";
 import swal from "sweetalert2";
+import { HalfCircleSpinner } from "epic-spinners";
 const db = firebase.firestore();
 export default {
+  components:{HalfCircleSpinner},
   data() {
     return {
       noticias: [],
+      loader:true,
     };
   },
   beforeCreate() {
@@ -83,6 +96,7 @@ export default {
           });
         });
         this.noticias = noticiasfirebase;
+        this.loader=false;
     })
   },
   methods: {

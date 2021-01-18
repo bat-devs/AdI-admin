@@ -29,11 +29,6 @@ const router = new Router({
           component: () => import(/* webpackChunkName: "demo" */ './views/AdicionarNoticia.vue')
         },
         {
-          path: '/profile',
-          name: 'profile',
-          component: () => import(/* webpackChunkName: "demo" */ './views/UserProfile.vue')
-        },
-        {
           path: '/noticias',
           name: 'Notícias',
           component: () => import(/* webpackChunkName: "demo" */ './views/ListarNoticias.vue')

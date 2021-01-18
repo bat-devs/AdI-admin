@@ -234,11 +234,7 @@ export default {
       ],
     };
   },
-
   methods: {
-    teste(event) {
-      alert(event.target.files);
-    },
     onCopy() {
       this.$notify({
         type: "success",
