@@ -23,6 +23,8 @@ import firebase from "firebase";
 const db=firebase.firestore();
 
 
+   
+
 export default {
   components: { PieChart, PieChartt },
   data() {
