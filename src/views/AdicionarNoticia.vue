@@ -71,6 +71,11 @@
               >
                 Publicar notícia
               </button>
+                <facebook-login class="button"
+      appId="2172026989597254"
+      @login="login"
+      @sdk-loaded="sdkLoaded">
+    </facebook-login>
             </form>
           </template>
         </card>
@@ -107,22 +112,35 @@
         </div>-->
   </div>
 </template>
+  
 <script>
 import Vue from "vue";
 import VueClipboard from "vue-clipboard2";
 import BTooltipDirective from "bootstrap-vue/esm/directives/tooltip";
 import firebase from "firebase";
 import swal from "sweetalert2";
+import facebookLogin from 'facebook-login-vuejs';
+ 
+
 
 const db = firebase.firestore();
 Vue.use(VueClipboard);
 export default {
-  components: {},
+  components: {
+  facebookLogin
+},
   directives: {
     "b-tooltip": BTooltipDirective,
   },
   data() {
     return {
+    isConnected: false,
+    name: '',
+    email: '',
+    personalID: '',
+    picture: '',
+    FB: undefined,
+   
       noticia: {
         content: "",
         title: "",
@@ -234,7 +252,77 @@ export default {
       ],
     };
   },
+ 
   methods: {
+  postar() {
+  
+
+             this.FB.api(
+  '/108709280980225/photos',
+  'POST',
+  {
+    "name": "ola mundo",
+  
+    "url": "https://appharbor.com/assets/images/stackoverflow-logo.png",
+  "access_token": "EAAe3cnEoUkYBANC6comcXBwQ6QAZBkfvgFftr4fg6W4MNjVvZAabTx3irZBgWVgd3IbNqaGrOaY36d0uPFMwEwYY1YrvPj0skC5TPbQg3j7j1hCt7qRPcvkTBBcZAqZAZBIUNEckQayY01ZBO9ESJrZBras1UTG5gZBBjmkLZCPoLdUe74NZC6mNLK8RfgxAUxCZBplkGS4xmKgpNwZDZD"},
+  function(response) {
+      // Insert your code here
+      console.log(response);
+  }
+);
+
+ /*
+
+{
+"message": "xxx",
+"published": true,
+"attached_media[0]": "{"media_fbid":"photo_id1" }"
+"attached_media[1]": "{"media_fbid":"photo_id2" }"
+}
+
+
+
+ //publicar foto com legenda
+       this.FB.api(
+  '/108709280980225/photos',
+  'POST',
+  {
+    "name": "ola mundo",
+    "url": "https://appharbor.com/assets/images/stackoverflow-logo.png",
+  "access_token": "EAAe3cnEoUkYBACbmtIeVuUt4kWsbC2ZBHvxpgSJf9wZApXUmEQZCQyiBlppEP7GhngN9RjMmTfPwvatWHlXEFSohRKmoc4nA8obuHrWpZAQMMuQ9jJwi6ZCJUXBDrIaqHt3Jl5MhSssYmpR6TecChlS5RoFbjxHqP9DsHKAPqr2eyHVXZAq6hyVHtR71QbIpsZD"},
+  function(response) {
+      // Insert your code here
+      console.log(response);
+  }
+);
+
+//publicar texto
+       this.FB.api(
+  '/108709280980225/feed',
+  'POST',
+  {
+    "name": "ola mundo",
+    "url": "https://appharbor.com/assets/images/stackoverflow-logo.png",
+  "access_token": "EAAe3cnEoUkYBACbmtIeVuUt4kWsbC2ZBHvxpgSJf9wZApXUmEQZCQyiBlppEP7GhngN9RjMmTfPwvatWHlXEFSohRKmoc4nA8obuHrWpZAQMMuQ9jJwi6ZCJUXBDrIaqHt3Jl5MhSssYmpR6TecChlS5RoFbjxHqP9DsHKAPqr2eyHVXZAq6hyVHtR71QbIpsZD"},
+  function(response) {
+      // Insert your code here
+      console.log(response);
+  }
+);
+*/
+    
+  },
+  sdkLoaded(payload) {
+    this.isConnected = payload.isConnected
+    this.FB = payload.FB
+    if (this.isConnected) this.postar()
+  },
+  login() {
+    this.isConnected = true
+    this.postar()
+  },
+ 
+
     onCopy() {
       this.$notify({
         type: "success",

@@ -31,6 +31,8 @@ import firebase from "firebase";
 import { HalfCircleSpinner } from "epic-spinners";
 const db = firebase.firestore();
 
+   
+
 export default {
   components: { PieChart, HalfCircleSpinner },
   data() {
