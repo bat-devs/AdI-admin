@@ -10,7 +10,7 @@
       </navbar-toggle-button>
       <router-link class="navbar-brand" to="/">
         <img
-          src="../../assets/images/academiainvestimento.jpeg"
+          src="../../assets/images/mono-logo.png"
           class="navbar-brand-img"
           alt="..."
         />
@@ -46,7 +46,7 @@
           <div class="row">
             <div class="col-6 collapse-brand">
               <router-link to="/">
-                <img src="../../assets/images/academiainvestimento.jpeg" />
+                <img src="../../assets/images/mono-logo.png" />
               </router-link>
             </div>
             <div class="col-6 collapse-close">

@@ -13,9 +13,7 @@
             slot="title"
             style="cursor: pointer"
           >
-            <span class="avatar avatar-sm rounded-circle">
-              <img alt="Image placeholder" src="img/theme/team-4-800x800.jpg" />
-            </span>
+            <i class="fas fa-user"></i>
             <div class="media-body ml-2 d-none d-lg-block">
               <span class="mb-0 text-sm font-weight-bold">{{
                 currentUserEmail

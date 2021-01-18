@@ -37,12 +37,8 @@
               <h6 class="heading-small text-muted mb-4">
                 Imagem Principal da notícia
               </h6>
-              <div class="pl-lg-4">
-                <div class="row">
-             
 
-                </div>
-              </div>
+              <input type="file" @change="teste" />
               <hr class="my-4" />
               <!-- Address -->
               <h6 class="heading-small text-muted mb-4">
@@ -123,16 +119,23 @@ import VueClipboard from "vue-clipboard2";
 import BTooltipDirective from "bootstrap-vue/esm/directives/tooltip";
 import firebase from "firebase";
 import swal from "sweetalert2";
+<<<<<<< HEAD
 import facebookLogin from 'facebook-login-vuejs';
  
 
+=======
+>>>>>>> 0010fdb1e1c8b69452516d586cad3d08de8fc388
 
 const db = firebase.firestore();
 Vue.use(VueClipboard);
 export default {
+<<<<<<< HEAD
   components: {
   facebookLogin
 },
+=======
+  components: {},
+>>>>>>> 0010fdb1e1c8b69452516d586cad3d08de8fc388
   directives: {
     "b-tooltip": BTooltipDirective,
   },
@@ -144,10 +147,13 @@ export default {
     personalID: '',
     picture: '',
     FB: undefined,
-    noticia: {
-      content: "",
-      title: "",
-    },
+   
+      noticia: {
+        content: "",
+        title: "",
+        mainImage: null,
+        othersfiles: [],
+      },
       icons: [
         { name: "ni ni-active-40" },
         { name: "ni ni-air-baloon" },
@@ -348,11 +354,22 @@ export default {
         .catch(function (error) {
           console.error("Error writing document: ", error);
         });
-
-      /*var storageRef = firebase.storage().ref(`news/"${this.imagePreview.name}`);
-      const task = storageRef.put(this.imagePreview);
-      task.on("state_changed");*/
     },
+    deleNew() {
+      //apagar
+      firebase
+        .firestore()
+        .collection("news")
+        .doc("id")
+        .delete()
+        .then(function () {
+          console.log("apagdao");
+        })
+        .catch(function (error) {
+          console.error("Erro ", error);
+        });
+    },
+    
   },
 };
 </script>

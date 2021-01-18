@@ -15,10 +15,17 @@
         ></base-input>
       </div>
     </div>
-
+    <div class="d-flex justify-content-center">
+      <half-circle-spinner v-if="loader"
+          :animation-duration="1000"
+          :size="60"
+          color="#113855"
+        />
+    </div>
     <div class="table-responsive">
       <div>
-        <table class="table align-items-center table-light">
+        
+        <table class="table align-items-center table-light" v-if="!loader">
           <thead class="thead-light">
             <tr>
               <th scope="col" class="sort" data-sort="name">Número da conta</th>
@@ -88,6 +95,11 @@
       </p>
       <br />
       <p>
+        <span style="font-weight: bold">Data de nascimento:</span>
+        {{ userAccountData.birthDate }}
+      </p>
+      <br />
+      <p>
         <span style="font-weight: bold">Morada:</span>
         {{ userAccountData.address }}
       </p>
@@ -117,7 +129,7 @@
         </base-button>
       </template>
     </modal>
-    <modal :show.sync="modal1">
+    <modal :show.sync="modal1" modal-classes="modal-dialog-centered modal-xl">
       <h5
         slot="header"
         modal-classes="modal-dialog-centered modal-xl"
@@ -168,7 +180,7 @@
               type="date"
               name="title"
               label="Data de nascimento"
-              :value="updateAccount.birthDate"
+              v-model="updateAccount.birthDate"
             />
           </div>
         </div>
@@ -177,8 +189,21 @@
         <div class="row">
           <div class="col-lg">
             <base-input label="Género">
-              <select class="form-control">
-                <option>M</option>
+              <select
+                v-if="updateAccount.gender == 'M'"
+                class="form-control"
+                v-model="updateAccount.gender"
+              >
+                <option selected :value="updateAccount.gender">M</option>
+                <option value="F">F</option>
+              </select>
+              <select
+                v-if="updateAccount.gender == 'F'"
+                class="form-control"
+                v-model="updateAccount.gender"
+              >
+                <option selected :value="updateAccount.gender">F</option>
+                <option value="M">M</option>
               </select>
             </base-input>
           </div>
@@ -208,11 +233,11 @@
       </div>
 
       <template slot="footer">
-        <base-button type="secondary" class="ml-auto" @click="modal1 = false"
+        <base-button type="secondary" @click="modal1 = false"
           >Fechar
         </base-button>
         <base-button type="primary" @click="updateData(userAccountData.id)"
-          >Save changes</base-button
+          >Salvar alterações</base-button
         >
       </template>
     </modal>
@@ -221,21 +246,24 @@
 <script>
 import firebase from "firebase";
 import BaseInput from "../components/BaseInput.vue";
-import swal from "sweetalert2"
+import swal from "sweetalert2";
+import { HalfCircleSpinner } from "epic-spinners";
 const db = firebase.firestore();
 export default {
   components: {
     BaseInput,
+    HalfCircleSpinner,
   },
   data() {
     return {
+      loader: true,
       accounts: [],
       modal: false,
       modal1: false,
       userAccountData: {},
       search: "",
       updateAccount: {
-        accountNumber:'',
+        accountNumber: "",
         name: "",
         address: "",
         bi: "",
@@ -254,6 +282,7 @@ export default {
           let f = doc.data().account;
           accountsArray.push({ ...f, email: doc.data().email, id: doc.id });
         }
+        this.loader=false
       });
       this.accounts = accountsArray;
     });
@@ -273,18 +302,18 @@ export default {
       this.updateAccount.name = this.userAccountData.name;
       this.updateAccount.address = this.userAccountData.address;
       this.updateAccount.bi = this.userAccountData.bi;
-      this.updateAccount.bithDate = this.userAccountData.bithDate;
+      this.updateAccount.birthDate = this.userAccountData.birthDate;
       this.updateAccount.gender = this.userAccountData.gender;
       this.updateAccount.nationality = this.userAccountData.nationality;
       this.updateAccount.phone = this.userAccountData.phone;
-      this.modal1=true;
+      this.modal1 = true;
     },
     updateData(id) {
       db.collection("users")
         .doc(id)
         .update({
           account: {
-            accountNumber:this.updateAccount.accountNumber,
+            accountNumber: this.updateAccount.accountNumber,
             name: this.updateAccount.name,
             address: this.updateAccount.address,
             bi: this.updateAccount.bi,
