@@ -1,39 +1,9 @@
 <template>
     <div class="main-content bg-default">
         <!-- Navbar -->
-        <base-nav class="navbar-top navbar-horizontal navbar-dark"
-                  containerClasses="px-4 container"
-                  expand>
-            <router-link slot="brand" class="navbar-brand" to="/">
-                <img src="img/brand/white.png"/>
-            </router-link>
-
-            <template v-slot="{closeMenu}">
-                <!-- Collapse header -->
-                <div class="navbar-collapse-header d-md-none">
-                    <div class="row">
-                        <div class="col-6 collapse-brand">
-                            <router-link to="/">
-                                <img src="img/brand/green.png">
-                            </router-link>
-                        </div>
-                        <div class="col-6 collapse-close">
-                            <button type="button"
-                                    @click="closeMenu"
-                                    class="navbar-toggler"
-                                    aria-label="Toggle sidenav">
-                                <span></span>
-                                <span></span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Navbar items -->
-                
-            </template>
-        </base-nav>
+        
         <!-- Header -->
-        <div class="header py-7 py-lg-8" style="background-color:#DB8D07">
+        <div class="header py-4 py-lg-8" style="background-color:#DB8D07">
             <div class="container">
                 <div class="header-body text-center mb-7">
                     <div class="row justify-content-center">
