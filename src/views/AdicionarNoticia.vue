@@ -5,6 +5,7 @@
       class="pb-6 pb-8 pt-5 pt-md-8"
     >
       <!-- Card stats -->
+      
     </base-header>
     <div class="container-fluid mt--7">
       <div class="col-xl order-xl-1">
@@ -71,11 +72,11 @@
               >
                 Publicar notícia
               </button>
-                <facebook-login class="button"
+             <!--   <facebook-login class="button"
       appId="2172026989597254"
       @login="login"
       @sdk-loaded="sdkLoaded">
-    </facebook-login>
+    </facebook-login>-->
             </form>
           </template>
         </card>
@@ -119,7 +120,7 @@ import VueClipboard from "vue-clipboard2";
 import BTooltipDirective from "bootstrap-vue/esm/directives/tooltip";
 import firebase from "firebase";
 import swal from "sweetalert2";
-import facebookLogin from 'facebook-login-vuejs';
+//import facebookLogin from 'facebook-login-vuejs';
  
 
 
@@ -127,19 +128,19 @@ const db = firebase.firestore();
 Vue.use(VueClipboard);
 export default {
   components: {
-  facebookLogin
+  //facebookLogin
 },
   directives: {
     "b-tooltip": BTooltipDirective,
   },
   data() {
     return {
-    isConnected: false,
-    name: '',
-    email: '',
-    personalID: '',
-    picture: '',
-    FB: undefined,
+   // isConnected: false,
+   // name: '',
+    //email: '',
+   // personalID: '',
+   // picture: '',
+   // FB: undefined,
    
       noticia: {
         content: "",
@@ -254,6 +255,7 @@ export default {
   },
  
   methods: {
+ /*
   postar() {
   
 
@@ -271,7 +273,7 @@ export default {
   }
 );
 
- /*
+
 
 {
 "message": "xxx",
@@ -309,7 +311,7 @@ export default {
       console.log(response);
   }
 );
-*/
+
     
   },
   sdkLoaded(payload) {
@@ -321,7 +323,7 @@ export default {
     this.isConnected = true
     this.postar()
   },
- 
+ */
 
     onCopy() {
       this.$notify({
