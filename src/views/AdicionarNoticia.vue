@@ -5,6 +5,7 @@
       class="pb-6 pb-8 pt-5 pt-md-8"
     >
       <!-- Card stats -->
+      
     </base-header>
     <div class="container-fluid mt--7">
       <div class="col-xl order-xl-1">
@@ -71,11 +72,11 @@
               >
                 Publicar notícia
               </button>
-                <facebook-login class="button"
+             <!--   <facebook-login class="button"
       appId="2172026989597254"
       @login="login"
       @sdk-loaded="sdkLoaded">
-    </facebook-login>
+    </facebook-login>-->
             </form>
           </template>
         </card>
@@ -119,7 +120,7 @@ import VueClipboard from "vue-clipboard2";
 import BTooltipDirective from "bootstrap-vue/esm/directives/tooltip";
 import firebase from "firebase";
 import swal from "sweetalert2";
-import facebookLogin from 'facebook-login-vuejs';
+//import facebookLogin from 'facebook-login-vuejs';
  
 
 
@@ -127,19 +128,19 @@ const db = firebase.firestore();
 Vue.use(VueClipboard);
 export default {
   components: {
-  facebookLogin
+  //facebookLogin
 },
   directives: {
     "b-tooltip": BTooltipDirective,
   },
   data() {
     return {
-    isConnected: false,
-    name: '',
-    email: '',
-    personalID: '',
-    picture: '',
-    FB: undefined,
+   // isConnected: false,
+   // name: '',
+    //email: '',
+   // personalID: '',
+   // picture: '',
+   // FB: undefined,
    
       noticia: {
         content: "",
@@ -254,6 +255,8 @@ export default {
   },
  
   methods: {
+ /*
+ não mexer
   postar() {
   
 
@@ -271,7 +274,7 @@ export default {
   }
 );
 
- /*
+
 
 {
 "message": "xxx",
@@ -309,7 +312,7 @@ export default {
       console.log(response);
   }
 );
-*/
+
     
   },
   sdkLoaded(payload) {
@@ -321,7 +324,7 @@ export default {
     this.isConnected = true
     this.postar()
   },
- 
+ */
 
     onCopy() {
       this.$notify({
@@ -362,6 +365,45 @@ export default {
           console.error("Erro ", error);
         });
     },
+    // Função para adicionar noticia
+    addNews(){
+      
+     /*
+
+    firebase.firestore().collection("publicacao").add({
+        content:  'fixe',
+        keywords: 'fixe',
+        mainImage: 'fixe',
+        title: 'fixe',
+        published: false,
+
+    }).then(async (id)=>{
+        this.id= await id.id;
+        var k=[];
+        var i=0;
+
+        while(i<10){
+            await firebase.storage().ref().child('images/'+this.id+"/"+i+imagem.name ).put(imagem).then( async ()=>{
+
+                await firebase.storage().ref().child('images/'+this.id+"/"+i+imagem.name).getDownloadURL().then( 
+                    async function(downloadURL) {
+                        await k.push(downloadURL); 
+                });
+            });
+        i++;
+        }
+        console.log(k);
+        firebase.firestore().collection("publicacao").doc(this.id).update({
+            images: k,
+
+        }).then(()=>{
+            alert("Esse é o foi");
+        });
+
+    });
+
+    */
+    }
     
   },
 };

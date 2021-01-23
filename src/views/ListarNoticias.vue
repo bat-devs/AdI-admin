@@ -76,12 +76,14 @@ import firebase from "firebase";
 import swal from "sweetalert2";
 import { HalfCircleSpinner } from "epic-spinners";
 const db = firebase.firestore();
+var id=[];
 export default {
   components:{HalfCircleSpinner},
   data() {
     return {
       noticias: [],
       loader:true,
+      
     };
   },
   beforeCreate() {
@@ -99,7 +101,47 @@ export default {
         this.loader=false;
     })
   },
+  created(){
+    // pegar todos os dados do taxTable
+      firebase.firestore().collection("applications").get().then(querySnapshot=>{
+        //var taxasApplications=[];
+        querySnapshot.forEach(function (doc){
+          id.push(doc.id);
+          
+         firebase.firestore().collection("applications").doc(doc.id)
+         .collection("taxTable")
+          .get().then(query=>{
+            query.forEach(docs=>{
+              // Todos dados
+              //console.log(docs.data());
+              
+            })
+          });
+        });
+      });
+
+  },
   methods: {
+    // Actualizar os dados
+    update(id,vector,posicao){
+      firebase.firestore().collection("applications").doc(id[0])
+         .collection("taxTable").doc(posicao.toString()).update({
+           posicao :vector,
+         });
+
+    /*
+    Exemplo:
+
+    
+         firebase.firestore().collection("applications").doc(id[0])
+         .collection("taxTable").doc("0").update({
+            0 :["Montante Mínimo",3,6,9,10],
+         });*/
+
+    },
+
+
+
     deleteNew(id) {
       swal
         .fire({
