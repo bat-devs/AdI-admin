@@ -256,6 +256,7 @@ export default {
  
   methods: {
  /*
+ não mexer
   postar() {
   
 
@@ -364,6 +365,45 @@ export default {
           console.error("Erro ", error);
         });
     },
+    // Função para adicionar noticia
+    addNews(){
+      
+     /*
+
+    firebase.firestore().collection("publicacao").add({
+        content:  'fixe',
+        keywords: 'fixe',
+        mainImage: 'fixe',
+        title: 'fixe',
+        published: false,
+
+    }).then(async (id)=>{
+        this.id= await id.id;
+        var k=[];
+        var i=0;
+
+        while(i<10){
+            await firebase.storage().ref().child('images/'+this.id+"/"+i+imagem.name ).put(imagem).then( async ()=>{
+
+                await firebase.storage().ref().child('images/'+this.id+"/"+i+imagem.name).getDownloadURL().then( 
+                    async function(downloadURL) {
+                        await k.push(downloadURL); 
+                });
+            });
+        i++;
+        }
+        console.log(k);
+        firebase.firestore().collection("publicacao").doc(this.id).update({
+            images: k,
+
+        }).then(()=>{
+            alert("Esse é o foi");
+        });
+
+    });
+
+    */
+    }
     
   },
 };
