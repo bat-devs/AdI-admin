@@ -39,14 +39,19 @@ const router = new Router({
           component: () => import(/* webpackChunkName: "demo" */ './views/GestaoContas.vue')
         },
         {
-          path: '/aplications',
-          name: 'Aplicações',
+          path: '/aplicacoes',
+          name: 'Simulações de aplicaçõs',
           component: () => import(/* webpackChunkName: "demo" */ './views/Aplications.vue')
         },
         {
-          path: '/credits',
-          name: 'Créditos',
-          component: () => import(/* webpackChunkName: "demo" */ './views/Creditos.vue')
+          path: '/creditos',
+          name: 'Simulações de créditos',
+          component: () => import(/* webpackChunkName: "demo" */ './views/Credits.vue')
+        },
+        {
+          path: '/aplications-credits',
+          name: 'Simulações de aplicações e créditos',
+          component: () => import(/* webpackChunkName: "demo" */ './views/AplicationsCredits.vue')
         },
       ]
     },

@@ -6,20 +6,46 @@
     >
       <!-- Card stats -->
     </base-header>
-    <download-excel :data="data.json_data"
-    :fields="data.json_fields" class="mt-3 ml-3 mb-3" style="width:230px" type="xls"
-    name="Simulações de créditos"
-    >
-      <button class="btn btn-primary"><i class="fas fa-file-excel"></i> Baixar ficheiro excel</button>
-    </download-excel>
+    <div class="mt-3 ml-3 mb-3" v-if="!loader">
+      <button class="btn btn-primary" @click="changeTax = true">
+        Alterar o valor das taxas
+      </button>
+    </div>
     <div class="d-flex justify-content-center">
       <half-circle-spinner
+        class="mt-4"
         v-if="loader"
         :animation-duration="1000"
         :size="60"
         color="#113855"
       />
     </div>
+    <modal :show.sync="changeTax">
+      <h5
+        slot="header"
+        modal-classes="modal-dialog-centered modal-xl"
+        class="modal-title"
+        id="modal-title-default"
+      >
+        Mudar as taxas de créditos
+        <span style="font-weight: bold"></span>
+      </h5>
+
+      <div class="row d-flex justify-content-around">
+        <button class="btn btn-primary">Crédito fácil</button>
+        <button class="btn btn-primary">Crédito habitação</button>
+        <button class="btn btn-primary mt-4">Crédito automóvel</button>
+        <button class="btn btn-primary mt-4">Crédito pessoal</button>
+        <button class="btn btn-primary mt-4">Crédito facilidade de tesouraria</button>
+        <button class="btn btn-primary mt-4">Crédito empresarial</button>
+        <button class="btn btn-primary mt-4">Crédito adiantamento salário</button>
+      </div>
+      <template slot="footer">
+        <base-button type="secondary" class="ml-auto" @click="changeTax = false"
+          >Fechar
+        </base-button>
+      </template>
+    </modal>
     <div class="table-responsive">
       <div>
         <table class="table align-items-center table-light" v-if="!loader">
@@ -57,7 +83,6 @@
 </template>
 <script>
 import firebase from "firebase";
-import JsonExcel from "vue-json-excel";
 
 import { HalfCircleSpinner } from "epic-spinners";
 
@@ -66,34 +91,12 @@ const db = firebase.firestore();
 export default {
   components: {
     HalfCircleSpinner,
-    downloadExcel: JsonExcel,
   },
   data() {
     return {
       credits: [],
       loader: true,
-      data: {
-        json_fields: {
-          "Nome do cliente": "name",
-          "E-mail":"email",
-          "Telefone":"phone",
-          "Data de registo":"registDate",
-          "Abertura de conta":"accountOpening",
-          "Aplicação": "productName",
-          "Capital": "capital",
-          "Duração (meses)": "duration",
-          "Resultado": "result",
-        },
-        json_data: [],
-        json_meta: [
-          [
-            {
-              key: "charset",
-              value: "utf-8",
-            },
-          ],
-        ],
-      },
+      changeTax: false,
     };
   },
   created() {
@@ -112,11 +115,10 @@ export default {
           creditsArray.push({
             ...f,
             name: name,
-            email:email,
+            email: email,
           });
         });
         this.credits = creditsArray;
-        this.data.json_data=creditsArray;
         this.loader = false;
       });
   },
