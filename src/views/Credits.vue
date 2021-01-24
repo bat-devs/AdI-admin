@@ -32,16 +32,41 @@
       </h5>
 
       <div class="row d-flex justify-content-around">
-        <button class="btn btn-primary">Crédito fácil</button>
-        <button class="btn btn-primary">Crédito habitação</button>
-        <button class="btn btn-primary mt-4">Crédito automóvel</button>
-        <button class="btn btn-primary mt-4">Crédito pessoal</button>
-        <button class="btn btn-primary mt-4">Crédito facilidade de tesouraria</button>
-        <button class="btn btn-primary mt-4">Crédito empresarial</button>
-        <button class="btn btn-primary mt-4">Crédito adiantamento salário</button>
+        <button
+          class="btn btn-primary mt-4"
+          @click="editCredit(credit.id)"
+          v-for="(credit, index) in creditsTaxes"
+          :key="index"
+        >
+          {{ credit.data().name }}
+        </button>
       </div>
       <template slot="footer">
         <base-button type="secondary" class="ml-auto" @click="changeTax = false"
+          >Fechar
+        </base-button>
+      </template>
+    </modal>
+    <modal :show.sync="editTax">
+      <h5
+        slot="header"
+        modal-classes="modal-dialog-centered modal-xl"
+        class="modal-title"
+        id="modal-title-default"
+      >
+        Editar
+        <span style="font-weight: bold"></span>
+      </h5>
+
+      <base-input
+        name="code"
+        label="Insira a referência de download"
+        placeholder="Código"
+        input-classes="form-control-alternative"
+        
+      />
+      <template slot="footer">
+        <base-button type="secondary" class="ml-auto" @click="editTax = false"
           >Fechar
         </base-button>
       </template>
@@ -87,7 +112,7 @@ import firebase from "firebase";
 import { HalfCircleSpinner } from "epic-spinners";
 
 const db = firebase.firestore();
-
+const creditsTaxes = [];
 export default {
   components: {
     HalfCircleSpinner,
@@ -97,9 +122,11 @@ export default {
       credits: [],
       loader: true,
       changeTax: false,
+      editTax:false,
+      creditsTaxes,
     };
   },
-  created() {
+  beforeCreate() {
     db.collection("simulation")
       .where("type", "==", "Crédito")
       .onSnapshot((querySnapshot) => {
@@ -121,6 +148,30 @@ export default {
         this.credits = creditsArray;
         this.loader = false;
       });
+
+    db.collection("credits")
+      .get()
+      .then(function (querySnapshot) {
+        querySnapshot.forEach(async (doc) => {
+          let f = doc;
+          creditsTaxes.push(f);
+        });
+      });
+  },
+  methods: {
+    editCredit(id) {
+      db.collection("credits")
+        .doc(id)
+        .collection("taxTable")
+        .get()
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(async (doc)=>{
+            console.log(doc.data()[doc.id])
+          })
+        });
+        this.changeTax=false;
+        this.editTax=true;
+    },
   },
 };
 </script>
