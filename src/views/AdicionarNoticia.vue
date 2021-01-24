@@ -5,7 +5,6 @@
       class="pb-6 pb-8 pt-5 pt-md-8"
     >
       <!-- Card stats -->
-      
     </base-header>
     <div class="container-fluid mt--7">
       <div class="col-xl order-xl-1">
@@ -39,7 +38,7 @@
                 Imagem Principal da notícia
               </h6>
 
-              <input type="file" @change="teste" />
+              <input type="file" @change="teste"/>
               <hr class="my-4" />
               <!-- Address -->
               <h6 class="heading-small text-muted mb-4">
@@ -67,12 +66,12 @@
                 </div>
               </div>
               <button
-                @click="saveData"
+                @click="addNews"
                 class="btn btn-success btn-lg btn-block"
               >
                 Publicar notícia
               </button>
-             <!--   <facebook-login class="button"
+              <!--   <facebook-login class="button"
       appId="2172026989597254"
       @login="login"
       @sdk-loaded="sdkLoaded">
@@ -119,33 +118,32 @@ import Vue from "vue";
 import VueClipboard from "vue-clipboard2";
 import BTooltipDirective from "bootstrap-vue/esm/directives/tooltip";
 import firebase from "firebase";
-import swal from "sweetalert2";
+//import swal from "sweetalert2";
 //import facebookLogin from 'facebook-login-vuejs';
- 
 
-
-const db = firebase.firestore();
+//const db = firebase.firestore();
 Vue.use(VueClipboard);
 export default {
   components: {
-  //facebookLogin
-},
+    //facebookLogin
+  },
   directives: {
     "b-tooltip": BTooltipDirective,
   },
   data() {
     return {
-   // isConnected: false,
-   // name: '',
-    //email: '',
-   // personalID: '',
-   // picture: '',
-   // FB: undefined,
-   
+      // isConnected: false,
+      // name: '',
+      //email: '',
+      // personalID: '',
+      // picture: '',
+      // FB: undefined,
+
       noticia: {
         content: "",
         title: "",
         mainImage: null,
+        keywords:[],
         othersfiles: [],
       },
       icons: [
@@ -253,9 +251,9 @@ export default {
       ],
     };
   },
- 
+
   methods: {
- /*
+  /*
  não mexer
   postar() {
   
@@ -325,31 +323,23 @@ export default {
     this.postar()
   },
  */
-
     onCopy() {
       this.$notify({
         type: "success",
         title: "Copied to clipboard",
       });
     },
-    saveData() {
-      db.collection("news")
-        .add({
-          publishedAt: firebase.firestore.Timestamp.now(),
-          ...this.noticia,
-        })
-        .then(function () {
-          swal.fire({
-            position: "top-end",
-            icon: "success",
-            title: "A sua notícia foi publicada",
-            showConfirmButton: false,
-            timer: 1200,
-          });
-        })
-        .catch(function (error) {
-          console.error("Error writing document: ", error);
-        });
+    /*teste2(e)
+    {
+      var image=e.target.files || e.dataTransfer.files;
+      this.othersfiles=image[0];
+      console.log(this.noticia.othersfiles);
+    },*/
+    teste(e)
+    {
+      var image=e.target.files || e.dataTransfer.files;
+      this.noticia.mainImage=image[0];
+      console.log(this.noticia.mainImage);
     },
     deleNew() {
       //apagar
@@ -366,45 +356,51 @@ export default {
         });
     },
     // Função para adicionar noticia
-    addNews(){
-      
-     /*
+    addNews() {
+      firebase
+        .firestore()
+        .collection("publicacao")
+        .add({
+          content: this.noticia.content,
+          keywords: "fixe",
+          mainImage: this.mainImage,
+          title: this.noticia.title,
+          published: false,
+        })
+        .then(async (id) => {
+          this.id = await id.id;
+          var k = [];
 
-    firebase.firestore().collection("publicacao").add({
-        content:  'fixe',
-        keywords: 'fixe',
-        mainImage: 'fixe',
-        title: 'fixe',
-        published: false,
-
-    }).then(async (id)=>{
-        this.id= await id.id;
-        var k=[];
-        var i=0;
-
-        while(i<10){
-            await firebase.storage().ref().child('images/'+this.id+"/"+i+imagem.name ).put(imagem).then( async ()=>{
-
-                await firebase.storage().ref().child('images/'+this.id+"/"+i+imagem.name).getDownloadURL().then( 
-                    async function(downloadURL) {
-                        await k.push(downloadURL); 
-                });
+          Object.entries(this.noticia.othersfiles).forEach(async([index,image]) => {
+            console.log(image)
+            await firebase
+              .storage()
+              .ref()
+              .child("images/" + this.id + "/" + index + "foto")
+              .put(image)
+              .then(async () => {
+                await firebase
+                  .storage()
+                  .ref()
+                  .child("images/" + this.id + "/" + index + "foto")
+                  .getDownloadURL()
+                  .then(async function (downloadURL) {
+                    await k.push(downloadURL);
+                  });
+              });
+          })
+          firebase
+            .firestore()
+            .collection("publicacao")
+            .doc(this.id)
+            .update({
+              images: k,
+            })
+            .then(() => {
+              alert("Esse é o foi");
             });
-        i++;
-        }
-        console.log(k);
-        firebase.firestore().collection("publicacao").doc(this.id).update({
-            images: k,
-
-        }).then(()=>{
-            alert("Esse é o foi");
         });
-
-    });
-
-    */
-    }
-    
+    },
   },
 };
 </script>

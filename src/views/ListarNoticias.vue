@@ -76,7 +76,7 @@ import firebase from "firebase";
 import swal from "sweetalert2";
 import { HalfCircleSpinner } from "epic-spinners";
 const db = firebase.firestore();
-var id=[];
+//var id=[];
 export default {
   components:{HalfCircleSpinner},
   data() {
@@ -103,7 +103,7 @@ export default {
   },
   created(){
     // pegar todos os dados do taxTable
-      firebase.firestore().collection("applications").get().then(querySnapshot=>{
+      /*firebase.firestore().collection("applications").get().then(querySnapshot=>{
         //var taxasApplications=[];
         querySnapshot.forEach(function (doc){
           id.push(doc.id);
@@ -113,12 +113,12 @@ export default {
           .get().then(query=>{
             query.forEach(docs=>{
               // Todos dados
-              //console.log(docs.data());
+              console.log(docs.data());
               
             })
           });
         });
-      });
+      });*/
 
   },
   methods: {
