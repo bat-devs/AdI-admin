@@ -339,7 +339,9 @@ export default {
     {
       var image=e.target.files || e.dataTransfer.files;
       this.noticia.mainImage=image[0];
-      console.log(this.noticia.mainImage);
+      this.noticia.othersfiles.push(image[0]);
+      //console.log(this.noticia.mainImage);
+      //console.log(this.noticia.othersfiles[0]);
     },
     deleNew() {
       //apagar
@@ -357,49 +359,89 @@ export default {
     },
     // Função para adicionar noticia
     addNews() {
+      
       firebase
         .firestore()
         .collection("publicacao")
         .add({
           content: this.noticia.content,
           keywords: "fixe",
-          mainImage: this.mainImage,
           title: this.noticia.title,
           published: false,
         })
         .then(async (id) => {
           this.id = await id.id;
-          var k = [];
+          var imagesURL = [];
+          var mainImageURL; 
+          var mainType=this.noticia.mainImage.split(".")[1];
 
+         await firebase
+              .storage()
+              .ref()
+              .child("images/" + this.id + "/" + 0+ "."+mainType)
+              .put(this.noticia.mainImage[0])
+              .then(async () => {
+                console.log(this.id);
+                await firebase
+                  .storage()
+                  .ref()
+                  .child("images/" + this.id + "/" +0+ "."+mainType)
+                  .getDownloadURL()
+                  .then(async function (downloadURL) {
+                    mainImageURL=await downloadURL;
+
+                  });
+              });
+
+        if(this.noticia.othersfiles.length==0)
           Object.entries(this.noticia.othersfiles).forEach(async([index,image]) => {
-            console.log(image)
             await firebase
               .storage()
               .ref()
-              .child("images/" + this.id + "/" + index + "foto")
+              .child("images/" + this.id + "/" + (index+1) + "foto.png")
               .put(image)
               .then(async () => {
                 await firebase
                   .storage()
                   .ref()
-                  .child("images/" + this.id + "/" + index + "foto")
+                  .child("images/" + this.id + "/" + (index+1) + "foto.png")
                   .getDownloadURL()
                   .then(async function (downloadURL) {
-                    await k.push(downloadURL);
+                    await imagesURL.push(downloadURL);
                   });
               });
-          })
-          firebase
+              
+              
+              if(index==this.noticia.othersfiles.length-1){
+              firebase
             .firestore()
             .collection("publicacao")
             .doc(this.id)
             .update({
-              images: k,
+              images: imagesURL,
+               mainImage:  mainImageURL
             })
             .then(() => {
-              alert("Esse é o foi");
+             // terminar o loader
             });
+              }   
         });
+        else
+           firebase
+            .firestore()
+            .collection("publicacao")
+            .doc(this.id)
+            .update({
+              images: imagesURL,
+               mainImage:  mainImageURL
+            })
+            .then(() => {
+             // terminar o loader
+            });
+      });
+          
+     
+          
     },
   },
 };
