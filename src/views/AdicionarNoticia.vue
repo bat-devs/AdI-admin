@@ -38,7 +38,7 @@
                 Imagem Principal da notícia
               </h6>
 
-              <input type="file" @change="teste"/>
+              <input type="file" @change="teste" />
               <hr class="my-4" />
               <!-- Address -->
               <h6 class="heading-small text-muted mb-4">
@@ -47,7 +47,7 @@
               <div class="pl-lg-4">
                 <div class="row">
                   <div class="col-md-12">
-                    <input type="file" name="outrasFotos[]" multiple />
+                    <input type="file" @change="teste2" name="outrasFotos[]" multiple />
                   </div>
                 </div>
               </div>
@@ -65,10 +65,7 @@
                   </textarea>
                 </div>
               </div>
-              <button
-                @click="addNews"
-                class="btn btn-success btn-lg btn-block"
-              >
+              <button @click="addNews" class="btn btn-success btn-lg btn-block">
                 Publicar notícia
               </button>
               <!--   <facebook-login class="button"
@@ -143,7 +140,7 @@ export default {
         content: "",
         title: "",
         mainImage: null,
-        keywords:[],
+        keywords: [],
         othersfiles: [],
       },
       icons: [
@@ -253,7 +250,7 @@ export default {
   },
 
   methods: {
-  /*
+    /*
  não mexer
   postar() {
   
@@ -329,17 +326,16 @@ export default {
         title: "Copied to clipboard",
       });
     },
-    /*teste2(e)
+    teste2(e)
     {
       var image=e.target.files || e.dataTransfer.files;
-      this.othersfiles=image[0];
-      console.log(this.noticia.othersfiles);
-    },*/
-    teste(e)
-    {
-      var image=e.target.files || e.dataTransfer.files;
-      this.noticia.mainImage=image[0];
       this.noticia.othersfiles.push(image[0]);
+      console.log(this.noticia.othersfiles);
+    },
+    teste(e) {
+      var image = e.target.files || e.dataTransfer.files;
+      this.noticia.mainImage = image[0];
+      console.log(this.noticia.mainImage);
       //console.log(this.noticia.mainImage);
       //console.log(this.noticia.othersfiles[0]);
     },
@@ -359,7 +355,6 @@ export default {
     },
     // Função para adicionar noticia
     addNews() {
-      
       firebase
         .firestore()
         .collection("publicacao")
@@ -372,76 +367,75 @@ export default {
         .then(async (id) => {
           this.id = await id.id;
           var imagesURL = [];
-          var mainImageURL; 
-          var mainType=this.noticia.mainImage.split(".")[1];
+          var mainImageURL;
+          var mainType = this.noticia.mainImage[0].split(".")[1];
 
-         await firebase
-              .storage()
-              .ref()
-              .child("images/" + this.id + "/" + 0+ "."+mainType)
-              .put(this.noticia.mainImage[0])
-              .then(async () => {
-                console.log(this.id);
-                await firebase
-                  .storage()
-                  .ref()
-                  .child("images/" + this.id + "/" +0+ "."+mainType)
-                  .getDownloadURL()
-                  .then(async function (downloadURL) {
-                    mainImageURL=await downloadURL;
-
-                  });
-              });
-
-        if(this.noticia.othersfiles.length==0)
-          Object.entries(this.noticia.othersfiles).forEach(async([index,image]) => {
-            await firebase
-              .storage()
-              .ref()
-              .child("images/" + this.id + "/" + (index+1) + "foto.png")
-              .put(image)
-              .then(async () => {
-                await firebase
-                  .storage()
-                  .ref()
-                  .child("images/" + this.id + "/" + (index+1) + "foto.png")
-                  .getDownloadURL()
-                  .then(async function (downloadURL) {
-                    await imagesURL.push(downloadURL);
-                  });
-              });
-              
-              
-              if(index==this.noticia.othersfiles.length-1){
-              firebase
-            .firestore()
-            .collection("publicacao")
-            .doc(this.id)
-            .update({
-              images: imagesURL,
-               mainImage:  mainImageURL
-            })
-            .then(() => {
-             // terminar o loader
+          await firebase
+            .storage()
+            .ref()
+            .child("images/" + this.id + "/" + 0 + "." + mainType)
+            .put(this.noticia.mainImage[0])
+            .then(async () => {
+              console.log(this.id);
+              await firebase
+                .storage()
+                .ref()
+                .child("images/" + this.id + "/" + 0 + "." + mainType)
+                .getDownloadURL()
+                .then(async function (downloadURL) {
+                  mainImageURL = await downloadURL;
+                });
             });
-              }   
+
+          if (this.noticia.othersfiles.length == 0)
+            Object.entries(this.noticia.othersfiles).forEach(
+              async ([index, image]) => {
+                await firebase
+                  .storage()
+                  .ref()
+                  .child("images/" + this.id + "/" + (index + 1) + "foto.png")
+                  .put(image)
+                  .then(async () => {
+                    await firebase
+                      .storage()
+                      .ref()
+                      .child(
+                        "images/" + this.id + "/" + (index + 1) + "foto.png"
+                      )
+                      .getDownloadURL()
+                      .then(async function (downloadURL) {
+                        await imagesURL.push(downloadURL);
+                      });
+                  });
+
+                if (index == this.noticia.othersfiles.length - 1) {
+                  firebase
+                    .firestore()
+                    .collection("publicacao")
+                    .doc(this.id)
+                    .update({
+                      images: imagesURL,
+                      mainImage: mainImageURL,
+                    })
+                    .then(() => {
+                      // terminar o loader
+                    });
+                }
+              }
+            );
+          else
+            firebase
+              .firestore()
+              .collection("publicacao")
+              .doc(this.id)
+              .update({
+                images: imagesURL,
+                mainImage: mainImageURL,
+              })
+              .then(() => {
+                // terminar o loader
+              });
         });
-        else
-           firebase
-            .firestore()
-            .collection("publicacao")
-            .doc(this.id)
-            .update({
-              images: imagesURL,
-               mainImage:  mainImageURL
-            })
-            .then(() => {
-             // terminar o loader
-            });
-      });
-          
-     
-          
     },
   },
 };
