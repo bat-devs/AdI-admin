@@ -11,7 +11,7 @@
         <base-input
           alternative
           v-model="search"
-          placeholder="Procuar pelo nome..."
+          placeholder="Procurar pela referência..."
         ></base-input>
       </div>
     </div>
@@ -337,7 +337,7 @@ export default {
   computed: {
     accountsfilter() {
       return this.accounts.filter((accounts) => {
-        return accounts.name.toLowerCase().includes(this.search.toLowerCase());
+        return accounts.accountNumber.toString().toLowerCase().includes(this.search.toLowerCase());
       });
     },
   },

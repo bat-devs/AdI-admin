@@ -48,7 +48,7 @@
               </th>
 
               <td class="budget">
-                {{ noticia.publishedAt.toDate().toLocaleString() }}
+                {{ noticia.published.toDate().toLocaleString() }}
               </td>
               <td>
                 <div class="row">
