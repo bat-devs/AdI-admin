@@ -7,10 +7,83 @@
       <!-- Card stats -->
     </base-header>
     <div class="mt-3 ml-3 mb-3">
-      <button class="btn btn-primary" v-if="!loader">Alterar o valor das taxas</button>
+      <button class="btn btn-primary" v-if="!loader" @click="changeTax = true">
+        Alterar o valor das taxas
+      </button>
     </div>
-    <div class="d-flex justify-content-center ">
-      <half-circle-spinner class="mt-4"
+    <modal :show.sync="changeTax">
+      <h5
+        slot="header"
+        modal-classes="modal-dialog-centered modal-xl"
+        class="modal-title"
+        id="modal-title-default"
+      >
+        Mudar as taxas de créditos
+        <span style="font-weight: bold"></span>
+      </h5>
+
+      <div class="row d-flex justify-content-around">
+        <button
+          class="btn btn-primary mt-4"
+          @click="getCredit(credit.id)"
+          v-for="(credit, index) in creditsTaxes"
+          :key="index"
+        >
+          {{ credit.data().name }}
+        </button>
+      </div>
+      <template slot="footer">
+        <base-button type="secondary" class="ml-auto" @click="changeTax = false"
+          >Fechar
+        </base-button>
+      </template>
+    </modal>
+    <modal :show.sync="editTax">
+      <h5
+        slot="header"
+        modal-classes="modal-dialog-centered modal-xl"
+        class="modal-title"
+        id="modal-title-default"
+      >
+        Editar
+        <span style="font-weight: bold"></span>
+      </h5>
+      <form @submit.prevent="editCredit">
+        <table class="list">
+          <tr v-for="(valor, juroIndex) in juros" :key="juroIndex">
+            <th>{{ valor[0] }}</th>
+            <td
+              v-for="(taxa, taxaIndex) in valor.slice(1)"
+              :key="taxaIndex"
+              style="inline-block; text-align: center;"
+            >
+              <span v-if="juroIndex === 0">{{ taxa }} meses</span>
+              <input
+                class="form-control"
+                :value="taxa"
+                v-if="juroIndex > 0"
+                max="100"
+              />
+            </td>
+          </tr>
+        </table>
+        <div class="mt-2 d-flex justify-content-around">
+          <base-button
+            type="secondary"
+            value="not"
+            class="ml-auto"
+            @click="editTax = false"
+            >Fechar
+          </base-button>
+          <button class="btn btn-primary ml-auto" value="not" type="submit">
+            Guardar Novas Taxas
+          </button>
+        </div>
+      </form>
+    </modal>
+    <div class="d-flex justify-content-center">
+      <half-circle-spinner
+        class="mt-4"
         v-if="loader"
         :animation-duration="1000"
         :size="60"
@@ -56,21 +129,27 @@
 import firebase from "firebase";
 
 import { HalfCircleSpinner } from "epic-spinners";
+import swal from "sweetalert2";
 
 const db = firebase.firestore();
-
+const creditsTaxes = [];
+let juros1 = [];
 export default {
   components: {
     HalfCircleSpinner,
-  
   },
   data() {
     return {
       credits: [],
       loader: true,
+      changeTax: false,
+      editTax: false,
+      creditsTaxes,
+      juros: [],
+      id: "",
     };
   },
-  created() {
+  beforeCreate() {
     db.collection("simulation")
       .where("type", "==", "Aplicação")
       .onSnapshot((querySnapshot) => {
@@ -86,12 +165,80 @@ export default {
           creditsArray.push({
             ...f,
             name: name,
-            email:email,
+            email: email,
           });
         });
         this.credits = creditsArray;
         this.loader = false;
       });
+
+    db.collection("applications")
+      .get()
+      .then(function (querySnapshot) {
+        querySnapshot.forEach(async (doc) => {
+          let f = doc;
+          creditsTaxes.push(f);
+        });
+      });
+  },
+  methods: {
+    async getCredit(id) {
+      this.id = id;
+      juros1 = [];
+      await db
+        .collection("applications")
+        .doc(id)
+        .collection("taxTable")
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            juros1.push(doc.data()[doc.id]);
+          });
+          this.juros = juros1;
+        });
+      this.changeTax = false;
+      this.editTax = true;
+    },
+    editCredit(submitEvent) {
+      const elements = submitEvent.target.elements;
+      let novasTaxas = [];
+      novasTaxas.push(this.juros[0]);
+      this.juros.forEach((value, index) => {
+        if (index > 0) {
+          let newLine = [];
+          value.forEach((_, taxIndex) => {
+            const currentIndex =
+              taxIndex - 1 + (index - 1) * (value.length - 1);
+            if (taxIndex === 0) {
+              newLine.push(value[taxIndex]);
+            } else if (elements[currentIndex].value !== "not") {
+              newLine.push(elements[currentIndex].value);
+            }
+          });
+          novasTaxas.push(newLine);
+        }
+      });
+      novasTaxas.forEach(
+        async (line, index) =>
+          await db
+            .collection("applications")
+            .doc(this.id)
+            .collection("taxTable")
+            .doc(`${index}`)
+            .update({
+              [`${index}`]: line,
+            })
+            .then(() => {
+              swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Your work has been saved",
+                showConfirmButton: false,
+                timer: 1500,
+              });
+            })
+      );
+    },
   },
 };
 </script>
