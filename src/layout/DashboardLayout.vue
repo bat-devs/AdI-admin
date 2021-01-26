@@ -1,35 +1,68 @@
 <template >
   <div class="wrapper" :class="{ 'nav-open': $sidebar.showSidebar }">
-    <side-bar  
+    <side-bar
       :background-color="sidebarBackground"
       short-title="BatDev"
       title="BatDev"
     >
-      <template slot="links" >
+      <template slot="links">
         <sidebar-item
           :link="{
             name: 'Home',
             icon: 'ni ni-tv-2 text-success',
-            path: '/home'
+            path: '/home',
+          }"
+        />
+        <sidebar-item
+          :link="{
+            name: 'Notícias',
+            icon: 'ni ni-single-copy-04 text-orange',
+            path: '/noticias',
+          }"
+        />
+        <sidebar-item
+          :link="{
+            name: 'Relatório das simulações e créditos',
+            icon: 'fas fa-wallet text-yellow',
+            path: '/aplications-credits',
+          }"
+        />
+        <sidebar-item
+          :link="{
+            name: 'Aplicações',
+            icon: 'fas fa-wallet text-blue',
+            path: '/aplicacoes',
+          }"
+        />
+        <sidebar-item
+          :link="{
+            name: 'Créditos',
+            icon: 'fas fa-hand-holding-usd text-blue',
+            path: '/creditos',
           }"
         />
 
-        <sidebar-item  :link="{name: 'AdicionarNoticia', icon: 'ni ni-fat-add text-blue', path: '/adicionar-noticia'}"/>
-        <sidebar-item :link="{name: 'ListarNoticias', icon: 'ni ni-single-copy-04 text-orange', path: '/listar-noticias'}"/>
-        <!--<sidebar-item :link="{name: 'User Profile', icon: 'ni ni-single-02 text-yellow', path: '/profile'}"/>
-        <sidebar-item :link="{name: 'Tables', icon: 'ni ni-bullet-list-67 text-red', path: '/tables'}"/>
+        <sidebar-item
+          :link="{
+            name: 'Gestão de Contas',
+            icon: 'ni ni-single-02 text-purple',
+            path: '/gestao-de-contas',
+          }"
+        />
+        <!--<sidebar-item :link="{name: 'Tables', icon: 'ni ni-bullet-list-67 text-red', path: '/tables'}"/>
         <sidebar-item :link="{name: 'Login', icon: 'ni ni-key-25 text-info', path: '/login'}"/>
         <sidebar-item :link="{name: 'Register', icon: 'ni ni-circle-08 text-pink', path: '/register'}"/>-->
-
       </template>
     </side-bar>
-    <div class="main-content" :data="sidebarBackground" >
+    <div class="main-content" :data="sidebarBackground">
       <dashboard-navbar></dashboard-navbar>
 
-      <div @click="toggleSidebar" > 
+      <div @click="toggleSidebar">
         <fade-transition :duration="200" origin="center top" mode="out-in">
           <!-- your content here -->
-          <router-view></router-view>
+          <keep-alive>
+            <router-view :key="$router.home"></router-view>
+          </keep-alive>
         </fade-transition>
         <content-footer v-if="!$route.meta.hideFooter"></content-footer>
       </div>
@@ -37,29 +70,29 @@
   </div>
 </template>
 <script>
-  import DashboardNavbar from './DashboardNavbar.vue';
-  import ContentFooter from './ContentFooter.vue';
-  import { FadeTransition } from 'vue2-transitions';
+import DashboardNavbar from "./DashboardNavbar.vue";
+import ContentFooter from "./ContentFooter.vue";
+import { FadeTransition } from "vue2-transitions";
 
-  export default {
-    components: {
-      DashboardNavbar,
-      ContentFooter,
-      FadeTransition
-    },
-    data() {
-      return {
-        sidebarBackground: 'vue' //vue|blue|orange|green|red|primary
-      };
-    },
-    methods: {
-      toggleSidebar() {
-        if (this.$sidebar.showSidebar) {
-          this.$sidebar.displaySidebar(false);
-        }
+export default {
+  components: {
+    DashboardNavbar,
+    ContentFooter,
+    FadeTransition,
+  },
+  data() {
+    return {
+      sidebarBackground: "vue", //vue|blue|orange|green|red|primary
+    };
+  },
+  methods: {
+    toggleSidebar() {
+      if (this.$sidebar.showSidebar) {
+        this.$sidebar.displaySidebar(false);
       }
-    }
-  };
+    },
+  },
+};
 </script>
 <style lang="scss">
 </style>
