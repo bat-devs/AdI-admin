@@ -6,10 +6,19 @@
     >
       <!-- Card stats -->
     </base-header>
-    <div class="mt-3 ml-3 mb-3">
-      <button class="btn btn-primary" v-if="!loader" @click="changeTax = true">
+    <div class="mt-3 ml-3 mb-3" v-if="!loader">
+      <button class="btn btn-primary" @click="changeTax = true">
         Alterar o valor das taxas
       </button>
+    </div>
+    <div class="d-flex justify-content-center">
+      <half-circle-spinner
+        class="mt-4"
+        v-if="loader"
+        :animation-duration="1000"
+        :size="60"
+        color="#113855"
+      />
     </div>
     <modal :show.sync="changeTax">
       <h5
@@ -81,15 +90,6 @@
         </div>
       </form>
     </modal>
-    <div class="d-flex justify-content-center">
-      <half-circle-spinner
-        class="mt-4"
-        v-if="loader"
-        :animation-duration="1000"
-        :size="60"
-        color="#113855"
-      />
-    </div>
     <div class="table-responsive">
       <div>
         <table class="table align-items-center table-light" v-if="!loader">
@@ -151,7 +151,7 @@ export default {
   },
   beforeCreate() {
     db.collection("simulation")
-      .where("type", "==", "Aplicação")
+      .where("type", "==", "Crédito")
       .onSnapshot((querySnapshot) => {
         var creditsArray = [];
         querySnapshot.forEach(async (doc) => {
@@ -172,7 +172,7 @@ export default {
         this.loader = false;
       });
 
-    db.collection("applications")
+    db.collection("credits")
       .get()
       .then(function (querySnapshot) {
         querySnapshot.forEach(async (doc) => {
@@ -186,7 +186,7 @@ export default {
       this.id = id;
       juros1 = [];
       await db
-        .collection("applications")
+        .collection("credits")
         .doc(id)
         .collection("taxTable")
         .get()
@@ -221,7 +221,7 @@ export default {
       novasTaxas.forEach(
         async (line, index) =>
           await db
-            .collection("applications")
+            .collection("credits")
             .doc(this.id)
             .collection("taxTable")
             .doc(`${index}`)

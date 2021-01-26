@@ -13,29 +13,35 @@
             path: '/home',
           }"
         />
-
-        <!--<sidebar-item  :link="{name: 'Adicionar Noticia', icon: 'ni ni-fat-add text-blue', path: '/adicionar-noticia'}"/>-->
         <sidebar-item
           :link="{
-            name: 'Noticias',
+            name: 'Notícias',
             icon: 'ni ni-single-copy-04 text-orange',
             path: '/noticias',
           }"
         />
         <sidebar-item
           :link="{
-            name: 'Aplicações',
+            name: 'Relatório das simulações e créditos',
             icon: 'fas fa-wallet text-yellow',
-            path: '/aplications',
+            path: '/aplications-credits',
+          }"
+        />
+        <sidebar-item
+          :link="{
+            name: 'Aplicações',
+            icon: 'fas fa-wallet text-blue',
+            path: '/aplicacoes',
           }"
         />
         <sidebar-item
           :link="{
             name: 'Créditos',
             icon: 'fas fa-hand-holding-usd text-blue',
-            path: '/credits',
+            path: '/creditos',
           }"
         />
+
         <sidebar-item
           :link="{
             name: 'Gestão de Contas',
