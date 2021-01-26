@@ -10,7 +10,6 @@
         Fazer download do relatório
       </button>
     </div>
-
     <modal :show.sync="insertCodeModal">
       <h5
         slot="header"
@@ -53,7 +52,7 @@
         :data="data.json_data"
         :fields="data.json_fields"
         class="mt-3 ml-3 mb-3"
-        name="Simulações de aplicações"
+        name="Relatório.xls"
         style="width: 230px"
       >
         <button class="btn btn-primary">
@@ -61,7 +60,10 @@
         </button>
       </download-excel>
       <template slot="footer">
-        <base-button type="secondary" class="ml-auto" @click="downloadExcelModal = false"
+        <base-button
+          type="secondary"
+          class="ml-auto"
+          @click="downloadExcelModal = false"
           >Fechar
         </base-button>
       </template>
@@ -120,7 +122,7 @@
 <script>
 import firebase from "firebase";
 import JsonExcel from "vue-json-excel";
-import swal from "sweetalert2"
+import swal from "sweetalert2";
 import { HalfCircleSpinner } from "epic-spinners";
 const db = firebase.firestore();
 
@@ -137,13 +139,13 @@ export default {
         json_fields: {
           "Nome do cliente": "name",
           "E-mail": "email",
-          " Telefone": "phone",
-          "Data de registo": "registDate",
-          "Abertura de conta": "accountOpening",
-          Aplicação: "productName",
-          Capital: "capital",
+          "Telefone": "phone",
+          "Data de registo": "createdAt",
+          "Abertura de conta": "accountCreation",
+          "Aplicação": "productName",
+          "Capital": "capital",
           "Duração (meses)": "duration",
-          Resultado: "result",
+          "Resultado": "result",
         },
         json_data: [],
         json_meta: [
@@ -167,17 +169,28 @@ export default {
         var aplicationsArray = [];
         querySnapshot.forEach(async (doc) => {
           let f = doc.data();
+          let name, phone, email, createdAt, accountCreation;
 
-          let name = await (
-            await db.collection("users").doc(doc.data().uid).get()
-          ).data().name;
-          let email = await (
-            await db.collection("users").doc(doc.data().uid).get()
-          ).data().email;
+          await db
+            .collection("users")
+            .doc(f.uid)
+            .get()
+            .then((document) => {
+              const userData = document.data();
+              name = userData.name;
+              email = userData.email;
+              phone = userData.account.phone || "";
+              createdAt = new Date(userData.createdAt).toLocaleString() || "";
+              accountCreation  = new Date(userData.account.createdAt).toLocaleString() || "";
+            });
+
           aplicationsArray.push({
             ...f,
-            name: name,
-            email: email,
+            name,
+            email,
+            phone,
+            createdAt,
+            accountCreation,
           });
         });
         this.aplications = aplicationsArray;
@@ -188,19 +201,18 @@ export default {
   methods: {
     modalChange() {
       if (this.EnterCode === "123456") {
-        this.EnterCode="";
+        this.EnterCode = "";
         this.insertCodeModal = false;
         this.downloadExcelModal = true;
-      }
-      else{
-        this.EnterCode="";
+      } else {
+        this.EnterCode = "";
         swal.fire({
-            position: "top-end",
-            icon: "error",
-            title: "A referência inserida está errada!",
-            showConfirmButton: false,
-            timer: 1200,
-          });
+          position: "top-end",
+          icon: "error",
+          title: "A referência inserida está errada!",
+          showConfirmButton: false,
+          timer: 1200,
+        });
       }
     },
   },
