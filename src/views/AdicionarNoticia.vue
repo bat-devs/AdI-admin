@@ -350,12 +350,12 @@ export default {
 
       await firebase
         .firestore()
-        .collection("publicacao")
+        .collection("news")
         .add({
           content: this.noticia.content,
           keywords: "fixe",
           title: this.noticia.title,
-          published: false,
+          published: firebase.firestore.Timestamp.now(),
         })
         .then(async (id) => {
           this.id =  id.id;
@@ -363,7 +363,8 @@ export default {
           var mainImageURL;
           var lengthMainImage=this.noticia.mainImage.name.split(".").length;
           var mainType = this.noticia.mainImage.name.split(".")[lengthMainImage-1];
-          console.log(this.id);
+          
+          
           await firebase
             .storage()
             .ref()
@@ -390,7 +391,7 @@ export default {
                     if(imagesURL.length==this.noticia.othersfiles[0].length)
                        firebase
                       .firestore()
-                      .collection("publicacao")
+                      .collection("news")
                       .doc(this.id)
                     .update({
                       images: imagesURL,
@@ -406,7 +407,7 @@ export default {
               else
                  firebase
                   .firestore()
-                  .collection("publicacao")
+                  .collection("news")
                   .doc(this.id)
                 .update({
                   images: imagesURL,
