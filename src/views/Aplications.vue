@@ -236,6 +236,7 @@ export default {
                 showConfirmButton: false,
                 timer: 1500,
               });
+              this.editTax=false;
             })
       );
     },
