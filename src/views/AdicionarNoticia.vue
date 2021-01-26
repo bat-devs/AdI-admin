@@ -47,7 +47,12 @@
               <div class="pl-lg-4">
                 <div class="row">
                   <div class="col-md-12">
-                    <input type="file" @change="teste2" name="outrasFotos[]" multiple />
+                    <input
+                      type="file"
+                      @change="teste2"
+                      name="outrasFotos[]"
+                      multiple
+                    />
                   </div>
                 </div>
               </div>
@@ -117,7 +122,6 @@ import BTooltipDirective from "bootstrap-vue/esm/directives/tooltip";
 import firebase from "firebase";
 //import swal from "sweetalert2";
 //import facebookLogin from 'facebook-login-vuejs';
-
 //const db = firebase.firestore();
 Vue.use(VueClipboard);
 export default {
@@ -135,7 +139,6 @@ export default {
       // personalID: '',
       // picture: '',
       // FB: undefined,
-
       noticia: {
         content: "",
         title: "",
@@ -248,13 +251,11 @@ export default {
       ],
     };
   },
-
   methods: {
     /*
  não mexer
   postar() {
   
-
              this.FB.api(
   '/108709280980225/photos',
   'POST',
@@ -268,18 +269,12 @@ export default {
       console.log(response);
   }
 );
-
-
-
 {
 "message": "xxx",
 "published": true,
 "attached_media[0]": "{"media_fbid":"photo_id1" }"
 "attached_media[1]": "{"media_fbid":"photo_id2" }"
 }
-
-
-
  //publicar foto com legenda
        this.FB.api(
   '/108709280980225/photos',
@@ -293,7 +288,6 @@ export default {
       console.log(response);
   }
 );
-
 //publicar texto
        this.FB.api(
   '/108709280980225/feed',
@@ -307,7 +301,6 @@ export default {
       console.log(response);
   }
 );
-
     
   },
   sdkLoaded(payload) {
@@ -329,15 +322,13 @@ export default {
     teste2(e)
     {
       var image=e.target.files || e.dataTransfer.files;
-      this.noticia.othersfiles.push(image[0]);
-      console.log(this.noticia.othersfiles);
+      
+      this.noticia.othersfiles.push(image);
     },
     teste(e) {
       var image = e.target.files || e.dataTransfer.files;
       this.noticia.mainImage = image[0];
-      console.log(this.noticia.mainImage);
-      //console.log(this.noticia.mainImage);
-      //console.log(this.noticia.othersfiles[0]);
+     
     },
     deleNew() {
       //apagar
@@ -354,8 +345,10 @@ export default {
         });
     },
     // Função para adicionar noticia
-    addNews() {
-      firebase
+    async addNews() {
+
+
+      await firebase
         .firestore()
         .collection("publicacao")
         .add({
@@ -365,77 +358,64 @@ export default {
           published: false,
         })
         .then(async (id) => {
-          this.id = await id.id;
+          this.id =  id.id;
           var imagesURL = [];
           var mainImageURL;
-          var mainType = this.noticia.mainImage[0].split(".")[1];
-
+          var lengthMainImage=this.noticia.mainImage.name.split(".").length;
+          var mainType = this.noticia.mainImage.name.split(".")[lengthMainImage-1];
+          console.log(this.id);
           await firebase
             .storage()
             .ref()
             .child("images/" + this.id + "/" + 0 + "." + mainType)
-            .put(this.noticia.mainImage[0])
-            .then(async () => {
-              console.log(this.id);
-              await firebase
-                .storage()
-                .ref()
-                .child("images/" + this.id + "/" + 0 + "." + mainType)
-                .getDownloadURL()
-                .then(async function (downloadURL) {
-                  mainImageURL = await downloadURL;
-                });
-            });
-
-          if (this.noticia.othersfiles.length == 0)
-            Object.entries(this.noticia.othersfiles).forEach(
+            .put(this.noticia.mainImage)
+            .then(async (image) => await image.ref.getDownloadURL().then( (url)=> mainImageURL=url));
+          
+          
+        if(this.noticia.othersfiles[0].length>0)
+            Object.entries(this.noticia.othersfiles[0]).forEach(
               async ([index, image]) => {
+                var lengthImage=image.name.split(".").length;
+                var typeImage=image.name.split(".")[lengthImage-1];
+                let n=parseInt(index)+1;
                 await firebase
                   .storage()
                   .ref()
-                  .child("images/" + this.id + "/" + (index + 1) + "foto.png")
+                  .child("images/" + this.id + "/" + n + "."+typeImage)
                   .put(image)
-                  .then(async () => {
-                    await firebase
-                      .storage()
-                      .ref()
-                      .child(
-                        "images/" + this.id + "/" + (index + 1) + "foto.png"
-                      )
-                      .getDownloadURL()
-                      .then(async function (downloadURL) {
-                        await imagesURL.push(downloadURL);
-                      });
-                  });
-
-                if (index == this.noticia.othersfiles.length - 1) {
-                  firebase
-                    .firestore()
-                    .collection("publicacao")
-                    .doc(this.id)
+                  .then(async (image) => {
+                    await image.ref.getDownloadURL().then((url)=> {
+                      imagesURL.push(url);
+                       
+                    if(imagesURL.length==this.noticia.othersfiles[0].length)
+                       firebase
+                      .firestore()
+                      .collection("publicacao")
+                      .doc(this.id)
                     .update({
                       images: imagesURL,
                       mainImage: mainImageURL,
-                    })
-                    .then(() => {
-                      // terminar o loader
+                      })
+                      .then(() => {
+                          // terminar o loader
+                      });
+                    
                     });
-                }
-              }
-            );
-          else
-            firebase
-              .firestore()
-              .collection("publicacao")
-              .doc(this.id)
-              .update({
-                images: imagesURL,
-                mainImage: mainImageURL,
-              })
-              .then(() => {
-                // terminar o loader
+                  });  
               });
-        });
+              else
+                 firebase
+                  .firestore()
+                  .collection("publicacao")
+                  .doc(this.id)
+                .update({
+                  images: imagesURL,
+                  mainImage: mainImageURL,
+                  })
+                  .then(() => {
+                      // terminar o loader
+                  });
+                    });
     },
   },
 };
