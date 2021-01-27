@@ -62,13 +62,12 @@
                   >
                     <i class="fas fa-edit"></i>
                   </button>
-                  <button
-                    type="button"
-                    @click="goTransactions()"
+                  <router-link
                     class="btn btn-warning"
+                    :to="{name:'Transações',params:{id:account.accountNumber}}"
                   >
                     <i class="fas fa-exchange-alt"></i>
-                  </button>
+                  </router-link>
                 </div>
               </td>
             </tr>
@@ -340,9 +339,6 @@ export default {
           });
         });
     },
-    goTransactions(){
-      this.$router.push('transactions');
-    }
   },
   computed: {
     accountsfilter() {
