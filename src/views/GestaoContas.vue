@@ -62,6 +62,13 @@
                   >
                     <i class="fas fa-edit"></i>
                   </button>
+                  <button
+                    type="button"
+                    @click="goTransactions()"
+                    class="btn btn-warning"
+                  >
+                    <i class="fas fa-exchange-alt"></i>
+                  </button>
                 </div>
               </td>
             </tr>
@@ -333,6 +340,9 @@ export default {
           });
         });
     },
+    goTransactions(){
+      this.$router.push('transactions');
+    }
   },
   computed: {
     accountsfilter() {

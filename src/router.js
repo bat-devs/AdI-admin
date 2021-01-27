@@ -53,6 +53,11 @@ const router = new Router({
           name: 'Simulações de aplicações e créditos',
           component: () => import(/* webpackChunkName: "demo" */ './views/AplicationsCredits.vue')
         },
+        {
+          path: '/transactions',
+          name: 'Transações',
+          component: () => import(/* webpackChunkName: "demo" */ './views/Transactions.vue')
+        },
       ]
     },
     {
