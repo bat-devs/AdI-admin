@@ -6,6 +6,54 @@
     >
       <!-- Card stats -->
     </base-header>
+    <div class="d-flex justify-content-center mt-3">
+      <half-circle-spinner
+        v-if="loader"
+        :animation-duration="1000"
+        :size="60"
+        color="#113855"
+      />
+    </div>
+    <modal :show.sync="addTransaction">
+      <h5
+        slot="header"
+        modal-classes="modal-dialog-centered modal-xl"
+        class="modal-title"
+        id="modal-title-default"
+      >
+        Adicionar transação
+        <span style="font-weight: bold"></span>
+      </h5>
+      <base-input
+        v-model="description"
+        label="Descrição"
+        placeholder="Descriçaõ"
+        input-classes="form-control"
+      />
+      <base-input
+        v-model="value"
+        label="Valor"
+        placeholder="Valor"
+        input-classes="form-control"
+      />
+      <template slot="footer">
+        <base-button
+          type="secondary"
+          class="ml-auto"
+          @click="addTransaction = false"
+          >Fechar
+        </base-button>
+        <base-button
+          type="primary"
+          class="ml-auto"
+          @click="addTrans()"
+          >Adicionar transação
+        </base-button>
+      </template>
+    </modal>
+    <button @click="addTransaction = true" class="btn btn-primary ml-3 mt-3 mb-3">
+      Adicionar transação
+    </button>
     <div class="table-responsive">
       <div>
         <table class="table align-items-center table-light">
@@ -64,10 +112,12 @@
 </template>
 <script>
 import firebase from "firebase";
+import { HalfCircleSpinner } from "epic-spinners";
+import swal from "sweetalert2";
 const db = firebase.firestore();
 export default {
   components: {
-    
+    HalfCircleSpinner,
   },
   data() {
     return {
@@ -115,6 +165,25 @@ console.log(this.$route.params.id);
         value: value
       });
     }
+     /* loader: true,
+      addTransaction: false,
+      description: "",
+      value: "",
+    };*/
+  },
+
+  methods: {
+    addTrans() {
+      //código do adicionar as tranasções
+      swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "A transação foi adicionada",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      this.addTransaction=false;
+    },
   },
 };
 </script>
