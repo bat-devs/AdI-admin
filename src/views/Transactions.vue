@@ -40,7 +40,7 @@
   </div>
 </template>
 <script>
-
+import firebase from "firebase";
 export default {
   components: {
     
@@ -53,7 +53,15 @@ export default {
  
   methods: {
     
-    
+    addTransaction(description,fundAfter,referencem,value){
+      firebase.firestore().collection("transactions").add({
+        createAt: firebase.firestore.Timestamp.now(),
+        description: description,
+        fundAfter: fundAfter,
+        reference: reference,
+        value: value
+      });
+    }
   },
 };
 </script>
