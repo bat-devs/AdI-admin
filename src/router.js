@@ -54,7 +54,7 @@ const router = new Router({
           component: () => import(/* webpackChunkName: "demo" */ './views/AplicationsCredits.vue')
         },
         {
-          path: '/transactions',
+          path: '/transactions/:id',
           name: 'Transações',
           component: () => import(/* webpackChunkName: "demo" */ './views/Transactions.vue')
         },
