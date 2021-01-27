@@ -11,27 +11,50 @@
         <table class="table align-items-center table-light">
           <thead class="thead-light">
             <tr>
-              <th scope="col" class="sort" data-sort="name">Nome do cliente</th>
-              <th scope="col" class="sort" data-sort="name">Aplicação</th>
-              <th scope="col" class="sort" data-sort="budget">Capital</th>
-              <th scope="col" class="sort" data-sort="budget">Duração</th>
-              <th scope="col" class="sort" data-sort="budget">Resultado</th>
+              <th scope="col" class="sort" data-sort="name">Descrição</th>
+              <th scope="col" class="sort" data-sort="name">valor da Transação</th>
+              <th scope="col" class="sort" data-sort="budget">saldo</th>
+              <th scope="col" class="sort" data-sort="budget">Data</th>
               <th scope="col"></th>
             </tr>
           </thead>
           <tbody class="list">
-            <tr >
-              <td class="budget">oi</td>
+            <tr v-for="(transaction,index) in transactions" :key="index">
+              
+              <td class="budget">{{transaction.description}}</td>
+
               <th scope="row">
                 <div class="media align-items-center">
                   <div class="media-body">
                     <span class="name mb-0 text-sm">
-                    {{$route.params.id}}
+                   {{transaction.value}}
                     </span>
                   </div>
                 </div>
               </th>
               
+              <th scope="row">
+                <div class="media align-items-center">
+                  <div class="media-body">
+                    <span class="name mb-0 text-sm">
+                    {{transaction.fundAfter}}
+                    </span>
+                  </div>
+                </div>
+              </th>
+
+              <th scope="row">
+                <div class="media align-items-center">
+                  <div class="media-body">
+                    <span class="name mb-0 text-sm">
+                    {{transaction.data}}
+                    </span>
+                  </div>
+                </div>
+              </th>
+
+            
+
             </tr>
           </tbody>
         </table>
@@ -41,20 +64,50 @@
 </template>
 <script>
 import firebase from "firebase";
+const db = firebase.firestore();
 export default {
   components: {
     
   },
   data() {
     return {
-      
+      transactions: [],
     };
   },
-  
+  created(){
+console.log(this.$route.params.id);
+      db.collection("transactions").where("reference", "==",parseInt(this.$route.params.id))
+      .get().then(querySnapshot=>{
+      var transactionsArray = [];
+      querySnapshot.forEach(function (doc) {
+          let f = doc.data();
+          let date=new Date(doc.data().createdAt);
+          let month=date.getMonth()+1;
+          transactionsArray.push({
+            ...f,
+            data: date.getDate()+"/"+month+"/"+date.getFullYear()
+          });
+        });
+        this.transactions = transactionsArray;
+    });
+/*
+    db.collection("transactions")
+      .where("reference", "==",this.$route.params.id)
+      .onSnapshot((querySnapshot) => {
+        var transactionArray = [];
+        querySnapshot.forEach(async (doc) => {
+          let f = doc.data();
+          transactionArray.push(f);
+        });
+     
+       this.transactions=transactionArray;
+       console.log(this.transactions);
+      });*/
+  },
   methods: {
     
-    addTransaction(description,fundAfter,referencem,value){
-      firebase.firestore().collection("transactions").add({
+    addTransaction(description,fundAfter,reference,value){
+      db.collection("transactions").add({
         createAt: firebase.firestore.Timestamp.now(),
         description: description,
         fundAfter: fundAfter,
