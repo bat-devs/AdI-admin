@@ -277,7 +277,6 @@ this.FB.api('/100632798699325/feed', 'post', {
       "access_token": "EAAC2hn7BOCkBAE2jtPPMvTkecnuandWRTXYIKC7sa4sZA5xG2SCUsXGiaKLXV3DszFK0vN3mZCs4igT1Ccih06sg2RxZCwGEJAZA20iiu9mKGHP2YOZCocOKFthkc8aQGDCYQqW8xVC8FpvbrNgxW8vjX0cg76BRXy1lOy3OLtPih3V5UXl7c1p17QbXsY64ZD",
   "attached_media[0]": {"media_fbid":fotos[0]},
   "attached_media[1]": {"media_fbid":fotos[1]},
-  "attached_media[2]": {"media_fbid":fotos[2]},
   "message": 'teste',
   
 }, function(response){
