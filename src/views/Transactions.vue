@@ -122,10 +122,14 @@ export default {
   data() {
     return {
       transactions: [],
+      loader: true,
+      addTransaction: false,
+      description: "",
+      value: "",
     };
   },
   created(){
-console.log(this.$route.params.id);
+
       db.collection("transactions").where("reference", "==",parseInt(this.$route.params.id))
       .get().then(querySnapshot=>{
       var transactionsArray = [];
@@ -139,50 +143,62 @@ console.log(this.$route.params.id);
           });
         });
         this.transactions = transactionsArray;
+        this.loader=false;
     });
-/*
-    db.collection("transactions")
-      .where("reference", "==",this.$route.params.id)
-      .onSnapshot((querySnapshot) => {
-        var transactionArray = [];
-        querySnapshot.forEach(async (doc) => {
-          let f = doc.data();
-          transactionArray.push(f);
-        });
-     
-       this.transactions=transactionArray;
-       console.log(this.transactions);
-      });*/
+
   },
   methods: {
     
-    addTransaction(description,fundAfter,reference,value){
-      db.collection("transactions").add({
-        createAt: firebase.firestore.Timestamp.now(),
-        description: description,
-        fundAfter: fundAfter,
-        reference: reference,
-        value: value
-      });
-    }
-     /* loader: true,
-      addTransaction: false,
-      description: "",
-      value: "",
-    };*/
-  },
-
-  methods: {
-    addTrans() {
+   
+    async addTrans() {
       //código do adicionar as tranasções
-      swal.fire({
+      var dataUser;
+      var money;
+      
+      await db.collection("users").where("account.accountNumber", "==",parseInt(this.$route.params.id))
+        .get().then((querySnapshot) => {
+      querySnapshot.forEach(async (doc) => {
+        if (doc.data().account) {
+           dataUser= doc;  
+        }
+      });
+    });
+   
+      money=parseInt(dataUser.data().account.money);
+      
+       db.collection("transactions").add({
+        createdAt: Date.now(),
+        description: this.description,
+        fundAfter: parseInt(this.value)+money,
+        reference: parseInt(this.$route.params.id),
+        value: parseInt(this.value)
+      }).then(()=>{
+     swal.fire({
         position: "top-end",
         icon: "success",
         title: "A transação foi adicionada",
         showConfirmButton: false,
         timer: 1500,
       });
+      var currentAccount=dataUser.data().account;
+      currentAccount.money+=parseInt(this.value);
+     
+      db.collection("users").doc(dataUser.id).update({
+        account :currentAccount
+      });
       this.addTransaction=false;
+
+      let date=new Date(Date.now());
+      let month=date.getMonth()+1;
+
+       this.transactions.push({
+        data: date.getDate()+"/"+month+"/"+date.getFullYear(),
+        description: this.description,
+        fundAfter: parseInt(this.value)+parseInt(money),
+        reference: parseInt(this.$route.params.id),
+        value: parseInt(this.value)
+      })
+      })
     },
   },
 };
