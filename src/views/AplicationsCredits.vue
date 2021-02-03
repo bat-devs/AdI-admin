@@ -110,7 +110,7 @@
               <td class="budget">{{ aplication.duration }} meses</td>
               <td class="budget">{{ aplication.result }} AKZ</td>
               <td class="budget">
-                {{ new Date(aplication.createdAt).toLocaleString() }}
+                {{ aplication.createdAt }}
               </td>
             </tr>
           </tbody>
@@ -179,9 +179,9 @@ export default {
               const userData = document.data();
               name = userData.name;
               email = userData.email;
-              phone = userData.account.phone || "";
+              //phone = userData.account.phone || "";
               createdAt = new Date(userData.createdAt).toLocaleString() || "";
-              accountCreation  = new Date(userData.account.createdAt).toLocaleString() || "";
+              //accountCreation  = new Date(userData.account.createdAt).toLocaleString() || "";
             });
 
           aplicationsArray.push({
