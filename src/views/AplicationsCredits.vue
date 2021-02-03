@@ -169,7 +169,7 @@ export default {
         var aplicationsArray = [];
         querySnapshot.forEach(async (doc) => {
           let f = doc.data();
-          let name, phone, email, createdAt, accountCreation;
+          let name, phone, email, createdAtUser, accountCreationUser;
 
           await db
             .collection("users")
@@ -177,11 +177,12 @@ export default {
             .get()
             .then((document) => {
               const userData = document.data();
+              
               name = userData.name;
               email = userData.email;
               phone = userData.account.phone || "";
-              createdAt = new Date(userData.createdAt).toLocaleString() || "";
-              accountCreation  = new Date(userData.account.createdAt).toLocaleString() || "";
+              createdAtUser = new Date(userData.createdAt).toLocaleString() || "";
+              accountCreationUser  = new Date(userData.account.createdAt).toLocaleString() || "";
             });
 
           aplicationsArray.push({
@@ -189,8 +190,8 @@ export default {
             name,
             email,
             phone,
-            createdAt,
-            accountCreation,
+            createdAtUser,
+            accountCreationUser,
           });
         });
         this.aplications = aplicationsArray;
