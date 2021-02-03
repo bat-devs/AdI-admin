@@ -263,30 +263,31 @@ export default {
   async postar(imagesURL,titulo,texto) {
     var conteudo=titulo+"\n\n"+texto;
     var fotos=[];
- 
-                      for(var i=0;i<imagesURL.length;i++){
-                        console.log(imagesURL[i]);
-                     await this.FB.api('/100632798699325/photos', 'post', {
-                          access_token: "EAAC2hn7BOCkBAE2jtPPMvTkecnuandWRTXYIKC7sa4sZA5xG2SCUsXGiaKLXV3DszFK0vN3mZCs4igT1Ccih06sg2RxZCwGEJAZA20iiu9mKGHP2YOZCocOKFthkc8aQGDCYQqW8xVC8FpvbrNgxW8vjX0cg76BRXy1lOy3OLtPih3V5UXl7c1p17QbXsY64ZD",
-                      url: imagesURL[i],
-                      message: 'teste',
-                      published: false
-                    }, async function(response){
-                      if (response && response.id)
-                      fotos.push(await response.id);
+    let dados={
+      "access_token": "EAAC2hn7BOCkBAE2jtPPMvTkecnuandWRTXYIKC7sa4sZA5xG2SCUsXGiaKLXV3DszFK0vN3mZCs4igT1Ccih06sg2RxZCwGEJAZA20iiu9mKGHP2YOZCocOKFthkc8aQGDCYQqW8xVC8FpvbrNgxW8vjX0cg76BRXy1lOy3OLtPih3V5UXl7c1p17QbXsY64ZD",
+      "message": conteudo,  
+    };
+    for(var i=0;i<imagesURL.length;i++){
                         
-                        if(imagesURL.length==fotos.length){
-                      console.log(fotos);
-                    this.FB.api('/100632798699325/feed', 'post', {
-                          "access_token": "EAAC2hn7BOCkBAE2jtPPMvTkecnuandWRTXYIKC7sa4sZA5xG2SCUsXGiaKLXV3DszFK0vN3mZCs4igT1Ccih06sg2RxZCwGEJAZA20iiu9mKGHP2YOZCocOKFthkc8aQGDCYQqW8xVC8FpvbrNgxW8vjX0cg76BRXy1lOy3OLtPih3V5UXl7c1p17QbXsY64ZD",
-                      "attached_media[0]": {"media_fbid":fotos[0]},
-                      "attached_media[1]": {"media_fbid":fotos[1]},
-                      "attached_media[2]": {"media_fbid":fotos[2]},
-                      "message": conteudo,
+      await this.FB.api('/100632798699325/photos', 'post', {
+              access_token: "EAAC2hn7BOCkBAE2jtPPMvTkecnuandWRTXYIKC7sa4sZA5xG2SCUsXGiaKLXV3DszFK0vN3mZCs4igT1Ccih06sg2RxZCwGEJAZA20iiu9mKGHP2YOZCocOKFthkc8aQGDCYQqW8xVC8FpvbrNgxW8vjX0cg76BRXy1lOy3OLtPih3V5UXl7c1p17QbXsY64ZD",
+              url: imagesURL[i],
+              message: 'teste',
+              published: false
+              }, async function(response){
+                  if (response && response.id){
+                    fotos.push(await response.id);
+                  dados["attached_media["+parseInt(fotos.length-1)+"]"]={"media_fbid":await response.id};
+                  }
+                  if(imagesURL.length==fotos.length){
                       
-                    }, function(response){
-                        console.log("enviou",response);
-                        
+                    this.FB.api(
+                      '/100632798699325/feed', 
+                      'post', 
+                      dados,
+                      function(response){
+                        console.log(dados);
+                        console.log(response);
                     });
                     }
                     });
@@ -368,8 +369,6 @@ export default {
   },
    logout() {
     this.isConnected = false;
-    
-    
   },
  
     onCopy() {
