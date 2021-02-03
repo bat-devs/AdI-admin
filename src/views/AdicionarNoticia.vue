@@ -184,67 +184,7 @@ export default {
                     });
 
 
-                      }
-
-
-/*
-    this.FB.api('/100632798699325/photos', 'post', {
-      access_token: "EAAC2hn7BOCkBAE2jtPPMvTkecnuandWRTXYIKC7sa4sZA5xG2SCUsXGiaKLXV3DszFK0vN3mZCs4igT1Ccih06sg2RxZCwGEJAZA20iiu9mKGHP2YOZCocOKFthkc8aQGDCYQqW8xVC8FpvbrNgxW8vjX0cg76BRXy1lOy3OLtPih3V5UXl7c1p17QbXsY64ZD",
-  url: 'https://appharbor.com/assets/images/stackoverflow-logo.png',
-  message: 'teste',
-  published: false
-}, function(response){
-  if (response && response.id)
-    console.log('Photo uploaded', response.id);
-});
-
-/*
-  
-             this.FB.api(
-  '/100632798699325/photos',
-  'POST',
-  {
-    "name": "ola mundo",
-  
-    "url": "https://appharbor.com/assets/images/stackoverflow-logo.png",
-  "access_token": "EAAe3cnEoUkYBANC6comcXBwQ6QAZBkfvgFftr4fg6W4MNjVvZAabTx3irZBgWVgd3IbNqaGrOaY36d0uPFMwEwYY1YrvPj0skC5TPbQg3j7j1hCt7qRPcvkTBBcZAqZAZBIUNEckQayY01ZBO9ESJrZBras1UTG5gZBBjmkLZCPoLdUe74NZC6mNLK8RfgxAUxCZBplkGS4xmKgpNwZDZD"},
-  function(response) {
-      // Insert your code here
-      console.log(response);
-  }
-);
-{
-"message": "xxx",
-"published": true,
-"attached_media[0]": "{"media_fbid":"photo_id1" }"
-"attached_media[1]": "{"media_fbid":"photo_id2" }"
-}
- //publicar foto com legenda
-       this.FB.api(
-  '/100632798699325/photos',
-  'POST',
-  {
-    "name": "ola mundo",
-    "url": "https://appharbor.com/assets/images/stackoverflow-logo.png",
-  "access_token": "EAAe3cnEoUkYBACbmtIeVuUt4kWsbC2ZBHvxpgSJf9wZApXUmEQZCQyiBlppEP7GhngN9RjMmTfPwvatWHlXEFSohRKmoc4nA8obuHrWpZAQMMuQ9jJwi6ZCJUXBDrIaqHt3Jl5MhSssYmpR6TecChlS5RoFbjxHqP9DsHKAPqr2eyHVXZAq6hyVHtR71QbIpsZD"},
-  function(response) {
-      // Insert your code here
-      console.log(response);
-  }
-);
-//publicar texto
-       this.FB.api(
-  '/100632798699325/feed',
-  'POST',
-  {
-    "name": "ola mundo",
-    "url": "https://appharbor.com/assets/images/stackoverflow-logo.png",
-  "access_token": "EAAe3cnEoUkYBACbmtIeVuUt4kWsbC2ZBHvxpgSJf9wZApXUmEQZCQyiBlppEP7GhngN9RjMmTfPwvatWHlXEFSohRKmoc4nA8obuHrWpZAQMMuQ9jJwi6ZCJUXBDrIaqHt3Jl5MhSssYmpR6TecChlS5RoFbjxHqP9DsHKAPqr2eyHVXZAq6hyVHtR71QbIpsZD"},
-  function(response) {
-      // Insert your code here
-      console.log(response);
-  }*
-);*/
+      }
     },
     sdkLoaded(payload) {
       this.isConnected = payload.isConnected;
@@ -348,7 +288,8 @@ export default {
                           })
                           .then(async () => {
                             // terminar o loader
-
+                            imagesURL.push(mainImageURL);
+                          if(this.isConnected)
                             this.postar(
                               imagesURL,
                               this.noticia.title,
@@ -370,8 +311,17 @@ export default {
                 images: imagesURL,
                 mainImage: mainImageURL,
               })
-              .then(() => {
-                // terminar o loader ------------------------
+              .then(async () => {
+                            // terminar o loader
+                            imagesURL.push(mainImageURL);
+                          if(this.isConnected)
+                            this.postar(
+                              imagesURL,
+                              this.noticia.title,
+                              this.noticia.content
+                            );
+
+                            
                 // -----------------------------------------
               });
         });
