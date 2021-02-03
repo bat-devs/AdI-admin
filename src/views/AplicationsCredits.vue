@@ -110,7 +110,7 @@
               <td class="budget">{{ aplication.duration }} meses</td>
               <td class="budget">{{ aplication.result }} AKZ</td>
               <td class="budget">
-                {{ aplication.createdAt }}
+                {{  new Date(aplication.createdAt).toLocaleString()}}
               </td>
             </tr>
           </tbody>
@@ -163,12 +163,15 @@ export default {
     };
   },
   created() {
+
+ 
+
     db.collection("simulation")
       .orderBy("createdAt")
       .onSnapshot((querySnapshot) => {
         var aplicationsArray = [];
         querySnapshot.forEach(async (doc) => {
-          let f = doc.data();
+          let f =  doc.data();
           let name, phone, email, createdAtUser, accountCreationUser;
 
           await db
@@ -176,16 +179,14 @@ export default {
             .doc(f.uid)
             .get()
             .then((document) => {
-              const userData = document.data();
+              const userData =  document.data();
               
               name = userData.name;
               email = userData.email;
               phone = userData.account.phone || "";
               createdAtUser = new Date(userData.createdAt).toLocaleString() || "";
               accountCreationUser  = new Date(userData.account.createdAt).toLocaleString() || "";
-            });
-
-          aplicationsArray.push({
+            aplicationsArray.push({
             ...f,
             name,
             email,
@@ -193,6 +194,9 @@ export default {
             createdAtUser,
             accountCreationUser,
           });
+            });
+
+         
         });
         this.aplications = aplicationsArray;
         this.data.json_data = aplicationsArray;
