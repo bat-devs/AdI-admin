@@ -162,14 +162,15 @@ export default {
       insertCodeModal: false,
     };
   },
-  created() {
+  async created() {
 
  
 
-    db.collection("simulation")
+    await db.collection("simulation")
       .orderBy("createdAt")
       .onSnapshot((querySnapshot) => {
         var aplicationsArray = [];
+        
         querySnapshot.forEach(async (doc) => {
         let f = doc.data();
          let name ,  email;//accountCreationUser;//phone, createdAtUser, 
@@ -197,10 +198,13 @@ export default {
 
          
         });
+        
         this.aplications = aplicationsArray;
         this.data.json_data = aplicationsArray;
         this.loader = false;
+        
       });
+      console.log(this.aplications.length);
   },
   methods: {
     modalChange() {
