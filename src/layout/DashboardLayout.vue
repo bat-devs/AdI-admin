@@ -22,7 +22,7 @@
         />
         <sidebar-item
           :link="{
-            name: 'Relatório das simulações e créditos',
+            name: 'Relatório das simulações',
             icon: 'fas fa-wallet text-yellow',
             path: '/aplications-credits',
           }"
