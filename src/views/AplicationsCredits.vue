@@ -110,7 +110,7 @@
               <td class="budget">{{ aplication.duration }} meses</td>
               <td class="budget">{{ aplication.result }} AKZ</td>
               <td class="budget">
-                {{ new Date(aplication.createdAt).toLocaleString() }}
+                {{ aplication.createdAt }}
               </td>
             </tr>
           </tbody>
