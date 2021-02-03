@@ -72,11 +72,15 @@
               </div>
               <button @click="addNews" class="btn btn-success btn-lg btn-block">
                 Publicar notícia
+               
               </button>
-              <facebook-login class="button"
+               <facebook-login class="button"
       appId="200688768464937"
       @login="login"
-      @sdk-loaded="sdkLoaded">
+      @sdk-loaded="sdkLoaded"
+      @logout="logout"
+      loginLabel="Iniciar Sessão"
+      logoutLabel="Sair">
     </facebook-login>
             </form>
           </template>
@@ -133,7 +137,7 @@ export default {
   },
   data() {
     return {
-      // isConnected: false,
+       isConnected: false,
       // name: '',
       //email: '',
       // personalID: '',
@@ -256,38 +260,41 @@ export default {
 
     
  //não mexer
-  async postar() {
-   
-var fotos=[];
+  async postar(imagesURL,titulo,texto) {
+    var conteudo=titulo+"\n\n"+texto;
+    var fotos=[];
  
-  for(var i=0;i<3;i++){
-  await this.FB.api('/100632798699325/photos', 'post', {
-      access_token: "EAAC2hn7BOCkBAE2jtPPMvTkecnuandWRTXYIKC7sa4sZA5xG2SCUsXGiaKLXV3DszFK0vN3mZCs4igT1Ccih06sg2RxZCwGEJAZA20iiu9mKGHP2YOZCocOKFthkc8aQGDCYQqW8xVC8FpvbrNgxW8vjX0cg76BRXy1lOy3OLtPih3V5UXl7c1p17QbXsY64ZD",
-  url: 'https://appharbor.com/assets/images/stackoverflow-logo.png',
-  message: 'teste',
-  published: false
-}, async function(response){
-  if (response && response.id)
-  fotos.push(await response.id);
-    console.log('Photo uploaded', response.id);
-  console.log(i);
-    if(i==3){
-  console.log(fotos);
-this.FB.api('/100632798699325/feed', 'post', {
-      "access_token": "EAAC2hn7BOCkBAE2jtPPMvTkecnuandWRTXYIKC7sa4sZA5xG2SCUsXGiaKLXV3DszFK0vN3mZCs4igT1Ccih06sg2RxZCwGEJAZA20iiu9mKGHP2YOZCocOKFthkc8aQGDCYQqW8xVC8FpvbrNgxW8vjX0cg76BRXy1lOy3OLtPih3V5UXl7c1p17QbXsY64ZD",
-  "attached_media[0]": {"media_fbid":fotos[0]},
-  "attached_media[1]": {"media_fbid":fotos[1]},
-  "message": 'teste',
-  
-}, function(response){
-    console.log("enviou",response);
-    
-});
-}
-});
+                      for(var i=0;i<imagesURL.length;i++){
+                        console.log(imagesURL[i]);
+                     await this.FB.api('/100632798699325/photos', 'post', {
+                          access_token: "EAAC2hn7BOCkBAE2jtPPMvTkecnuandWRTXYIKC7sa4sZA5xG2SCUsXGiaKLXV3DszFK0vN3mZCs4igT1Ccih06sg2RxZCwGEJAZA20iiu9mKGHP2YOZCocOKFthkc8aQGDCYQqW8xVC8FpvbrNgxW8vjX0cg76BRXy1lOy3OLtPih3V5UXl7c1p17QbXsY64ZD",
+                      url: imagesURL[i],
+                      message: 'teste',
+                      published: false
+                    }, async function(response){
+                      if (response && response.id)
+                      fotos.push(await response.id);
+                        
+                        if(imagesURL.length==fotos.length){
+                      console.log(fotos);
+                    this.FB.api('/100632798699325/feed', 'post', {
+                          "access_token": "EAAC2hn7BOCkBAE2jtPPMvTkecnuandWRTXYIKC7sa4sZA5xG2SCUsXGiaKLXV3DszFK0vN3mZCs4igT1Ccih06sg2RxZCwGEJAZA20iiu9mKGHP2YOZCocOKFthkc8aQGDCYQqW8xVC8FpvbrNgxW8vjX0cg76BRXy1lOy3OLtPih3V5UXl7c1p17QbXsY64ZD",
+                      "attached_media[0]": {"media_fbid":fotos[0]},
+                      "attached_media[1]": {"media_fbid":fotos[1]},
+                      "attached_media[2]": {"media_fbid":fotos[2]},
+                      "message": conteudo,
+                      
+                    }, function(response){
+                        console.log("enviou",response);
+                        
+                    });
+                    }
+                    });
 
 
-  }
+                      }
+
+
 
    
 /*
@@ -353,11 +360,16 @@ this.FB.api('/100632798699325/feed', 'post', {
   sdkLoaded(payload) {
     this.isConnected = payload.isConnected
     this.FB = payload.FB
-    if (this.isConnected) this.postar()
+    
   },
   login() {
     this.isConnected = true
-    this.postar()
+    
+  },
+   logout() {
+    this.isConnected = false;
+    
+    
   },
  
     onCopy() {
@@ -394,6 +406,7 @@ this.FB.api('/100632798699325/feed', 'post', {
     // Função para adicionar noticia
     async addNews() {
 
+      
 
       await firebase
         .firestore()
@@ -444,8 +457,12 @@ this.FB.api('/100632798699325/feed', 'post', {
                       images: imagesURL,
                       mainImage: mainImageURL,
                       })
-                      .then(() => {
+                      .then(async () => {
                           // terminar o loader
+
+                        this.postar(imagesURL,this.noticia.title,this.noticia.content);
+                    
+                          //-------------------------------------
                       });
                     
                     });
@@ -460,10 +477,15 @@ this.FB.api('/100632798699325/feed', 'post', {
                   images: imagesURL,
                   mainImage: mainImageURL,
                   })
-                  .then(() => {
-                      // terminar o loader
+                  .then( () => {
+                      // terminar o loader ------------------------
+                   
+
+                    // -----------------------------------------
                   });
                     });
+
+                    
     },
   },
 };
