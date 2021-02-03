@@ -110,7 +110,7 @@
               <td class="budget">{{ aplication.duration }} meses</td>
               <td class="budget">{{ aplication.result }} AKZ</td>
               <td class="budget">
-                {{ aplication.createdAt }}
+                {{ new Date(aplication.createdAt).toLocaleString() }}
               </td>
             </tr>
           </tbody>
@@ -141,7 +141,7 @@ export default {
           "E-mail": "email",
           "Telefone": "phone",
           "Data de registo": "createdAt",
-          "Abertura de conta": "accountCreation",
+          "Abertura de conta": "accountCreationUser",
           "Aplicação": "productName",
           "Capital": "capital",
           "Duração (meses)": "duration",
@@ -168,9 +168,8 @@ export default {
       .onSnapshot((querySnapshot) => {
         var aplicationsArray = [];
         querySnapshot.forEach(async (doc) => {
-          let f = doc.data();
-          let name, phone, email, createdAtUser, accountCreationUser;
-
+        let f = doc.data();
+         let name ,  email;//accountCreationUser;//phone, createdAtUser, 
           await db
             .collection("users")
             .doc(f.uid)
@@ -180,18 +179,16 @@ export default {
               
               name = userData.name;
               email = userData.email;
-              phone = userData.account.phone || "";
-              createdAtUser = new Date(userData.createdAt).toLocaleString() || "";
-              accountCreationUser  = new Date(userData.account.createdAt).toLocaleString() || "";
+              //phone = userData.account.phone || "";
+              //accountCreationUser  = new Date(userData.account.createdAt).toLocaleString() || "";
             });
 
           aplicationsArray.push({
             ...f,
             name,
             email,
-            phone,
-            createdAtUser,
-            accountCreationUser,
+            //phone,
+            //accountCreationUser,
           });
         });
         this.aplications = aplicationsArray;
