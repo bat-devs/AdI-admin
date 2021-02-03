@@ -62,6 +62,12 @@
                   >
                     <i class="fas fa-edit"></i>
                   </button>
+                  <router-link
+                    class="btn btn-warning"
+                    :to="{name:'Transações',params:{id:account.accountNumber}}"
+                  >
+                    <i class="fas fa-exchange-alt"></i>
+                  </router-link>
                 </div>
               </td>
             </tr>
