@@ -126,29 +126,42 @@ export default {
       addTransaction: false,
       description: "",
       value: "",
+      id:this.$route.params.id
     };
   },
   created(){
-
-      db.collection("transactions").where("reference", "==",parseInt(this.$route.params.id))
-      .get().then(querySnapshot=>{
-      var transactionsArray = [];
-      querySnapshot.forEach(function (doc) {
-          let f = doc.data();
-          let date=new Date(doc.data().createdAt);
-          let month=date.getMonth()+1;
-          transactionsArray.push({
-            ...f,
-            data: date.getDate()+"/"+month+"/"+date.getFullYear()
-          });
-        });
-        this.transactions = transactionsArray;
-        this.loader=false;
-    });
-
+  
+      this.getData();
+  },
+ 
+   watch: {
+    $route() {
+      this.id=this.$route.params.id!=undefined?this.$route.params.id: null;
+      
+      if(this.id!=undefined){
+        this.getData();
+    }
+    }
   },
   methods: {
     
+    getData(){
+      db.collection("transactions").where("reference", "==",parseInt(this.id))
+            .get().then(querySnapshot=>{
+            var transactionsArray = [];
+            querySnapshot.forEach(function (doc) {
+                let f = doc.data();
+                let date=new Date(doc.data().createdAt);
+                let month=date.getMonth()+1;
+                transactionsArray.push({
+                  ...f,
+                  data: date.getDate()+"/"+month+"/"+date.getFullYear()
+                });
+              });
+              this.transactions = transactionsArray;
+              this.loader=false;
+      });
+    },
    
     async addTrans() {
       //código do adicionar as tranasções
