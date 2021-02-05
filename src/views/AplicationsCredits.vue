@@ -69,7 +69,7 @@
       </template>
     </modal>
 
-    <div class="d-flex justify-content-center">
+    <div class="d-flex justify-content-center mt-3">
       <half-circle-spinner
         v-if="loader"
         :animation-duration="1000"
@@ -83,7 +83,11 @@
           <thead class="thead-light">
             <tr>
               <th scope="col" class="sort" data-sort="name">Nome do cliente</th>
+              <th scope="col" class="sort" data-sort="name">Telefone</th>
               <th scope="col" class="sort" data-sort="budget">Tipo</th>
+              <th scope="col" class="sort" data-sort="name">
+                Tipo da Aplicação
+              </th>
               <th scope="col" class="sort" data-sort="name">Aplicação</th>
               <th scope="col" class="sort" data-sort="budget">Capital</th>
               <th scope="col" class="sort" data-sort="budget">Duração</th>
@@ -95,7 +99,7 @@
           <tbody class="list">
             <tr v-for="(aplication, index) in aplications" :key="index">
               <td class="budget">{{ aplication.name }}</td>
-
+              <td class="budget">{{ aplication.phone }}</td>
               <td class="budget">{{ aplication.type }}</td>
               <th scope="row">
                 <div class="media align-items-center">
@@ -103,6 +107,13 @@
                     <span class="name mb-0 text-sm">{{
                       aplication.productName
                     }}</span>
+                  </div>
+                </div>
+              </th>
+              <th scope="row">
+                <div class="media align-items-center">
+                  <div class="media-body">
+                    <span class="name mb-0 text-sm">{{ aplication.type }}</span>
                   </div>
                 </div>
               </th>
@@ -140,8 +151,9 @@ export default {
           "Nome do cliente": "name",
           "E-mail": "email",
           "Telefone": "phone",
-          "Data de registo": "createdAt",
+          "Data de registo": "createdSim",
           "Abertura de conta": "accountCreationUser",
+          "Tipo da Aplicação": "type",
           "Aplicação": "productName",
           "Capital": "capital",
           "Duração (meses)": "duration",
@@ -172,8 +184,8 @@ export default {
         var aplicationsArray = [];
         
         querySnapshot.forEach(async (doc) => {
-        let f = doc.data();
-         let name ,  email;//accountCreationUser;//phone, createdAtUser, 
+          let f = doc.data();
+          let name, email, createdSim, phone, accountCreationUser;
           await db
             .collection("users")
             .doc(f.uid)
@@ -183,16 +195,19 @@ export default {
               
               name = userData.name;
               email = userData.email;
-              //phone = userData.account.phone || "";
-              //accountCreationUser  = new Date(userData.account.createdAt).toLocaleString() || "";
+              createdSim = new Date(f.createdAt).toLocaleString();
+              phone = userData.account?.phone || "";
+              accountCreationUser =
+               userData.account?.createdAt ? new Date(userData.account?.createdAt).toLocaleString() : "";
             });
 
           aplicationsArray.push({
             ...f,
             name,
             email,
-            //phone,
-            //accountCreationUser,
+            createdSim,
+            phone,
+            accountCreationUser,
           });
             
 
