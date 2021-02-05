@@ -160,7 +160,7 @@ export default {
     };
     for(var i=0;i<imagesURL.length;i++){
                         
-      await this.FB.api('/100632798699325/photos', 'post', {
+     await this.FB.api('/100632798699325/photos', 'post', {
               access_token: "EAAC2hn7BOCkBAE2jtPPMvTkecnuandWRTXYIKC7sa4sZA5xG2SCUsXGiaKLXV3DszFK0vN3mZCs4igT1Ccih06sg2RxZCwGEJAZA20iiu9mKGHP2YOZCocOKFthkc8aQGDCYQqW8xVC8FpvbrNgxW8vjX0cg76BRXy1lOy3OLtPih3V5UXl7c1p17QbXsY64ZD",
               url: imagesURL[i],
               message: 'teste',
@@ -181,7 +181,7 @@ export default {
                         console.log(response);
                     });
                     }
-                    });
+                });
 
 
       }
