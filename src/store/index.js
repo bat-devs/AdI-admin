@@ -35,6 +35,9 @@ const store = new Vuex.Store({
     getcurrentUserEmail(state) {
       return state.currentUserEmail;
     },
+    getRole(state){
+      return state.admin;
+    }
   },
 });
 export default store;

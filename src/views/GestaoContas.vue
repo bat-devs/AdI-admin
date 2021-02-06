@@ -62,7 +62,7 @@
                   >
                     <i class="fas fa-edit"></i>
                   </button>
-                  <router-link v-if="$store.state.admin"
+                  <router-link v-if="$store.state.admin || $store.state.editor"
                     class="btn btn-warning"
                     :to="{name:'Transações',params:{id:account.accountNumber}}"
                   >
