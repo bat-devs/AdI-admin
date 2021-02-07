@@ -7,7 +7,7 @@
       <!-- Card stats -->
     </base-header>
     <div class="mt-3 ml-3 mb-3" v-if="!loader">
-      <button v-if="this.$store.state.editor || this.$store.state.admin" class="btn btn-primary" @click="changeTax = true">
+      <button v-if="this.$store.getters.getRoleEditor || this.$store.getters.getRoleAdmin" class="btn btn-primary" @click="changeTax = true">
         Alterar o valor das taxas
       </button>
     </div>
@@ -20,7 +20,7 @@
         color="#113855"
       />
     </div>
-    <modal :show.sync="changeTax" v-if="this.$store.state.editor || this.$store.state.admin">
+    <modal :show.sync="changeTax" v-if="this.$store.state.getRoleEditor || this.$store.getters.getRoleAdmin">
       <h5
         slot="header"
         modal-classes="modal-dialog-centered modal-xl"
@@ -47,7 +47,7 @@
         </base-button>
       </template>
     </modal>
-    <modal :show.sync="editTax" v-if="this.$store.state.editor || this.$store.state.admin">
+    <modal :show.sync="editTax" v-if="this.$store.getters.getRoleEditor || this.$store.getters.getRoleAdmin">
       <h5
         slot="header"
         modal-classes="modal-dialog-centered modal-xl"

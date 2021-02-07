@@ -8,7 +8,7 @@ const store = new Vuex.Store({
   state: {
     currentUserEmail: "",
     noticias: [],
-    admin:true,
+    admin:false,
     editor:false,
     viewer:false
   },
@@ -35,8 +35,14 @@ const store = new Vuex.Store({
     getcurrentUserEmail(state) {
       return state.currentUserEmail;
     },
-    getRole(state){
+    getRoleAdmin(state){
       return state.admin;
+    },
+    getRoleEditor(state){
+      return state.editor;
+    },
+    getRoleViewer(state){
+      return state.viewer;
     }
   },
 });

@@ -1,9 +1,10 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import DashboardLayout from '@/layout/DashboardLayout'
-import AuthLayout from '@/layout/AuthLayout'
+import Vue from 'vue';
+import Router from 'vue-router';
+import DashboardLayout from '@/layout/DashboardLayout';
+import AuthLayout from '@/layout/AuthLayout';
+import store from '@/store/index';
 import fb from "firebase";
-Vue.use(Router)
+Vue.use(Router);
 
 const router = new Router({
   linkExactActiveClass: 'active',
@@ -56,7 +57,15 @@ const router = new Router({
         {
           path: '/trabalhadores-academia',
           name: 'Trabalhadores da academia',
-          component: () => import(/* webpackChunkName: "demo" */ './views/TrabalhadoresAcademia.vue'),
+          component: () =>{ 
+            if(store.state.admin)
+            {
+              return import(/* webpackChunkName: "demo" */ './views/TrabalhadoresAcademia.vue')
+            }
+            else{
+              return import(/* webpackChunkName: "demo" */ './views/NotAccess.vue')
+            }
+          }
           
         },
         {

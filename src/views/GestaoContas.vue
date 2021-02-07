@@ -48,21 +48,21 @@
               <td class="budget">{{ account.name }}</td>
               <td class="budget">
                 <div class="row">
-                  <button v-if="$store.state.admin || $store.state.editor || $store.state.viewer"
+                  <button v-if="$store.getters.getRoleAdmin || $store.getters.getRoleEditor || $store.getters.getRoleViewer"
                     type="button"
                     @click="accountData(account.accountNumber)"
                     class="btn btn-primary"
                   >
                     <i class="fas fa-eye"></i>
                   </button>
-                  <button v-if="$store.state.admin"
+                  <button v-if="$store.getters.getRoleAdmin"
                     type="button"
                     @click="accountDataEdit(account.accountNumber)"
                     class="btn btn-info"
                   >
                     <i class="fas fa-edit"></i>
                   </button>
-                  <router-link v-if="$store.state.admin || $store.state.editor"
+                  <router-link v-if="$store.getters.getRoleAdmin || $store.getters.getRoleEditor"
                     class="btn btn-warning"
                     :to="{name:'Transações',params:{id:account.accountNumber}}"
                   >
@@ -76,7 +76,7 @@
       </div>
     </div>
 
-    <modal :show.sync="modal" v-if="$store.state.admin || $store.state.editor || $store.state.viewer">
+    <modal :show.sync="modal" v-if="$store.getters.getRoleAdmin || $store.getters.getRoleEditor || $store.getters.getRoleViewer">
       <h5
         slot="header"
         modal-classes="modal-dialog-centered modal-xl"
@@ -135,7 +135,7 @@
         </base-button>
       </template>
     </modal>
-    <modal :show.sync="modal1" modal-classes="modal-dialog-centered modal-xl" v-if="$store.state.admin">
+    <modal :show.sync="modal1" modal-classes="modal-dialog-centered modal-xl" v-if="$store.getters.getRoleAdmin">
       <h5
         slot="header"
         modal-classes="modal-dialog-centered modal-xl"

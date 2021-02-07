@@ -50,16 +50,14 @@
           }"
         />
 
-        <sidebar-item v-if="this.$store.state.admin"
+        <sidebar-item
+          v-if="this.$store.getters.getRoleAdmin"
           :link="{
             name: 'Trabalhadores da academia',
             icon: 'fas fa-briefcase text-purple',
             path: '/trabalhadores-academia',
           }"
         />
-        <!--<sidebar-item :link="{name: 'Tables', icon: 'ni ni-bullet-list-67 text-red', path: '/tables'}"/>
-        <sidebar-item :link="{name: 'Login', icon: 'ni ni-key-25 text-info', path: '/login'}"/>
-        <sidebar-item :link="{name: 'Register', icon: 'ni ni-circle-08 text-pink', path: '/register'}"/>-->
       </template>
     </side-bar>
     <div class="main-content" :data="sidebarBackground">
@@ -67,7 +65,6 @@
 
       <div @click="toggleSidebar">
         <fade-transition :duration="200" origin="center top" mode="out-in">
-          <!-- your content here -->
           <keep-alive>
             <router-view :key="$router.home"></router-view>
           </keep-alive>
@@ -81,7 +78,8 @@
 import DashboardNavbar from "./DashboardNavbar.vue";
 import ContentFooter from "./ContentFooter.vue";
 import { FadeTransition } from "vue2-transitions";
-
+import firebase from "firebase";
+import store from "@/store/index";
 export default {
   components: {
     DashboardNavbar,
@@ -92,6 +90,20 @@ export default {
     return {
       sidebarBackground: "vue", //vue|blue|orange|green|red|primary
     };
+  },
+  created() {
+    firebase
+      .firestore()
+      .collection("admin")
+      .where("email", "==", firebase.auth().currentUser.email)
+      .get()
+      .then(function (querySnapshot) {
+        querySnapshot.forEach((doc) => {
+          if (firebase.auth().currentUser.email == doc.data().email) {
+            store.commit("setAdmin", true);
+          } 
+        });
+      });
   },
   methods: {
     toggleSidebar() {
