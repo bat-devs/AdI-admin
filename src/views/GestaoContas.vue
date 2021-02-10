@@ -6,7 +6,7 @@
     >
       <!-- Card stats -->
     </base-header>
-    <div class="col-md-6">
+    <div class="col-md d-flex justify-content-around">
       <div class="col-md-6 mt-4">
         <base-input
           alternative
@@ -14,17 +14,29 @@
           placeholder="Procurar pela referência..."
         ></base-input>
       </div>
+      <download-excel
+        :data="data.json_data"
+        :fields="data.json_fields"
+        class="mt-3 ml-5 mb-3"
+        name="Relatório de transações.xls"
+        style="width: 230px"
+      >
+        <button class="btn btn-primary">
+          <i class="fas fa-file-excel"></i> Baixar relatório (Excel)
+        </button>
+      </download-excel>
     </div>
+
     <div class="d-flex justify-content-center">
-      <half-circle-spinner v-if="loader"
-          :animation-duration="1000"
-          :size="60"
-          color="#113855"
-        />
+      <half-circle-spinner
+        v-if="loader"
+        :animation-duration="1000"
+        :size="60"
+        color="#113855"
+      />
     </div>
     <div class="table-responsive">
       <div>
-        
         <table class="table align-items-center table-light" v-if="!loader">
           <thead class="thead-light">
             <tr>
@@ -64,7 +76,10 @@
                   </button>
                   <router-link
                     class="btn btn-warning"
-                    :to="{name:'Transações',params:{id:account.accountNumber}}"
+                    :to="{
+                      name: 'Transações',
+                      params: { id: account.accountNumber },
+                    }"
                   >
                     <i class="fas fa-exchange-alt"></i>
                   </router-link>
@@ -253,12 +268,14 @@
 import firebase from "firebase";
 import BaseInput from "../components/BaseInput.vue";
 import swal from "sweetalert2";
+import JsonExcel from "vue-json-excel";
 import { HalfCircleSpinner } from "epic-spinners";
 const db = firebase.firestore();
 export default {
   components: {
     BaseInput,
     HalfCircleSpinner,
+    downloadExcel: JsonExcel,
   },
   data() {
     return {
@@ -268,7 +285,7 @@ export default {
       modal1: false,
       userAccountData: {},
       search: "",
-      allTransactions:[],
+      allTransactions: [],
       updateAccount: {
         accountNumber: "",
         name: "",
@@ -278,6 +295,27 @@ export default {
         gender: "",
         nationality: "",
         phone: "",
+      },
+      data: {
+        json_fields: {
+          "Nome do cliente": "user.name",
+          "E-mail": "user.email",
+          "Número de telefone": "user.account.phone",
+          "Número da conta": "user.account.accountNumber",
+          "Saldo": "value",
+          "Valor depois da transação": "fundAfter",
+          "Descrição": "description",
+          "Data da transação": "createdSim",
+        },
+        json_data: [],
+        json_meta: [
+          [
+            {
+              key: "charset",
+              value: "utf-8",
+            },
+          ],
+        ],
       },
     };
   },
@@ -289,7 +327,7 @@ export default {
           let f = doc.data().account;
           accountsArray.push({ ...f, email: doc.data().email, id: doc.id });
         }
-        this.loader=false
+        this.loader = false;
       });
       this.accounts = accountsArray;
     });
@@ -341,37 +379,41 @@ export default {
           });
         });
     },
-    getAllTransactions(){
+    getAllTransactions() {
       var dataUser;
-      db.collection("transactions")
-      .onSnapshot((querySnapshot) => {
+      db.collection("transactions").onSnapshot((querySnapshot) => {
         var transactions = [];
-       
         querySnapshot.forEach(async (doc) => {
           let f = doc.data();
 
-          
-      await db.collection("users").where("account.accountNumber", "==",f.reference)
-        .get().then((querySnapshot) => {
-       querySnapshot.forEach(async (doc1) => {
-           dataUser= doc1.data();   
-         });
-      });
+          await db
+            .collection("users")
+            .where("account.accountNumber", "==", f.reference)
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach(async (doc1) => {
+                dataUser = doc1.data();
+              });
+            });
           transactions.push({
             ...f,
-            user: dataUser
-            
-          }); 
-         
+            createdSim : new Date(f.createdAt).toLocaleString(),
+            user: dataUser,
+          });
         });
-        this.allTransactions=transactions;
+
+        this.allTransactions = transactions;
+        this.data.json_data=transactions;
       });
-    }
+    },
   },
   computed: {
     accountsfilter() {
       return this.accounts.filter((accounts) => {
-        return accounts.accountNumber.toString().toLowerCase().includes(this.search.toLowerCase());
+        return accounts.accountNumber
+          .toString()
+          .toLowerCase()
+          .includes(this.search.toLowerCase());
       });
     },
   },
