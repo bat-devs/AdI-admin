@@ -282,6 +282,7 @@ export default {
       modal1: false,
       userAccountData: {},
       search: "",
+      allTransactions:[],
       updateAccount: {
         accountNumber: "",
         name: "",
@@ -329,6 +330,7 @@ export default {
       });
       this.accounts = accountsArray;
     });
+    this.getAllTransactions();
   },
   methods: {
     accountData(id) {
@@ -376,6 +378,36 @@ export default {
           });
         });
     },
+    getAllTransactions(){
+      var dataUser;
+      db.collection("transactions")
+      .onSnapshot((querySnapshot) => {
+        var transactions = [];
+        console.log(querySnapshot);
+        querySnapshot.forEach(async (doc) => {
+          let f = doc.data();
+
+          
+      await db.collection("users").where("account.accountNumber", "==",f.reference)
+        .get().then((querySnapshot) => {
+      querySnapshot.forEach(async (doc1) => {
+           dataUser= doc1.data();
+
+            
+      });
+    });
+          transactions.push({
+            ...f,
+            user: dataUser
+            
+          }); 
+         
+        });
+        
+        this.allTransactions=transactions;
+        
+      });
+    }
   },
   computed: {
     accountsfilter() {
