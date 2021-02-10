@@ -90,7 +90,7 @@
         </table>
       </div>
     </div>
-
+ 
     <modal :show.sync="modal">
       <h5
         slot="header"
