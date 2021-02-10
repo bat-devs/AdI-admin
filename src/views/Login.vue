@@ -70,7 +70,6 @@ export default {
             if(admin) {
               sessionStorage.setItem('role', admin.role);
               store.commit("setRole");
-              console.log(store.state.admin);
               this.$router.push("/home");
             }
           })

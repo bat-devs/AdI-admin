@@ -68,6 +68,7 @@ export default {
         .signOut()
         .then(() => {
           firebase.auth().onAuthStateChanged(() => {
+            sessionStorage.clear();
             this.$router.push("/login");
           });
         });
