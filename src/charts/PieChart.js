@@ -3,7 +3,7 @@ export default {
   extends: Doughnut,
   props: ["data"],
   mounted() {
-    console.log("fixe");
+
     this.renderChart(this.data, {
       borderWidth: "10px",
       hoverBackgroundColor: "red",
