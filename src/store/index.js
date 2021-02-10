@@ -16,18 +16,16 @@ const store = new Vuex.Store({
     setcurrentUserEmail(state, payload) {
       state.currentUserEmail = payload;
     },
-    setAdmin(state,payload)
+    setRole(state)
     {
-      state.admin=payload;
+      const role = sessionStorage.getItem("role");
+      if(role == 0)
+        state.admin = true;
+      else if (role == 1)
+        state.editor = true;
+      else
+        state.viewer = true;
     },
-    setEditor(state,payload)
-    {
-      state.admin=payload;
-    },
-    setViewer(state,payload)
-    {
-      state.admin=payload;
-    }
   },
   actions: {},
   modules: {},

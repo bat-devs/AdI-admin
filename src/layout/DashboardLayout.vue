@@ -78,8 +78,6 @@
 import DashboardNavbar from "./DashboardNavbar.vue";
 import ContentFooter from "./ContentFooter.vue";
 import { FadeTransition } from "vue2-transitions";
-import firebase from "firebase";
-import store from "@/store/index";
 export default {
   components: {
     DashboardNavbar,
@@ -92,18 +90,7 @@ export default {
     };
   },
   created() {
-    firebase
-      .firestore()
-      .collection("admin")
-      .where("email", "==", firebase.auth().currentUser.email)
-      .get()
-      .then(function (querySnapshot) {
-        querySnapshot.forEach((doc) => {
-          if (firebase.auth().currentUser.email == doc.data().email) {
-            store.commit("setAdmin", true);
-          } 
-        });
-      });
+    // 
   },
   methods: {
     toggleSidebar() {
