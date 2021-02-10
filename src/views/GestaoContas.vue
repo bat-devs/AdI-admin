@@ -6,7 +6,7 @@
     >
       <!-- Card stats -->
     </base-header>
-    <div class="col-md-6">
+    <div class="col-md d-flex justify-content-around">
       <div class="col-md-6 mt-4">
         <base-input
           alternative
@@ -14,7 +14,19 @@
           placeholder="Procurar pela referência..."
         ></base-input>
       </div>
+       <download-excel
+        :data="data.json_data"
+        :fields="data.json_fields"
+        class="mt-3 ml-5 mb-3"
+        name="Relatório.xls"
+        style="width: 230px"
+      >
+        <button class="btn btn-primary">
+          <i class="fas fa-file-excel"></i> Baixar relatório (Excel)
+        </button>
+      </download-excel>
     </div>
+   
     <div class="d-flex justify-content-center">
       <half-circle-spinner v-if="loader"
           :animation-duration="1000"
@@ -253,12 +265,14 @@
 import firebase from "firebase";
 import BaseInput from "../components/BaseInput.vue";
 import swal from "sweetalert2";
+import JsonExcel from "vue-json-excel";
 import { HalfCircleSpinner } from "epic-spinners";
 const db = firebase.firestore();
 export default {
   components: {
     BaseInput,
     HalfCircleSpinner,
+    downloadExcel: JsonExcel,
   },
   data() {
     return {
@@ -277,6 +291,29 @@ export default {
         gender: "",
         nationality: "",
         phone: "",
+      },
+      data: {
+        json_fields: {
+          "Nome do cliente": "name",
+          "E-mail": "email",
+          "Telefone": "phone",
+          "Data de registo": "createdSim",
+          "Abertura de conta": "accountCreationUser",
+          "Tipo da Aplicação": "type",
+          "Aplicação": "productName",
+          "Capital": "capital",
+          "Duração (meses)": "duration",
+          "Resultado": "result",
+        },
+        json_data: [],
+        json_meta: [
+          [
+            {
+              key: "charset",
+              value: "utf-8",
+            },
+          ],
+        ],
       },
     };
   },
