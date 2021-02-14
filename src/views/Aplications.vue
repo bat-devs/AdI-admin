@@ -118,6 +118,7 @@
               <td class="budget">{{ credit.capital }} AKZ</td>
               <td class="budget">{{ credit.duration }} meses</td>
               <td class="budget">{{ credit.result.toFixed(2) }} AKZ</td>
+              <td class="budget">{{ new Date(credit.createdAt).toLocaleString()}} </td>
             </tr>
           </tbody>
         </table>
@@ -149,7 +150,7 @@ export default {
       id: "",
     };
   },
-  beforeCreate() {
+  created() {
     db.collection("simulation")
       .where("type", "==", "Aplicação")
       .onSnapshot((querySnapshot) => {
