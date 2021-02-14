@@ -73,11 +73,11 @@
               <button @click="addNews" class="btn btn-success btn-lg btn-block">
                 Publicar notícia
               </button>
-              <facebook-login class="button"
-      appId="200688768464937"
+              <!--   <facebook-login class="button"
+      appId="2172026989597254"
       @login="login"
       @sdk-loaded="sdkLoaded">
-    </facebook-login>
+    </facebook-login>-->
             </form>
           </template>
         </card>
@@ -121,12 +121,12 @@ import VueClipboard from "vue-clipboard2";
 import BTooltipDirective from "bootstrap-vue/esm/directives/tooltip";
 import firebase from "firebase";
 //import swal from "sweetalert2";
-import facebookLogin from 'facebook-login-vuejs';
+//import facebookLogin from 'facebook-login-vuejs';
 //const db = firebase.firestore();
 Vue.use(VueClipboard);
 export default {
   components: {
-    facebookLogin
+    //facebookLogin
   },
   directives: {
     "b-tooltip": BTooltipDirective,
@@ -252,60 +252,12 @@ export default {
     };
   },
   methods: {
-
-
-    
- //não mexer
-  async postar() {
-   
-var fotos=[];
- 
-  for(var i=0;i<3;i++){
-  await this.FB.api('/100632798699325/photos', 'post', {
-      access_token: "EAAC2hn7BOCkBAE2jtPPMvTkecnuandWRTXYIKC7sa4sZA5xG2SCUsXGiaKLXV3DszFK0vN3mZCs4igT1Ccih06sg2RxZCwGEJAZA20iiu9mKGHP2YOZCocOKFthkc8aQGDCYQqW8xVC8FpvbrNgxW8vjX0cg76BRXy1lOy3OLtPih3V5UXl7c1p17QbXsY64ZD",
-  url: 'https://appharbor.com/assets/images/stackoverflow-logo.png',
-  message: 'teste',
-  published: false
-}, async function(response){
-  if (response && response.id)
-  fotos.push(await response.id);
-    console.log('Photo uploaded', response.id);
-  console.log(i);
-    if(i==3){
-  console.log(fotos);
-this.FB.api('/100632798699325/feed', 'post', {
-      "access_token": "EAAC2hn7BOCkBAE2jtPPMvTkecnuandWRTXYIKC7sa4sZA5xG2SCUsXGiaKLXV3DszFK0vN3mZCs4igT1Ccih06sg2RxZCwGEJAZA20iiu9mKGHP2YOZCocOKFthkc8aQGDCYQqW8xVC8FpvbrNgxW8vjX0cg76BRXy1lOy3OLtPih3V5UXl7c1p17QbXsY64ZD",
-  "attached_media[0]": {"media_fbid":fotos[0]},
-  "attached_media[1]": {"media_fbid":fotos[1]},
-  "attached_media[2]": {"media_fbid":fotos[2]},
-  "message": 'teste',
-  
-}, function(response){
-    console.log("enviou",response);
-    
-});
-}
-});
-
-
-  }
-
-   
-/*
-    this.FB.api('/100632798699325/photos', 'post', {
-      access_token: "EAAC2hn7BOCkBAE2jtPPMvTkecnuandWRTXYIKC7sa4sZA5xG2SCUsXGiaKLXV3DszFK0vN3mZCs4igT1Ccih06sg2RxZCwGEJAZA20iiu9mKGHP2YOZCocOKFthkc8aQGDCYQqW8xVC8FpvbrNgxW8vjX0cg76BRXy1lOy3OLtPih3V5UXl7c1p17QbXsY64ZD",
-  url: 'https://appharbor.com/assets/images/stackoverflow-logo.png',
-  message: 'teste',
-  published: false
-}, function(response){
-  if (response && response.id)
-    console.log('Photo uploaded', response.id);
-});
-
-/*
+    /*
+ não mexer
+  postar() {
   
              this.FB.api(
-  '/100632798699325/photos',
+  '/108709280980225/photos',
   'POST',
   {
     "name": "ola mundo",
@@ -325,7 +277,7 @@ this.FB.api('/100632798699325/feed', 'post', {
 }
  //publicar foto com legenda
        this.FB.api(
-  '/100632798699325/photos',
+  '/108709280980225/photos',
   'POST',
   {
     "name": "ola mundo",
@@ -338,7 +290,7 @@ this.FB.api('/100632798699325/feed', 'post', {
 );
 //publicar texto
        this.FB.api(
-  '/100632798699325/feed',
+  '/108709280980225/feed',
   'POST',
   {
     "name": "ola mundo",
@@ -347,8 +299,8 @@ this.FB.api('/100632798699325/feed', 'post', {
   function(response) {
       // Insert your code here
       console.log(response);
-  }*
-);*/
+  }
+);
     
   },
   sdkLoaded(payload) {
@@ -360,7 +312,7 @@ this.FB.api('/100632798699325/feed', 'post', {
     this.isConnected = true
     this.postar()
   },
- 
+ */
     onCopy() {
       this.$notify({
         type: "success",
