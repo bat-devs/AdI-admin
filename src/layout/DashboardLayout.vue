@@ -53,9 +53,17 @@
         <sidebar-item
           v-if="this.$store.getters.getRoleAdmin"
           :link="{
-            name: 'Trabalhadores da academia',
-            icon: 'fas fa-briefcase text-purple',
-            path: '/trabalhadores-academia',
+            name: 'Gestores',
+            icon: 'fas fa-briefcase text-success',
+            path: '/gestores',
+          }"
+        />
+
+        <sidebar-item
+          :link="{
+            name: 'Mudar palavra-passe',
+            icon: 'fas fa-lock text-warning',
+            path: '/mudar-palavra-passe',
           }"
         />
       </template>
@@ -90,7 +98,7 @@ export default {
     };
   },
   created() {
-    // 
+    this.$store.commit("refresh");
   },
   methods: {
     toggleSidebar() {

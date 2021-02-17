@@ -3,7 +3,6 @@ import Router from 'vue-router';
 import DashboardLayout from '@/layout/DashboardLayout';
 import AuthLayout from '@/layout/AuthLayout';
 import store from '@/store/index';
-import fb from "firebase";
 Vue.use(Router);
 
 const router = new Router({
@@ -19,6 +18,7 @@ const router = new Router({
         {
           path: '/home',
           name: 'Home',
+          requiresAuth: true,
           // route level code-splitting
           // this generates a separate chunk (about.[hash].js) for this route
           // which is lazy-loaded when the route is visited.
@@ -27,51 +27,70 @@ const router = new Router({
         {
           path: '/noticias/adicionar-noticia',
           name: 'Adicionar Notícia',
+          requiresAuth: true,
           component: () => import(/* webpackChunkName: "demo" */ './views/AdicionarNoticia.vue')
         },
         {
           path: '/noticias',
           name: 'Notícias',
+          requiresAuth: true,
           component: () => import(/* webpackChunkName: "demo" */ './views/ListarNoticias.vue')
         },
         {
           path: '/gestao-de-contas',
           name: 'Gestão de Contas',
+          requiresAuth: true,
           component: () => import(/* webpackChunkName: "demo" */ './views/GestaoContas.vue')
         },
         {
           path: '/aplicacoes',
           name: 'Simulações de aplicaçõs',
+          requiresAuth: true,
           component: () => import(/* webpackChunkName: "demo" */ './views/Aplications.vue')
         },
         {
           path: '/creditos',
           name: 'Simulações de créditos',
+          requiresAuth: true,
           component: () => import(/* webpackChunkName: "demo" */ './views/Credits.vue')
         },
         {
           path: '/aplications-credits',
           name: 'Simulações de aplicações e créditos',
+          requiresAuth: true,
           component: () => import(/* webpackChunkName: "demo" */ './views/AplicationsCredits.vue')
         },
         {
-          path: '/trabalhadores-academia',
-          name: 'Trabalhadores da academia',
-          component: () =>{ 
-            if(store.state.admin)
-            {
-              return import(/* webpackChunkName: "demo" */ './views/TrabalhadoresAcademia.vue')
-            }
-            else{
-              return import(/* webpackChunkName: "demo" */ './views/NotAccess.vue')
-            }
+          path: '/gestores',
+          name: 'Gestores',
+          requiresAuth: true,
+          component: () => {
+            const isAdmin = store.state.role === 0;
+            if(isAdmin) return import(/* webpackChunkName: "demo" */ './views/Gestores.vue');
+            else import(/* webpackChunkName: "demo" */ './views/NotAccess.vue');
           }
-          
+        },
+        {
+          path: '/gestores/adicionar-gestor',
+          name: 'Adicionar Gestor',
+          requiresAuth: true,
+          component: () => { 
+            const isAdmin = store.state.role === 0;
+            if(isAdmin) return import(/* webpackChunkName: "demo" */ './views/AdicionarGestor.vue');
+            else return import(/* webpackChunkName: "demo" */ './views/NotAccess.vue');
+          }
         },
         {
           path: '/transactions/:id',
           name: 'Transações',
+          requiresAuth: true,
           component: () => import(/* webpackChunkName: "demo" */ './views/Transactions.vue')
+        },
+        {
+          path: '/mudar-palavra-passe',
+          name: 'Mudar Palavra-Passe',
+          requiresAuth: true,
+          component: () => import(/* webpackChunkName: "demo" */ './views/MudarPalavraPasse.vue')
         },
       ]
     },
@@ -83,11 +102,11 @@ const router = new Router({
         {
           path: '/login',
           name: 'login',
+          requiresAuth: false,
           component: () => import(/* webpackChunkName: "demo" */ './views/Login.vue')
         },
       ]
-    }
-    ,
+    },
     {
       path: '*',
       name: 'NotFound',
@@ -96,17 +115,20 @@ const router = new Router({
   ]
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
     const requiresAuth= to.matched.some(x => x.meta.requiresAuth);
-    const currentUser=fb.auth().currentUser
-    
-    if (requiresAuth && !currentUser) {
+    const currentUserEmail = sessionStorage.getItem('email');
+
+    if (requiresAuth && !currentUserEmail) {
       next('/login')
-    } else if(requiresAuth && currentUser) {
+    } else if(requiresAuth && currentUserEmail) {
       next()
-    }else{
-      next()
+    } else if(!requiresAuth && currentUserEmail){
+      next('/home')
+    }
+    else {
+      next();
     }
 })
 
-export default router
+export default router;

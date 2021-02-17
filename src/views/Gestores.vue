@@ -6,6 +6,11 @@
     >
     </base-header>
 
+    <div class="d-flex justify-content-start" style="margin: 20px">
+      <router-link to="/gestores/adicionar-gestor" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Adicionar Gestor
+      </router-link>
+    </div>
     <div class="d-flex justify-content-center mt-3">
       <half-circle-spinner
         v-if="loader"

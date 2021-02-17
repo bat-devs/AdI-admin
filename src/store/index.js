@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import CryptoJS from 'crypto-js';
 //import firebase from "firebase";
 
 Vue.use(Vuex);
@@ -7,40 +8,46 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
   state: {
     currentUserEmail: "",
+    currentUserPassword: "",
     noticias: [],
-    admin:false,
-    editor:false,
-    viewer:false
+    role: 2,
   },
   mutations: {
-    setcurrentUserEmail(state, payload) {
-      state.currentUserEmail = payload;
+    refresh(state) {
+      state.currentUserEmail = sessionStorage.getItem('email');
+      state.currentUserPassword = CryptoJS.AES.decrypt(sessionStorage.getItem('__'), 'my pass key');
+      state.role = JSON.parse(sessionStorage.getItem('role'));
     },
-    setRole(state)
-    {
-      const role = sessionStorage.getItem("role");
-      if(role == 0)
-        state.admin = true;
-      else if (role == 1)
-        state.editor = true;
-      else
-        state.viewer = true;
+    changePassword(state, payload) {
+      const password = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(payload), 'my pass key');
+      state.currentUserPassword = CryptoJS.AES.decrypt(password, 'my pass key');
+      sessionStorage.setItem('__', password);
+    },
+    setCurrentUser(state, payload) {
+      const password = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(payload.password), 'my pass key');
+
+      sessionStorage.setItem('email', payload.email);
+      sessionStorage.setItem('role', JSON.stringify(payload.role));
+      sessionStorage.setItem('__', password);
+      state.currentUserEmail = payload.email;
+      state.currentUserPassword = CryptoJS.AES.decrypt(password, 'my pass key');
+      state.role = payload.role;
     },
   },
   actions: {},
   modules: {},
   getters: {
-    getcurrentUserEmail(state) {
+    getCurrentUserEmail(state) {
       return state.currentUserEmail;
     },
     getRoleAdmin(state){
-      return state.admin;
+      return state.role == 0;
     },
     getRoleEditor(state){
-      return state.editor;
+      return state.role == 1;
     },
     getRoleViewer(state){
-      return state.viewer;
+      return state.role == 2;
     }
   },
 });

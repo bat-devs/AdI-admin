@@ -44,13 +44,7 @@ export default {
     };
   },
   beforeMount() {
-    if (firebase.auth().currentUser) {
-      this.$store.commit(
-        "setcurrentUserEmail",
-        firebase.auth().currentUser.email
-      );
-      this.currentUserEmail = this.$store.getters.getcurrentUserEmail;
-    }
+    this.$store.commit("refresh");
   },
   methods: {
     toggleSidebar() {

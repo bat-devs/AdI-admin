@@ -69,7 +69,11 @@ export default {
             const admin = snapshot.docs[0].data();
             if(admin) {
               sessionStorage.setItem('role', admin.role);
-              store.commit("setRole");
+              store.commit("setCurrentUser", {
+                email: this.user.email,
+                password: this.user.password,
+                role: admin.role,
+              });
               this.$router.push("/home");
             }
           })
