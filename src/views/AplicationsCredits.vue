@@ -219,6 +219,7 @@ export default {
         this.loader = false;
         
       });
+      console.log(this.aplications.length);
   },
   methods: {
     modalChange() {
