@@ -175,12 +175,7 @@ export default {
 
     db.collection("applications")
       .get()
-      .then(function (querySnapshot) {
-        querySnapshot.forEach(async (doc) => {
-          let f = doc;
-          creditsTaxes.push(f);
-        });
-      });
+      .then(querySnapshot => querySnapshot.forEach(doc => creditsTaxes.push(doc)));
   },
   methods: {
     async getCredit(id) {
