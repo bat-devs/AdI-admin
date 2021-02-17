@@ -6,7 +6,14 @@
     >
       <!-- Card stats -->
     </base-header>
-    <div class="container-fluid mt-4">
+    <div v-if="loader" class="d-flex justify-content-center mt-4">
+      <half-circle-spinner
+        :animation-duration="1000"
+        :size="60"
+        color="#113855"
+      />
+    </div>
+    <div v-if="!loader" class="container-fluid mt-4">
       <base-input
         v-model="email"
         type="email"
@@ -45,15 +52,18 @@
 import Vue from "vue";
 import VueClipboard from "vue-clipboard2";
 import BaseDropdown from '../components/BaseDropdown.vue';
+import { HalfCircleSpinner } from "epic-spinners";
 import firebase from 'firebase';
+import swal from 'sweetalert2';
 import CryptoJS from 'crypto-js';
 
 Vue.use(VueClipboard);
 export default {
-  components: { BaseDropdown },
+  components: { BaseDropdown, HalfCircleSpinner },
   data() {
     return {
       role: 3,
+      loader: false,
       email: '',
     }
   },
@@ -61,32 +71,103 @@ export default {
     setRole(role) {
       this.role = role;
     },
-    createUser() {
-      console.log('This Store State ::::: ', this.$store.state);
-      firebase.auth().signOut().then(() =>
-        firebase
-          .auth()
-          .createUserWithEmailAndPassword(this.email, 'Angola123')
-          .then(() =>
-            firebase.firestore().collection('admin').add({
-              email: this.email,
-              role: this.role,
-            })
-            .then(() =>
-              firebase.auth().signOut().then(() =>
-                firebase
-                  .auth()
-                  .signInWithEmailAndPassword(
-                    this.$store.state.currentUserEmail, 
-                    this.$store.state.currentUserPassword.toString(CryptoJS.enc.Utf8)
+    async createUser() {
+      this.loader = true;
+      if (this.email !== '') {
+        if (this.email.match(/[\w.]+@academiadeinvestimento.ao/))
+          if (this.role >= 0 && this.role <= 2 )
+            await firebase.auth().signOut().then(async () =>
+              await firebase
+                .auth()
+                .createUserWithEmailAndPassword(this.email, 'Angola123')
+                .then(async () =>
+                  await firebase.firestore().collection('admin').add({
+                    email: this.email,
+                    role: this.role,
+                  })
+                  .then(() =>
+                    firebase.auth().signOut().then(async () =>
+                      await firebase
+                        .auth()
+                        .signInWithEmailAndPassword(
+                          this.$store.state.currentUserEmail, 
+                          this.$store.state.currentUserPassword.toString(CryptoJS.enc.Utf8)
+                        )
+                        .then(() => {
+                          swal.fire({
+                            position: "top-end",
+                            icon: 'success',
+                            title: "Gestor adicionado com sucesso",
+                            showConfirmButton: false,
+                            timer: 1500,
+                          });
+                          this.loader = false;
+                        })
+                        .catch(() => {
+                          swal.fire({
+                            position: "top-end",
+                            icon: 'error',
+                            title: "Ocorreu algum erro interno, tente mais tarde",
+                            showConfirmButton: false,
+                            timer: 1500,
+                          });
+                          this.loader = false;
+                        })
+                    )
+                    .catch(() => {
+                      swal.fire({
+                        position: "top-end",
+                        icon: 'error',
+                        title: "Ocorreu algum erro interno, tente mais tarde",
+                        showConfirmButton: false,
+                        timer: 1500,
+                      });
+                      this.loader = false;
+                    })
                   )
-                  .catch(error => console.log('Error 3 :::::: ', error))
-              )
-            )
-            .catch(error => console.log('Error 2 :::: ', error))
-          )
-          .catch(error => console.log('Error 1 ::::: ', error))
-      );
+                )
+                .catch(() => {
+                  swal.fire({
+                      position: "top-end",
+                      icon: 'error',
+                      title: "Ocorreu algum erro interno, tente mais tarde",
+                      showConfirmButton: false,
+                      timer: 1500,
+                    });
+                  this.loader = false;
+                })
+              );
+            else {
+              swal.fire({
+                position: "top-end",
+                icon: 'error',
+                title: "Selecione uma funcão para o gestor",
+                showConfirmButton: false,
+                timer: 1500,
+              });
+              this.loader = false;
+            }
+        else {
+          swal.fire({
+            position: "top-end",
+            icon: 'error',
+            title: "Insira apenas email da Academia",
+            showConfirmButton: false,
+            timer: 1500,
+          });      
+          this.loader = false;
+        }
+      }
+      else {
+        swal.fire({
+            position: "top-end",
+            icon: 'error',
+            title: "Insira um email",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        this.loader = false;
+      }
     }
   }
 };

@@ -28,9 +28,6 @@
             <tr>
               <th scope="col" class="sort" data-sort="name">Nome da notícia</th>
               <th scope="col" class="sort" data-sort="budget">
-                Data de criação
-              </th>
-              <th scope="col" class="sort" data-sort="budget">
                 Data de publicação
               </th>
               <th scope="col" class="sort" data-sort="status">Acções</th>
