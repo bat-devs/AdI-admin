@@ -6,6 +6,37 @@
     >
       <!-- Card stats -->
     </base-header>
+
+    <modal :show.sync="Pubfacebook">
+      <h5
+        slot="header"
+        modal-classes="modal-dialog-centered modal-xl"
+        class="modal-title"
+        id="modal-title-default"
+      >
+        Postar no facebook
+        <span style="font-weight: bold"></span>
+      </h5>
+      <h2>Deseja postar no facebook?</h2>
+      <facebook-login
+        class="btn"
+        appId="200688768464937"
+        @login="login"
+        @sdk-loaded="sdkLoaded"
+        @logout="logout"
+        loginLabel="Iniciar Sessão"
+        logoutLabel="Sair"
+      >
+      </facebook-login>
+      <template slot="footer">
+        <base-button
+          type="secondary"
+          class="ml-auto"
+          @click="Pubfacebook = false"
+          >Fechar
+        </base-button>
+      </template>
+    </modal>
     <div class="container-fluid mt--7">
       <div class="col-xl order-xl-1">
         <card shadow type="secondary">
@@ -37,22 +68,46 @@
               <h6 class="heading-small text-muted mb-4">
                 Imagem Principal da notícia
               </h6>
-
-              <input type="file" @change="teste" />
+              <label for="main" class="image-wrapper">
+                <img id="image" v-bind:src="mainImage" />
+              </label>
+              <input id="main" type="file" @change="teste" accept="image/x-png,image/gif,image/jpeg" />
               <hr class="my-4" />
               <!-- Address -->
+              <div class="others-files-header-wrapper">
               <h6 class="heading-small text-muted mb-4">
                 Outras fotos sobre a notícia
               </h6>
+              <button @click="clearOthersImages" class="btn btn-warning btn btn">Limpar</button>
+              </div>
               <div class="pl-lg-4">
                 <div class="row">
                   <div class="col-md-12">
-                    <input
-                      type="file"
-                      @change="teste2"
-                      name="outrasFotos[]"
-                      multiple
-                    />
+                    <div class="image-group">
+                      <div 
+                        class="image-wrapper"
+                        :key="image"
+                        v-for="image in allImages">
+                        <img 
+                          id="image" 
+                          v-bind:src="image"
+                        />
+                      </div>
+                      <label for="all" class="image-wrapper">
+                        <img 
+                          id="image" 
+                          src="img/others/add-image.jpg"
+                        />
+                      </label>
+                      <input
+                        id="all"
+                        type="file"
+                        @change="teste2"
+                        name="outrasFotos[]"
+                        accept="image/x-png,image/gif,image/jpeg"
+                        multiple
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -73,11 +128,6 @@
               <button @click="addNews" class="btn btn-success btn-lg btn-block">
                 Publicar notícia
               </button>
-              <facebook-login class="button"
-                appId="200688768464937"
-                @login="login"
-                @sdk-loaded="sdkLoaded">
-              </facebook-login>
             </form>
           </template>
         </card>
@@ -92,7 +142,7 @@ import VueClipboard from "vue-clipboard2";
 import BTooltipDirective from "bootstrap-vue/esm/directives/tooltip";
 import firebase from "firebase";
 //import swal from "sweetalert2";
-import facebookLogin from 'facebook-login-vuejs';
+import facebookLogin from "facebook-login-vuejs";
 //const db = firebase.firestore();
 Vue.use(VueClipboard);
 export default {
@@ -104,7 +154,10 @@ export default {
   },
   data() {
     return {
-      // isConnected: false,
+      mainImage: 'img/others/add-image.jpg',
+      allImages: [],
+      isConnected: false,
+      Pubfacebook: false,
       // name: '',
       //email: '',
       // personalID: '',
@@ -121,131 +174,74 @@ export default {
   },
 
   methods: {
-
-
-    
  //não mexer
-  async postar() {
-   
-var fotos=[];
- 
-  for(var i=0;i<3;i++){
-  await this.FB.api('/100632798699325/photos', 'post', {
-      access_token: "EAAC2hn7BOCkBAE2jtPPMvTkecnuandWRTXYIKC7sa4sZA5xG2SCUsXGiaKLXV3DszFK0vN3mZCs4igT1Ccih06sg2RxZCwGEJAZA20iiu9mKGHP2YOZCocOKFthkc8aQGDCYQqW8xVC8FpvbrNgxW8vjX0cg76BRXy1lOy3OLtPih3V5UXl7c1p17QbXsY64ZD",
-  url: 'https://appharbor.com/assets/images/stackoverflow-logo.png',
-  message: 'teste',
-  published: false
-}, async function(response){
-  if (response && response.id)
-  fotos.push(await response.id);
-    console.log('Photo uploaded', response.id);
-  console.log(i);
-    if(i==3){
-  console.log(fotos);
-this.FB.api('/100632798699325/feed', 'post', {
+  async postar(imagesURL,titulo,texto) {
+    var conteudo=titulo+"\n\n"+texto;
+    var fotos=[];
+    let dados={
       "access_token": "EAAC2hn7BOCkBAE2jtPPMvTkecnuandWRTXYIKC7sa4sZA5xG2SCUsXGiaKLXV3DszFK0vN3mZCs4igT1Ccih06sg2RxZCwGEJAZA20iiu9mKGHP2YOZCocOKFthkc8aQGDCYQqW8xVC8FpvbrNgxW8vjX0cg76BRXy1lOy3OLtPih3V5UXl7c1p17QbXsY64ZD",
-  "attached_media[0]": {"media_fbid":fotos[0]},
-  "attached_media[1]": {"media_fbid":fotos[1]},
-  "attached_media[2]": {"media_fbid":fotos[2]},
-  "message": 'teste',
-  
-}, function(response){
-    console.log("enviou",response);
-    
-});
-}
-});
+      "message": conteudo,  
+    };
+    for(var i=0;i<imagesURL.length;i++){
+                        
+      await this.FB.api('/100632798699325/photos', 'post', {
+              access_token: "EAAC2hn7BOCkBAE2jtPPMvTkecnuandWRTXYIKC7sa4sZA5xG2SCUsXGiaKLXV3DszFK0vN3mZCs4igT1Ccih06sg2RxZCwGEJAZA20iiu9mKGHP2YOZCocOKFthkc8aQGDCYQqW8xVC8FpvbrNgxW8vjX0cg76BRXy1lOy3OLtPih3V5UXl7c1p17QbXsY64ZD",
+              url: imagesURL[i],
+              message: 'teste',
+              published: false
+              }, async function(response){
+                  if (response && response.id){
+                    fotos.push(await response.id);
+                  dados["attached_media["+parseInt(fotos.length-1)+"]"]={"media_fbid":await response.id};
+                  }
+                  if(imagesURL.length==fotos.length){
+                      
+                    this.FB.api(
+                      '/100632798699325/feed', 
+                      'post', 
+                      dados,
+                      function(response){
+                        console.log(dados);
+                        console.log(response);
+                    });
+                    }
+                    });
 
 
-  }
+      }
+    },
+    sdkLoaded(payload) {
+      this.isConnected = payload.isConnected;
+      this.FB = payload.FB;
+    },
+    login() {
+      this.Pubfacebook=false;
+      this.isConnected = true;
+    },
+    logout() {
+      this.isConnected = false;
+    },
+    clearOthersImages() {
+      this.allImages = [],
+      this.noticia.othersfiles = [];
+    },
 
-   
-/*
-    this.FB.api('/100632798699325/photos', 'post', {
-      access_token: "EAAC2hn7BOCkBAE2jtPPMvTkecnuandWRTXYIKC7sa4sZA5xG2SCUsXGiaKLXV3DszFK0vN3mZCs4igT1Ccih06sg2RxZCwGEJAZA20iiu9mKGHP2YOZCocOKFthkc8aQGDCYQqW8xVC8FpvbrNgxW8vjX0cg76BRXy1lOy3OLtPih3V5UXl7c1p17QbXsY64ZD",
-  url: 'https://appharbor.com/assets/images/stackoverflow-logo.png',
-  message: 'teste',
-  published: false
-}, function(response){
-  if (response && response.id)
-    console.log('Photo uploaded', response.id);
-});
-
-/*
-  
-             this.FB.api(
-  '/100632798699325/photos',
-  'POST',
-  {
-    "name": "ola mundo",
-  
-    "url": "https://appharbor.com/assets/images/stackoverflow-logo.png",
-  "access_token": "EAAe3cnEoUkYBANC6comcXBwQ6QAZBkfvgFftr4fg6W4MNjVvZAabTx3irZBgWVgd3IbNqaGrOaY36d0uPFMwEwYY1YrvPj0skC5TPbQg3j7j1hCt7qRPcvkTBBcZAqZAZBIUNEckQayY01ZBO9ESJrZBras1UTG5gZBBjmkLZCPoLdUe74NZC6mNLK8RfgxAUxCZBplkGS4xmKgpNwZDZD"},
-  function(response) {
-      // Insert your code here
-      console.log(response);
-  }
-);
-{
-"message": "xxx",
-"published": true,
-"attached_media[0]": "{"media_fbid":"photo_id1" }"
-"attached_media[1]": "{"media_fbid":"photo_id2" }"
-}
- //publicar foto com legenda
-       this.FB.api(
-  '/100632798699325/photos',
-  'POST',
-  {
-    "name": "ola mundo",
-    "url": "https://appharbor.com/assets/images/stackoverflow-logo.png",
-  "access_token": "EAAe3cnEoUkYBACbmtIeVuUt4kWsbC2ZBHvxpgSJf9wZApXUmEQZCQyiBlppEP7GhngN9RjMmTfPwvatWHlXEFSohRKmoc4nA8obuHrWpZAQMMuQ9jJwi6ZCJUXBDrIaqHt3Jl5MhSssYmpR6TecChlS5RoFbjxHqP9DsHKAPqr2eyHVXZAq6hyVHtR71QbIpsZD"},
-  function(response) {
-      // Insert your code here
-      console.log(response);
-  }
-);
-//publicar texto
-       this.FB.api(
-  '/100632798699325/feed',
-  'POST',
-  {
-    "name": "ola mundo",
-    "url": "https://appharbor.com/assets/images/stackoverflow-logo.png",
-  "access_token": "EAAe3cnEoUkYBACbmtIeVuUt4kWsbC2ZBHvxpgSJf9wZApXUmEQZCQyiBlppEP7GhngN9RjMmTfPwvatWHlXEFSohRKmoc4nA8obuHrWpZAQMMuQ9jJwi6ZCJUXBDrIaqHt3Jl5MhSssYmpR6TecChlS5RoFbjxHqP9DsHKAPqr2eyHVXZAq6hyVHtR71QbIpsZD"},
-  function(response) {
-      // Insert your code here
-      console.log(response);
-  }*
-);*/
-    
-  },
-  sdkLoaded(payload) {
-    this.isConnected = payload.isConnected
-    this.FB = payload.FB
-    if (this.isConnected) this.postar()
-  },
-  login() {
-    this.isConnected = true
-    this.postar()
-  },
- 
     onCopy() {
       this.$notify({
         type: "success",
         title: "Copied to clipboard",
       });
     },
-    teste2(e)
-    {
-      var image=e.target.files || e.dataTransfer.files;
-      
+    teste2(e) {
+      var image = e.target.files || e.dataTransfer.files;
       this.noticia.othersfiles.push(image);
+      image.forEach(e => this.allImages.push(URL.createObjectURL(e)));
     },
     teste(e) {
       var image = e.target.files || e.dataTransfer.files;
       this.noticia.mainImage = image[0];
-     
+      const fakeImageURL = URL.createObjectURL(this.noticia.mainImage);
+      this.mainImage = fakeImageURL;
     },
     deleNew() {
       //apagar
@@ -263,8 +259,7 @@ this.FB.api('/100632798699325/feed', 'post', {
     },
     // Função para adicionar noticia
     async addNews() {
-
-
+      this.Pubfacebook=true;
       await firebase
         .firestore()
         .collection("news")
@@ -275,68 +270,118 @@ this.FB.api('/100632798699325/feed', 'post', {
           published: firebase.firestore.Timestamp.now(),
         })
         .then(async (id) => {
-          this.id =  id.id;
+          this.id = id.id;
           var imagesURL = [];
           var mainImageURL;
-          var lengthMainImage=this.noticia.mainImage.name.split(".").length;
-          var mainType = this.noticia.mainImage.name.split(".")[lengthMainImage-1];
-          
-          
+          var lengthMainImage = this.noticia.mainImage.name.split(".").length;
+          var mainType = this.noticia.mainImage.name.split(".")[
+            lengthMainImage - 1
+          ];
+
           await firebase
             .storage()
             .ref()
             .child("images/" + this.id + "/" + 0 + "." + mainType)
             .put(this.noticia.mainImage)
-            .then(async (image) => await image.ref.getDownloadURL().then( (url)=> mainImageURL=url));
-          
-          
-        if(this.noticia.othersfiles[0].length>0)
+            .then(
+              async (image) =>
+                await image.ref
+                  .getDownloadURL()
+                  .then((url) => (mainImageURL = url))
+            );
+
+          if (this.noticia.othersfiles[0].length > 0)
             Object.entries(this.noticia.othersfiles[0]).forEach(
               async ([index, image]) => {
-                var lengthImage=image.name.split(".").length;
-                var typeImage=image.name.split(".")[lengthImage-1];
-                let n=parseInt(index)+1;
+                var lengthImage = image.name.split(".").length;
+                var typeImage = image.name.split(".")[lengthImage - 1];
+                let n = parseInt(index) + 1;
                 await firebase
                   .storage()
                   .ref()
-                  .child("images/" + this.id + "/" + n + "."+typeImage)
+                  .child("images/" + this.id + "/" + n + "." + typeImage)
                   .put(image)
                   .then(async (image) => {
-                    await image.ref.getDownloadURL().then((url)=> {
+                    await image.ref.getDownloadURL().then((url) => {
                       imagesURL.push(url);
-                       
-                    if(imagesURL.length==this.noticia.othersfiles[0].length)
-                       firebase
-                      .firestore()
-                      .collection("news")
-                      .doc(this.id)
-                    .update({
-                      images: imagesURL,
-                      mainImage: mainImageURL,
-                      })
-                      .then(() => {
-                          // terminar o loader
-                      });
-                    
+
+                      if (
+                        imagesURL.length == this.noticia.othersfiles[0].length
+                      )
+                        firebase
+                          .firestore()
+                          .collection("news")
+                          .doc(this.id)
+                          .update({
+                            images: imagesURL,
+                            mainImage: mainImageURL,
+                          })
+                          .then(async () => {
+                            // terminar o loader
+                            imagesURL.push(mainImageURL);
+                          if(this.isConnected)
+                            this.postar(
+                              imagesURL,
+                              this.noticia.title,
+                              this.noticia.content
+                            );
+
+                            //-------------------------------------
+                          });
                     });
-                  });  
-              });
-              else
-                 firebase
-                  .firestore()
-                  .collection("news")
-                  .doc(this.id)
-                .update({
-                  images: imagesURL,
-                  mainImage: mainImageURL,
-                  })
-                  .then(() => {
-                      // terminar o loader
                   });
-                    });
+              }
+            );
+          else
+            firebase
+              .firestore()
+              .collection("news")
+              .doc(this.id)
+              .update({
+                images: imagesURL,
+                mainImage: mainImageURL,
+              })
+              .then(async () => {
+                            // terminar o loader
+                            imagesURL.push(mainImageURL);
+                          if(this.isConnected)
+                            this.postar(
+                              imagesURL,
+                              this.noticia.title,
+                              this.noticia.content
+                            );
+
+                            
+                // -----------------------------------------
+              });
+        });
     },
   },
 };
 </script>
 <style>
+  .others-files-header-wrapper {
+    display: flex;
+    justify-content: space-between;
+  }
+  .image-group{
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .image-wrapper {
+    margin: 0.5rem;
+    min-width: 5rem;
+    max-width: 10rem;
+    min-height: 5rem;
+    max-height: 10rem;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .image-wrapper > img{
+    width: 100%;
+    height: 100%;
+  }
+  input[type="file"] {
+    opacity: 0;
+  }
 </style>
