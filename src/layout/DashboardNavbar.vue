@@ -22,23 +22,6 @@
           </div>
 
           <template>
-            <!--<router-link to="/profile" class="dropdown-item">
-                            <i class="ni ni-single-02"></i>
-                            <span>Perfil</span>
-                        </router-link>
-                        <router-link to="/profile" class="dropdown-item">
-                            <i class="ni ni-settings-gear-65"></i>
-                            <span>Settings</span>
-                        </router-link>
-                        <router-link to="/profile" class="dropdown-item">
-                            <i class="ni ni-calendar-grid-58"></i>
-                            <span>Activity</span>
-                        </router-link>
-                        <router-link to="/profile" class="dropdown-item">
-                            <i class="ni ni-support-16"></i>
-                            <span>Support</span>
-                        </router-link>
-                        <div class="dropdown-divider"></div>-->
             <li @click="logOut()" class="dropdown-item" style="cursor: pointer">
               <i class="ni ni-button-power"></i>
               <span>Sair</span>
@@ -61,13 +44,7 @@ export default {
     };
   },
   beforeMount() {
-    if (firebase.auth().currentUser) {
-      this.$store.commit(
-        "setcurrentUserEmail",
-        firebase.auth().currentUser.email
-      );
-      this.currentUserEmail = this.$store.getters.getcurrentUserEmail;
-    }
+    this.$store.commit("refresh");
   },
   methods: {
     toggleSidebar() {
@@ -85,6 +62,7 @@ export default {
         .signOut()
         .then(() => {
           firebase.auth().onAuthStateChanged(() => {
+            sessionStorage.clear();
             this.$router.push("/login");
           });
         });

@@ -172,10 +172,8 @@ export default {
       },
     };
   },
-  methods: {
-    
 
-    
+  methods: {
  //não mexer
   async postar(imagesURL,titulo,texto) {
     var conteudo=titulo+"\n\n"+texto;
@@ -227,6 +225,7 @@ export default {
       this.allImages = [],
       this.noticia.othersfiles = [];
     },
+
     onCopy() {
       this.$notify({
         type: "success",

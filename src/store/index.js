@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import CryptoJS from 'crypto-js';
 //import firebase from "firebase";
 
 Vue.use(Vuex);
@@ -7,51 +8,47 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
   state: {
     currentUserEmail: "",
+    currentUserPassword: "",
     noticias: [],
-    apliNegocio: 0,
-    apliSalario: "",
-    apliFamilia: "",
-    apliEstudante: "",
-    apliKandengue: "",
-    apliSomarPlus: "",
-    cofreTesouro: "",
-    credFacil: "",
-    credHabitcao: "",
-    credAutomovel: "",
-    credPessoal: "",
-    credFacilidadeTesouraria: "",
-    credEmpresarial: "",
-    adiantaSalario: "",
+    role: 2,
   },
   mutations: {
-    setcurrentUserEmail(state, payload) {
-      state.currentUserEmail = payload;
+    refresh(state) {
+      state.currentUserEmail = sessionStorage.getItem('email');
+      state.currentUserPassword = CryptoJS.AES.decrypt(sessionStorage.getItem('__'), 'my pass key');
+      state.role = JSON.parse(sessionStorage.getItem('role'));
     },
-    async setapliNegocio(state,payload) {
-      state.apliNegocio =payload;
+    changePassword(state, payload) {
+      const password = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(payload), 'my pass key');
+      state.currentUserPassword = CryptoJS.AES.decrypt(password, 'my pass key');
+      sessionStorage.setItem('__', password);
     },
-    setapliSalario(state, payload) {
-      state.apliSalario = payload;
-    },
-    setapliFapliEstudante(state, payload) {
-      state.apliEstudante = payload;
+    setCurrentUser(state, payload) {
+      const password = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(payload.password), 'my pass key');
+
+      sessionStorage.setItem('email', payload.email);
+      sessionStorage.setItem('role', JSON.stringify(payload.role));
+      sessionStorage.setItem('__', password);
+      state.currentUserEmail = payload.email;
+      state.currentUserPassword = CryptoJS.AES.decrypt(password, 'my pass key');
+      state.role = payload.role;
     },
   },
   actions: {},
   modules: {},
   getters: {
-    getcurrentUserEmail(state) {
+    getCurrentUserEmail(state) {
       return state.currentUserEmail;
     },
-    getNoticias(state) {
-      return state.noticias;
+    getRoleAdmin(state){
+      return state.role == 0;
     },
-     getapliNegocio() {
-    /*  let a=await firebase.firestore().collection("simulation").where("productName", "==", "Aplicação Negócio").get();
-      
-      state.apliNegocio=a.size;*/
-        return 3;
-      },
+    getRoleEditor(state){
+      return state.role == 1;
+    },
+    getRoleViewer(state){
+      return state.role == 2;
+    }
   },
 });
 export default store;
