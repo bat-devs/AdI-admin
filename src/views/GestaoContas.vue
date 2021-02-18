@@ -74,7 +74,7 @@
                   >
                     <i class="fas fa-edit"></i>
                   </button>
-                  <router-link v-if="$store.getters.getRoleAdmin || $store.getters.getRoleEditor"
+                  <router-link
                     class="btn btn-warning"
                     :to="{name:'Transações',params:{id:account.accountNumber}}"
                   >
