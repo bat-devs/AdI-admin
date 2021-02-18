@@ -7,7 +7,7 @@
       <!-- Card stats -->
     </base-header>
     <div class="d-flex justify-content-start" style="margin: 20px">
-      <router-link to="/noticias/adicionar-noticia" class="btn btn-primary">
+      <router-link v-if="this.$store.getters.getRoleAdmin" to="/noticias/adicionar-noticia" class="btn btn-primary">
         <i class="fas fa-plus"></i> Adicionar Notícia
       </router-link>
     </div>
@@ -27,9 +27,6 @@
           <thead class="thead-light">
             <tr>
               <th scope="col" class="sort" data-sort="name">Nome da notícia</th>
-              <th scope="col" class="sort" data-sort="budget">
-                Data de criação
-              </th>
               <th scope="col" class="sort" data-sort="budget">
                 Data de publicação
               </th>

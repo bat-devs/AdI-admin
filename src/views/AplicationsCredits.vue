@@ -6,11 +6,11 @@
     >
     </base-header>
     <div class="mt-3 ml-3 mb-3" v-if="!loader">
-      <button class="btn btn-primary" @click="insertCodeModal = true">
+      <button class="btn btn-primary" v-if="this.$store.getters.getRoleAdmin" @click="insertCodeModal = true">
         Fazer download do relatório
       </button>
     </div>
-    <modal :show.sync="insertCodeModal">
+    <modal :show.sync="insertCodeModal" v-if="this.$store.getters.getRoleAdmin">
       <h5
         slot="header"
         modal-classes="modal-dialog-centered modal-xl"
@@ -38,7 +38,7 @@
         <base-button type="primary" @click="modalChange()">Entrar</base-button>
       </template>
     </modal>
-    <modal :show.sync="downloadExcelModal">
+    <modal :show.sync="downloadExcelModal" v-if="this.$store.getters.getRoleAdmin">
       <h5
         slot="header"
         modal-classes="modal-dialog-centered modal-xl"

@@ -46,6 +46,9 @@
 <script>
 import firebase from "firebase";
 import swal from "sweetalert2";
+import store from "@/store/index"
+const db = firebase.firestore();
+
 export default {
   name: "login",
   data() {
@@ -62,8 +65,27 @@ export default {
         .auth()
         .signInWithEmailAndPassword(this.user.email, this.user.password)
         .then(() => {
-          firebase.auth().currentUser.email
-          this.$router.push("/home");
+          db.collection("admin").where("email", "==", this.user.email).get().then(async snapshot => {
+            const admin = snapshot.docs[0].data();
+            if(admin) {
+              sessionStorage.setItem('role', admin.role);
+              store.commit("setCurrentUser", {
+                email: this.user.email,
+                password: this.user.password,
+                role: admin.role,
+              });
+              this.$router.push("/home");
+            }
+          })
+          .catch((error) => {
+            swal.fire({
+              title: error.message,
+              buttonsStyling: false,
+              customClass: {
+                confirmButton: "btn btn-success btn-fill",
+              },
+            });
+          });
         })
         .catch((error) => {
           swal.fire({
