@@ -99,6 +99,7 @@ export default {
   created() {
     db.collection("simulation")
       .where("type", "==", "Crédito")
+      .orderBy("createdAt", "desc")
       .onSnapshot((querySnapshot) => {
         var creditsArray = [];
         querySnapshot.forEach(async (doc) => {

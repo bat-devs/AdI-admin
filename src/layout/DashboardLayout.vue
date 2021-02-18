@@ -22,7 +22,7 @@
         />
         <sidebar-item
           :link="{
-            name: 'Relatório das simulações e créditos',
+            name: 'Relatório das simulações',
             icon: 'fas fa-wallet text-yellow',
             path: '/aplications-credits',
           }"
@@ -49,9 +49,23 @@
             path: '/gestao-de-contas',
           }"
         />
-        <!--<sidebar-item :link="{name: 'Tables', icon: 'ni ni-bullet-list-67 text-red', path: '/tables'}"/>
-        <sidebar-item :link="{name: 'Login', icon: 'ni ni-key-25 text-info', path: '/login'}"/>
-        <sidebar-item :link="{name: 'Register', icon: 'ni ni-circle-08 text-pink', path: '/register'}"/>-->
+
+        <sidebar-item
+          v-if="this.$store.getters.getRoleAdmin"
+          :link="{
+            name: 'Gestores',
+            icon: 'fas fa-briefcase text-success',
+            path: '/gestores',
+          }"
+        />
+
+        <sidebar-item
+          :link="{
+            name: 'Mudar palavra-passe',
+            icon: 'fas fa-lock text-warning',
+            path: '/mudar-palavra-passe',
+          }"
+        />
       </template>
     </side-bar>
     <div class="main-content" :data="sidebarBackground">
@@ -59,7 +73,6 @@
 
       <div @click="toggleSidebar">
         <fade-transition :duration="200" origin="center top" mode="out-in">
-          <!-- your content here -->
           <keep-alive>
             <router-view :key="$router.home"></router-view>
           </keep-alive>
@@ -73,7 +86,6 @@
 import DashboardNavbar from "./DashboardNavbar.vue";
 import ContentFooter from "./ContentFooter.vue";
 import { FadeTransition } from "vue2-transitions";
-
 export default {
   components: {
     DashboardNavbar,
@@ -84,6 +96,9 @@ export default {
     return {
       sidebarBackground: "vue", //vue|blue|orange|green|red|primary
     };
+  },
+  created() {
+    this.$store.commit("refresh");
   },
   methods: {
     toggleSidebar() {
