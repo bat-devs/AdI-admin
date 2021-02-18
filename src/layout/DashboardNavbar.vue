@@ -15,9 +15,8 @@
           >
             <i class="fas fa-user"></i>
             <div class="media-body ml-2 d-none d-lg-block">
-              <span class="mb-0 text-sm font-weight-bold">{{
-                currentUserEmail
-              }}</span>
+              <span class="mb-0 text-sm font-weight-bold">
+                {{ this.$store.state.currentUserEmail }}</span>
             </div>
           </div>
 
@@ -40,7 +39,6 @@ export default {
       activeNotifications: false,
       showMenu: false,
       searchQuery: "",
-      currentUserEmail: "",
     };
   },
   beforeMount() {
