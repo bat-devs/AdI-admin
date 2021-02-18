@@ -60,14 +60,14 @@
               <td class="budget">{{ account.name }}</td>
               <td class="budget">
                 <div class="row">
-                  <button
+                  <button v-if="$store.getters.getRoleAdmin || $store.getters.getRoleEditor || $store.getters.getRoleViewer"
                     type="button"
                     @click="accountData(account.accountNumber)"
                     class="btn btn-primary"
                   >
                     <i class="fas fa-eye"></i>
                   </button>
-                  <button
+                  <button v-if="$store.getters.getRoleAdmin"
                     type="button"
                     @click="accountDataEdit(account.accountNumber)"
                     class="btn btn-info"
@@ -76,10 +76,7 @@
                   </button>
                   <router-link
                     class="btn btn-warning"
-                    :to="{
-                      name: 'Transações',
-                      params: { id: account.accountNumber },
-                    }"
+                    :to="{name:'Transações',params:{id:account.accountNumber}}"
                   >
                     <i class="fas fa-exchange-alt"></i>
                   </router-link>
@@ -90,8 +87,7 @@
         </table>
       </div>
     </div>
- 
-    <modal :show.sync="modal">
+    <modal :show.sync="modal" v-if="$store.getters.getRoleAdmin || $store.getters.getRoleEditor || $store.getters.getRoleViewer">
       <h5
         slot="header"
         modal-classes="modal-dialog-centered modal-xl"
@@ -150,7 +146,7 @@
         </base-button>
       </template>
     </modal>
-    <modal :show.sync="modal1" modal-classes="modal-dialog-centered modal-xl">
+    <modal :show.sync="modal1" modal-classes="modal-dialog-centered modal-xl" v-if="$store.getters.getRoleAdmin">
       <h5
         slot="header"
         modal-classes="modal-dialog-centered modal-xl"
