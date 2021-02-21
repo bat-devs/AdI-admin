@@ -128,6 +128,16 @@
               <button @click="addNews" class="btn btn-success btn-lg btn-block">
                 Publicar notícia
               </button>
+               <facebook-login
+        class="btn"
+        appId="200688768464937"
+        @login="login"
+        @sdk-loaded="sdkLoaded"
+        @logout="logout"
+        loginLabel="Iniciar Sessão"
+        logoutLabel="Sair"
+      >
+      </facebook-login>
             </form>
           </template>
         </card>
@@ -141,6 +151,7 @@ import Vue from "vue";
 import VueClipboard from "vue-clipboard2";
 import BTooltipDirective from "bootstrap-vue/esm/directives/tooltip";
 import firebase from "firebase";
+
 //import swal from "sweetalert2";
 import facebookLogin from "facebook-login-vuejs";
 //const db = firebase.firestore();
@@ -163,6 +174,7 @@ export default {
       // personalID: '',
       // picture: '',
       // FB: undefined,
+      te:'',
       noticia: {
         content: "",
         title: "",
@@ -175,13 +187,38 @@ export default {
 
   methods: {
  //não mexer
-  async postar(imagesURL,titulo,texto) {
-    var conteudo=titulo+"\n\n"+texto;
-    var fotos=[];
-    let dados={
+
+  async postar(imagesURL,titulo,texto,id) {
+    // id instagram=  17841445161723909
+    // 17841445161723909/media?image_url=https://image.freepik.com/vetores-gratis/imagens-animadas-abstratas-neon-lines_23-2148344065.jpg&caption=ola+mundo+teste+\n+esse+é+o+foi
+    //17889455560051444
+    //var conteudo=titulo+"\n\n"+texto;
+    //var fotos=[];
+    /*let dados={
       "access_token": "EAAC2hn7BOCkBAE2jtPPMvTkecnuandWRTXYIKC7sa4sZA5xG2SCUsXGiaKLXV3DszFK0vN3mZCs4igT1Ccih06sg2RxZCwGEJAZA20iiu9mKGHP2YOZCocOKFthkc8aQGDCYQqW8xVC8FpvbrNgxW8vjX0cg76BRXy1lOy3OLtPih3V5UXl7c1p17QbXsY64ZD",
       "message": conteudo,  
-    };
+    };*/
+    var caminho="https://storage.googleapis.com/academiadeinvestimento-ba1c3.appspot.com/images/"+id+"/0.png";
+     
+
+    this.FB.api('/17841445161723909/media?image_url='+caminho+'&caption='+titulo+'\n\n'+texto, 'post', {
+     access_token: "EAAC2hn7BOCkBALwCZBVYBAPVYktP5BKUu5mXQnQDCWbaDcPYnm9oL29KPVh5caOIkT5bvrMkNsV8XDzEYvRkSYxuaRm7KyWaKQ9DuyirRtDX6DsdIHQRbhJ6ndewOmpuzRRZA0ZCBn0uv1CBoo4z16II8y1VLGoXarZBOU1NDek2HzU71xuh6CDNEZCK5pcrSgpDAmaR4LPEFJYZC2KFyu",
+    }, async function(response){
+      console.log(response);
+      if(response.id){
+
+        this.FB.api(
+          '/17841445161723909/media_publish?creation_id='+response.id, 
+          'post',{
+            access_token: "EAAC2hn7BOCkBALwCZBVYBAPVYktP5BKUu5mXQnQDCWbaDcPYnm9oL29KPVh5caOIkT5bvrMkNsV8XDzEYvRkSYxuaRm7KyWaKQ9DuyirRtDX6DsdIHQRbhJ6ndewOmpuzRRZA0ZCBn0uv1CBoo4z16II8y1VLGoXarZBOU1NDek2HzU71xuh6CDNEZCK5pcrSgpDAmaR4LPEFJYZC2KFyu",
+          },
+          function(response){            
+           console.log(response);      
+        });
+      }
+       
+    });
+                /*
     for(var i=0;i<imagesURL.length;i++){
                         
      await this.FB.api('/100632798699325/photos', 'post', {
@@ -209,6 +246,8 @@ export default {
 
 
       }
+
+*/
     },
     sdkLoaded(payload) {
       this.isConnected = payload.isConnected;
@@ -233,16 +272,21 @@ export default {
       });
     },
     teste2(e) {
+       
       var image = e.target.files || e.dataTransfer.files;
       this.noticia.othersfiles.push(image);
       image.forEach(e => this.allImages.push(URL.createObjectURL(e)));
+    
     },
     teste(e) {
       var image = e.target.files || e.dataTransfer.files;
+      
       this.noticia.mainImage = image[0];
       const fakeImageURL = URL.createObjectURL(this.noticia.mainImage);
       this.mainImage = fakeImageURL;
+    
     },
+     
     deleNew() {
       //apagar
       firebase
@@ -259,6 +303,8 @@ export default {
     },
     // Função para adicionar noticia
     async addNews() {
+      //this.postar(this.noticia.mainImage,this.noticia.title,this.noticia.content);
+      
       this.Pubfacebook=true;
       await firebase
         .firestore()
@@ -281,7 +327,7 @@ export default {
           await firebase
             .storage()
             .ref()
-            .child("images/" + this.id + "/" + 0 + "." + mainType)
+            .child("images/" + this.id + "/" + 0 +mainType )
             .put(this.noticia.mainImage)
             .then(
               async (image) =>
@@ -319,6 +365,7 @@ export default {
                           .then(async () => {
                             // terminar o loader
                             imagesURL.push(mainImageURL);
+                            this.postar(imagesURL,this.noticia.title,this.noticia.content,this.id);
                           if(this.isConnected)
                             this.postar(
                               imagesURL,
@@ -344,17 +391,21 @@ export default {
               .then(async () => {
                             // terminar o loader
                             imagesURL.push(mainImageURL);
-                          if(this.isConnected)
+                            
+                            
+                          /*if(this.isConnected)
                             this.postar(
                               imagesURL,
                               this.noticia.title,
-                              this.noticia.content
-                            );
+                              this.noticia.content,
+                              this.id
+                            );*/
 
                             
                 // -----------------------------------------
               });
         });
+        
     },
   },
 };
