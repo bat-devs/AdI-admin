@@ -128,16 +128,7 @@
               <button @click="addNews" class="btn btn-success btn-lg btn-block">
                 Publicar notícia
               </button>
-               <facebook-login
-        class="btn"
-        appId="200688768464937"
-        @login="login"
-        @sdk-loaded="sdkLoaded"
-        @logout="logout"
-        loginLabel="Iniciar Sessão"
-        logoutLabel="Sair"
-      >
-      </facebook-login>
+             
             </form>
           </template>
         </card>
@@ -181,6 +172,7 @@ export default {
         mainImage: null,
         keywords: [],
         othersfiles: [],
+        pageToken:'',
       },
     };
   },
@@ -189,73 +181,101 @@ export default {
  //não mexer
 
   async postar(imagesURL,titulo,texto,id) {
-    // id instagram=  17841445161723909
-    // 17841445161723909/media?image_url=https://image.freepik.com/vetores-gratis/imagens-animadas-abstratas-neon-lines_23-2148344065.jpg&caption=ola+mundo+teste+\n+esse+é+o+foi
-    //17889455560051444
-    //var conteudo=titulo+"\n\n"+texto;
-    //var fotos=[];
-    /*let dados={
-      "access_token": "EAAC2hn7BOCkBAE2jtPPMvTkecnuandWRTXYIKC7sa4sZA5xG2SCUsXGiaKLXV3DszFK0vN3mZCs4igT1Ccih06sg2RxZCwGEJAZA20iiu9mKGHP2YOZCocOKFthkc8aQGDCYQqW8xVC8FpvbrNgxW8vjX0cg76BRXy1lOy3OLtPih3V5UXl7c1p17QbXsY64ZD",
-      "message": conteudo,  
-    };*/
-    var caminho="https://storage.googleapis.com/academiadeinvestimento-ba1c3.appspot.com/images/"+id+"/0.png";
-     
-
-    this.FB.api('/17841445161723909/media?image_url='+caminho+'&caption='+titulo+'\n\n'+texto, 'post', {
-     access_token: "EAAC2hn7BOCkBALwCZBVYBAPVYktP5BKUu5mXQnQDCWbaDcPYnm9oL29KPVh5caOIkT5bvrMkNsV8XDzEYvRkSYxuaRm7KyWaKQ9DuyirRtDX6DsdIHQRbhJ6ndewOmpuzRRZA0ZCBn0uv1CBoo4z16II8y1VLGoXarZBOU1NDek2HzU71xuh6CDNEZCK5pcrSgpDAmaR4LPEFJYZC2KFyu",
-    }, async function(response){
-      console.log(response);
-      if(response.id){
-
-        this.FB.api(
-          '/17841445161723909/media_publish?creation_id='+response.id, 
-          'post',{
-            access_token: "EAAC2hn7BOCkBALwCZBVYBAPVYktP5BKUu5mXQnQDCWbaDcPYnm9oL29KPVh5caOIkT5bvrMkNsV8XDzEYvRkSYxuaRm7KyWaKQ9DuyirRtDX6DsdIHQRbhJ6ndewOmpuzRRZA0ZCBn0uv1CBoo4z16II8y1VLGoXarZBOU1NDek2HzU71xuh6CDNEZCK5pcrSgpDAmaR4LPEFJYZC2KFyu",
+ 
+  
+  
+  this.FB.getLoginStatus( function(response) {
+  if (response.status === 'connected') {
+    var accessToken = response.authResponse.accessToken;
+      this.FB.api(
+          '/me/accounts', 
+          'get',{
+            access_token: accessToken,
           },
-          function(response){            
-           console.log(response);      
-        });
-      }
-       
-    });
-                /*
-    for(var i=0;i<imagesURL.length;i++){
+         async  function(response){            
+         
+          for(var i=0;i<response.data.length;i++){
+            if(response.data[i].id==100632798699325){
+              
+            this.pageToken= response.data[i].access_token;
+              var conteudo=titulo+"\n\n"+texto;
+              var fotos=[];
+              let dados={
+                "access_token": this.pageToken,
+                "message": conteudo,  
+              };
+             var caminho="https://storage.googleapis.com/academiadeinvestimento-ba1c3.appspot.com/images/"+id+"/0.jpg";
+           
+
+            this.FB.api('/17841445161723909/media?image_url='+caminho+'&caption='+conteudo, 'post', {
+            access_token: this.pageToken,
+            }, async function(response){
+              console.log(response);
+              if(response.id){
+                this.FB.api(
+                  '/17841445161723909/media_publish?creation_id='+response.id, 
+                  'post',{
+                    access_token: this.pageToken,
+                  },
+                  function(){            
                         
+                });
+              }
+              
+            });
+                
+               
+    for(var i1=0;i1<imagesURL.length;i1++){
+                        console.log(this.pageToken);
      await this.FB.api('/100632798699325/photos', 'post', {
-              access_token: "EAAC2hn7BOCkBAE2jtPPMvTkecnuandWRTXYIKC7sa4sZA5xG2SCUsXGiaKLXV3DszFK0vN3mZCs4igT1Ccih06sg2RxZCwGEJAZA20iiu9mKGHP2YOZCocOKFthkc8aQGDCYQqW8xVC8FpvbrNgxW8vjX0cg76BRXy1lOy3OLtPih3V5UXl7c1p17QbXsY64ZD",
-              url: imagesURL[i],
+              access_token: this.pageToken,
+              url: imagesURL[i1],
               message: 'teste',
               published: false
-              }, async function(response){
-                  if (response && response.id){
+              }, 
+              async function(response){
+                if (response && response.id){
                     fotos.push(await response.id);
                   dados["attached_media["+parseInt(fotos.length-1)+"]"]={"media_fbid":await response.id};
-                  }
-                  if(imagesURL.length==fotos.length){
+                }
+                console.log(response);
+                if(imagesURL.length==fotos.length){
                       
                     this.FB.api(
                       '/100632798699325/feed', 
                       'post', 
                       dados,
                       function(response){
-                        console.log(dados);
+                        console.log("ola",dados);
                         console.log(response);
                     });
-                    }
-                });
-
-
+                  }
+              });
       }
 
-*/
+
+            }
+          }   
+        }); 
+      } 
+    });
+  
+   
+
+
+    },
+    async getTokenPage(){
+
+  
     },
     sdkLoaded(payload) {
       this.isConnected = payload.isConnected;
       this.FB = payload.FB;
     },
-    login() {
+    async login() {
       this.Pubfacebook=false;
       this.isConnected = true;
+      
     },
     logout() {
       this.isConnected = false;
@@ -280,11 +300,12 @@ export default {
     },
     teste(e) {
       var image = e.target.files || e.dataTransfer.files;
-      
-      this.noticia.mainImage = image[0];
+      var blob = image[0].slice(0, image[0].size, 'image/jpg'); 
+      var newFile = new File([blob], 'principal.jpg', {type: 'image/jpg'});
+    
+      this.noticia.mainImage=newFile;
       const fakeImageURL = URL.createObjectURL(this.noticia.mainImage);
       this.mainImage = fakeImageURL;
-    
     },
      
     deleNew() {
@@ -303,7 +324,7 @@ export default {
     },
     // Função para adicionar noticia
     async addNews() {
-      //this.postar(this.noticia.mainImage,this.noticia.title,this.noticia.content);
+      
       
       this.Pubfacebook=true;
       await firebase
@@ -327,7 +348,7 @@ export default {
           await firebase
             .storage()
             .ref()
-            .child("images/" + this.id + "/" + 0 +mainType )
+            .child("images/" + this.id + "/" + 0 +'.'+mainType )
             .put(this.noticia.mainImage)
             .then(
               async (image) =>
@@ -365,12 +386,13 @@ export default {
                           .then(async () => {
                             // terminar o loader
                             imagesURL.push(mainImageURL);
-                            this.postar(imagesURL,this.noticia.title,this.noticia.content,this.id);
+                         
                           if(this.isConnected)
                             this.postar(
                               imagesURL,
                               this.noticia.title,
-                              this.noticia.content
+                              this.noticia.content,
+                              this.id
                             );
 
                             //-------------------------------------
@@ -389,19 +411,17 @@ export default {
                 mainImage: mainImageURL,
               })
               .then(async () => {
-                            // terminar o loader
-                            imagesURL.push(mainImageURL);
-                            
-                            
-                          /*if(this.isConnected)
-                            this.postar(
-                              imagesURL,
-                              this.noticia.title,
-                              this.noticia.content,
-                              this.id
-                            );*/
+                  // terminar o loader
+                  imagesURL.push(mainImageURL);
+        
+                  if(this.isConnected)
+                      this.postar(
+                      imagesURL,
+                      this.noticia.title,
+                      this.noticia.content,
+                      this.id
+                      );
 
-                            
                 // -----------------------------------------
               });
         });
