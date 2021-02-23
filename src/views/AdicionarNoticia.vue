@@ -7,28 +7,40 @@
       <!-- Card stats -->
     </base-header>
 
-    <modal :show.sync="Pubfacebook">
+    <modal :show.sync="Pubfacebook" >
       <h5
         slot="header"
         modal-classes="modal-dialog-centered modal-xl"
         class="modal-title"
         id="modal-title-default"
       >
-        Postar no facebook
+        Postar
         <span style="font-weight: bold"></span>
       </h5>
-      <h2>Deseja postar no facebook?</h2>
+      <h2>
+        Aonde deseja publicar a notícia? <b> (Além de publicar no site)</b>
+      </h2>
+      <base-checkbox class="mb-3" v-model="verify.facebook">
+        <i class="fab fa-facebook"></i> Facebook
+      </base-checkbox>
+      <base-checkbox class="mb-3" v-model="verify.instagram">
+        <i class="fab fa-instagram"></i> Instagram
+      </base-checkbox>
       <facebook-login
-        class="btn"
+        v-if="(verify.facebook || verify.instagram) && !isConnected"
+        class="facebook-button"
         appId="200688768464937"
         @login="login"
         @sdk-loaded="sdkLoaded"
         @logout="logout"
-        loginLabel="Iniciar Sessão"
+        loginLabel="Iniciar Sessão no Facebook"
         logoutLabel="Sair"
       >
       </facebook-login>
       <template slot="footer">
+        <base-button type="primary" class="ml-auto" @click="loader = true"
+          >Publicar notícia
+        </base-button>
         <base-button
           type="secondary"
           class="ml-auto"
@@ -36,6 +48,26 @@
           >Fechar
         </base-button>
       </template>
+    </modal>
+    <modal id="loading-modal" :show.sync="loader" class="loading-modal">
+      <h5
+        slot="header"
+        modal-classes="modal-dialog-centered modal-xl"
+        class="modal-title"
+        id="modal-title-default"
+      >
+        Carregando...
+        <span style="font-weight: bold"></span>
+      </h5>
+      <div class="d-flex justify-content-center">
+        <half-circle-spinner
+          class="mt-4"
+          v-if="loader"
+          :animation-duration="1000"
+          :size="60"
+          color="#113855"
+        />
+      </div>
     </modal>
     <div class="container-fluid mt--7">
       <div class="col-xl order-xl-1">
@@ -71,33 +103,38 @@
               <label for="main" class="image-wrapper">
                 <img id="image" v-bind:src="mainImage" />
               </label>
-              <input id="main" type="file" @change="teste" accept="image/x-png,image/gif,image/jpeg" />
+              <input
+                id="main"
+                type="file"
+                @change="teste"
+                accept="image/x-png,image/gif,image/jpeg"
+              />
               <hr class="my-4" />
               <!-- Address -->
               <div class="others-files-header-wrapper">
-              <h6 class="heading-small text-muted mb-4">
-                Outras fotos sobre a notícia
-              </h6>
-              <button @click="clearOthersImages" class="btn btn-warning btn btn">Limpar</button>
+                <h6 class="heading-small text-muted mb-4">
+                  Outras fotos sobre a notícia
+                </h6>
+                <button
+                  @click="clearOthersImages"
+                  class="btn btn-warning btn btn"
+                >
+                  Limpar
+                </button>
               </div>
               <div class="pl-lg-4">
                 <div class="row">
                   <div class="col-md-12">
                     <div class="image-group">
-                      <div 
+                      <div
                         class="image-wrapper"
                         :key="image"
-                        v-for="image in allImages">
-                        <img 
-                          id="image" 
-                          v-bind:src="image"
-                        />
+                        v-for="image in allImages"
+                      >
+                        <img id="image" v-bind:src="image" />
                       </div>
                       <label for="all" class="image-wrapper">
-                        <img 
-                          id="image" 
-                          src="img/others/add-image.jpg"
-                        />
+                        <img id="image" src="img/others/add-image.jpg" />
                       </label>
                       <input
                         id="all"
@@ -128,7 +165,6 @@
               <button @click="addNews" class="btn btn-success btn-lg btn-block">
                 Publicar notícia
               </button>
-             
             </form>
           </template>
         </card>
@@ -141,6 +177,7 @@
 import Vue from "vue";
 import VueClipboard from "vue-clipboard2";
 import BTooltipDirective from "bootstrap-vue/esm/directives/tooltip";
+import { HalfCircleSpinner } from "epic-spinners";
 import firebase from "firebase";
 
 //import swal from "sweetalert2";
@@ -149,140 +186,150 @@ import facebookLogin from "facebook-login-vuejs";
 Vue.use(VueClipboard);
 export default {
   components: {
-    facebookLogin
+    facebookLogin,
+    HalfCircleSpinner,
   },
   directives: {
     "b-tooltip": BTooltipDirective,
   },
   data() {
     return {
-      mainImage: 'img/others/add-image.jpg',
+      mainImage: "img/others/add-image.jpg",
       allImages: [],
       isConnected: false,
       Pubfacebook: false,
+      loader: false,
+      verify: {
+        facebook: false,
+        instagram: false,
+      },
       // name: '',
       //email: '',
       // personalID: '',
       // picture: '',
       // FB: undefined,
-      te:'',
+      te: "",
       noticia: {
         content: "",
         title: "",
         mainImage: null,
         keywords: [],
         othersfiles: [],
-        pageToken:'',
+        pageToken: "",
       },
     };
   },
-
   methods: {
- //não mexer
+    //não mexer
 
-  async postar(imagesURL,titulo,texto,id) {
- 
-  
-  
-  this.FB.getLoginStatus( function(response) {
-  if (response.status === 'connected') {
-    var accessToken = response.authResponse.accessToken;
-      this.FB.api(
-          '/me/accounts', 
-          'get',{
-            access_token: accessToken,
-          },
-         async  function(response){            
-         
-          for(var i=0;i<response.data.length;i++){
-            if(response.data[i].id==100632798699325){
-              
-            this.pageToken= response.data[i].access_token;
-              var conteudo=titulo+"\n\n"+texto;
-              var fotos=[];
-              let dados={
-                "access_token": this.pageToken,
-                "message": conteudo,  
-              };
-             var caminho="https://storage.googleapis.com/academiadeinvestimento-ba1c3.appspot.com/images/"+id+"/0.jpg";
-           
+    async postar(imagesURL, titulo, texto, id) {
+      this.FB.getLoginStatus(function (response) {
+        if (response.status === "connected") {
+          var accessToken = response.authResponse.accessToken;
+          this.FB.api(
+            "/me/accounts",
+            "get",
+            {
+              access_token: accessToken,
+            },
+            async function (response) {
+              for (var i = 0; i < response.data.length; i++) {
+                if (response.data[i].id == 100632798699325) {
+                  this.pageToken = response.data[i].access_token;
+                  var conteudo = titulo + "\n\n" + texto;
+                  var fotos = [];
+                  let dados = {
+                    access_token: this.pageToken,
+                    message: conteudo,
+                  };
+                  if (this.verify.instagram) {
+                    var caminho =
+                      "https://storage.googleapis.com/academiadeinvestimento-ba1c3.appspot.com/images/" +
+                      id +
+                      "/0.jpg";
 
-          this.FB.api('/17841445161723909/media?image_url='+caminho+'&caption='+conteudo, 'post', {
-          access_token: this.pageToken,
-          }, async function(response){
-            console.log(response);
-            if(response.id){
-              this.FB.api(
-                '/17841445161723909/media_publish?creation_id='+response.id, 
-                'post',{
-                  access_token: this.pageToken,
-                },
-                function(){            
-                      
-              });
-            }
-            
-          });
-                
-               
-    for(var i1=0;i1<imagesURL.length;i1++){
-                        console.log(this.pageToken);
-     await this.FB.api('/100632798699325/photos', 'post', {
-              access_token: this.pageToken,
-              url: imagesURL[i1],
-              message: 'teste',
-              published: false
-              }, 
-              async function(response){
-                if (response && response.id){
-                    fotos.push(await response.id);
-                  dados["attached_media["+parseInt(fotos.length-1)+"]"]={"media_fbid":await response.id};
-                }
-                console.log(response);
-                if(imagesURL.length==fotos.length){
-                      
                     this.FB.api(
-                      '/100632798699325/feed', 
-                      'post', 
-                      dados,
-                      function(response){
-                        console.log("ola",dados);
+                      "/17841445161723909/media?image_url=" +
+                        caminho +
+                        "&caption=" +
+                        conteudo,
+                      "post",
+                      {
+                        access_token: this.pageToken,
+                      },
+                      async function (response) {
                         console.log(response);
-                    });
+                        if (response.id) {
+                          this.FB.api(
+                            "/17841445161723909/media_publish?creation_id=" +
+                              response.id,
+                            "post",
+                            {
+                              access_token: this.pageToken,
+                            },
+                            function () {}
+                          );
+                        }
+                      }
+                    );
                   }
-              });
-      }
-
-
+                  if (this.verify.facebook)
+                    for (var i1 = 0; i1 < imagesURL.length; i1++) {
+                      console.log(this.pageToken);
+                      await this.FB.api(
+                        "/100632798699325/photos",
+                        "post",
+                        {
+                          access_token: this.pageToken,
+                          url: imagesURL[i1],
+                          message: "teste",
+                          published: false,
+                        },
+                        async function (response) {
+                          if (response && response.id) {
+                            fotos.push(await response.id);
+                            dados[
+                              "attached_media[" +
+                                parseInt(fotos.length - 1) +
+                                "]"
+                            ] = { media_fbid: await response.id };
+                          }
+                          console.log(response);
+                          if (imagesURL.length == fotos.length) {
+                            this.FB.api(
+                              "/100632798699325/feed",
+                              "post",
+                              dados,
+                              function (response) {
+                                console.log("ola", dados);
+                                console.log(response);
+                              }
+                            );
+                          }
+                        }
+                      );
+                    }
+                }
+              }
             }
-          }   
-        }); 
-      } 
-    });
-  
-   
-
-
+          );
+        }
+      });
     },
-    async getTokenPage(){
-
-  
-    },
+    async getTokenPage() {},
     sdkLoaded(payload) {
       this.isConnected = payload.isConnected;
       this.FB = payload.FB;
     },
     async login() {
-      this.Pubfacebook=false;
+      this.Pubfacebook = false;
       this.isConnected = true;
-      
     },
     logout() {
       this.isConnected = false;
     },
     clearOthersImages() {
-      this.allImages = [],
-      this.noticia.othersfiles = [];
+      (this.allImages = []), (this.noticia.othersfiles = []);
     },
 
     onCopy() {
@@ -292,22 +339,20 @@ export default {
       });
     },
     teste2(e) {
-       
       var image = e.target.files || e.dataTransfer.files;
       this.noticia.othersfiles.push(image);
-      image.forEach(e => this.allImages.push(URL.createObjectURL(e)));
-    
+      image.forEach((e) => this.allImages.push(URL.createObjectURL(e)));
     },
     teste(e) {
       var image = e.target.files || e.dataTransfer.files;
-      var blob = image[0].slice(0, image[0].size, 'image/jpg'); 
-      var newFile = new File([blob], 'principal.jpg', {type: 'image/jpg'});
-    
-      this.noticia.mainImage=newFile;
+      var blob = image[0].slice(0, image[0].size, "image/jpg");
+      var newFile = new File([blob], "principal.jpg", { type: "image/jpg" });
+
+      this.noticia.mainImage = newFile;
       const fakeImageURL = URL.createObjectURL(this.noticia.mainImage);
       this.mainImage = fakeImageURL;
     },
-     
+
     deleNew() {
       //apagar
       firebase
@@ -324,9 +369,7 @@ export default {
     },
     // Função para adicionar noticia
     async addNews() {
-      
-      
-      this.Pubfacebook=true;
+      this.Pubfacebook = true;
       await firebase
         .firestore()
         .collection("news")
@@ -348,7 +391,7 @@ export default {
           await firebase
             .storage()
             .ref()
-            .child("images/" + this.id + "/" + 0 +'.'+mainType )
+            .child("images/" + this.id + "/" + 0 + "." + mainType)
             .put(this.noticia.mainImage)
             .then(
               async (image) =>
@@ -386,14 +429,14 @@ export default {
                           .then(async () => {
                             // terminar o loader
                             imagesURL.push(mainImageURL);
-                         
-                          if(this.isConnected)
-                            this.postar(
-                              imagesURL,
-                              this.noticia.title,
-                              this.noticia.content,
-                              this.id
-                            );
+
+                            if (this.isConnected)
+                              this.postar(
+                                imagesURL,
+                                this.noticia.title,
+                                this.noticia.content,
+                                this.id
+                              );
 
                             //-------------------------------------
                           });
@@ -411,48 +454,57 @@ export default {
                 mainImage: mainImageURL,
               })
               .then(async () => {
-                  // terminar o loader
-                  imagesURL.push(mainImageURL);
-        
-                  if(this.isConnected)
-                      this.postar(
-                      imagesURL,
-                      this.noticia.title,
-                      this.noticia.content,
-                      this.id
-                      );
+                // terminar o loader
+                imagesURL.push(mainImageURL);
+
+                if (this.isConnected)
+                  this.postar(
+                    imagesURL,
+                    this.noticia.title,
+                    this.noticia.content,
+                    this.id
+                  );
 
                 // -----------------------------------------
               });
         });
-        
     },
   },
 };
 </script>
 <style>
-  .others-files-header-wrapper {
-    display: flex;
-    justify-content: space-between;
-  }
-  .image-group{
-    display: flex;
-    flex-wrap: wrap;
-  }
-  .image-wrapper {
-    margin: 0.5rem;
-    min-width: 5rem;
-    max-width: 10rem;
-    min-height: 5rem;
-    max-height: 10rem;
-    border-radius: 5px;
-    overflow: hidden;
-  }
-  .image-wrapper > img{
-    width: 100%;
-    height: 100%;
-  }
-  input[type="file"] {
-    opacity: 0;
-  }
+.others-files-header-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+.image-group {
+  display: flex;
+  flex-wrap: wrap;
+}
+.image-wrapper {
+  margin: 0.5rem;
+  min-width: 5rem;
+  max-width: 10rem;
+  min-height: 5rem;
+  max-height: 10rem;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.image-wrapper > img {
+  width: 100%;
+  height: 100%;
+}
+input[type="file"] {
+  opacity: 0;
+}
+.facebook-button > button {
+  border-radius: 10px;
+  cursor: pointer;
+}
+.facebook-button > button > img {
+  display: none;
+}
+.loading-modal .close {
+  display: none;
+}
 </style>

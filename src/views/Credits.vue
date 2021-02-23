@@ -7,7 +7,13 @@
       <!-- Card stats -->
     </base-header>
     <div class="mt-3 ml-3 mb-3" v-if="!loader">
-      <button v-if="this.$store.getters.getRoleEditor || this.$store.getters.getRoleAdmin" class="btn btn-primary" @click="changeTax = true">
+      <button
+        v-if="
+          this.$store.getters.getRoleEditor || this.$store.getters.getRoleAdmin
+        "
+        class="btn btn-primary"
+        @click="changeTax = true"
+      >
         Alterar o valor das taxas
       </button>
     </div>
@@ -20,7 +26,10 @@
         color="#113855"
       />
     </div>
-    <modal :show.sync="changeTax" v-if="this.$store.state.getRoleEditor || this.$store.getters.getRoleAdmin">
+    <modal
+      :show.sync="changeTax"
+      v-if="this.$store.state.getRoleEditor || this.$store.getters.getRoleAdmin"
+    >
       <h5
         slot="header"
         modal-classes="modal-dialog-centered modal-xl"
@@ -47,7 +56,12 @@
         </base-button>
       </template>
     </modal>
-    <modal :show.sync="editTax" v-if="this.$store.getters.getRoleEditor || this.$store.getters.getRoleAdmin">
+    <modal
+      :show.sync="editTax"
+      v-if="
+        this.$store.getters.getRoleEditor || this.$store.getters.getRoleAdmin
+      "
+    >
       <h5
         slot="header"
         modal-classes="modal-dialog-centered modal-xl"
@@ -118,6 +132,9 @@
               <td class="budget">{{ credit.capital }} AKZ</td>
               <td class="budget">{{ credit.duration }} meses</td>
               <td class="budget">{{ credit.result.toFixed(2) }} AKZ</td>
+              <td class="budget">
+                {{ new Date(credit.createdAt).toLocaleString() }}
+              </td>
             </tr>
           </tbody>
         </table>
@@ -149,7 +166,8 @@ export default {
       id: "",
     };
   },
-  beforeCreate() {
+
+  created() {
     db.collection("simulation")
       .where("type", "==", "Crédito")
       .onSnapshot((querySnapshot) => {
@@ -167,6 +185,7 @@ export default {
             name: name,
             email: email,
           });
+          creditsArray.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
         });
         this.credits = creditsArray;
         this.loader = false;
@@ -174,7 +193,9 @@ export default {
 
     db.collection("credits")
       .get()
-      .then(querySnapshot => querySnapshot.forEach(doc => creditsTaxes.push(doc)));
+      .then((querySnapshot) =>
+        querySnapshot.forEach((doc) => creditsTaxes.push(doc))
+      );
   },
   methods: {
     async getCredit(id) {
@@ -231,7 +252,7 @@ export default {
                 showConfirmButton: false,
                 timer: 1500,
               });
-              this.editTax=false;
+              this.editTax = false;
             })
       );
     },
