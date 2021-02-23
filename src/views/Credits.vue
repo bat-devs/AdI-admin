@@ -243,7 +243,7 @@ export default {
             .doc(`${index}`)
             .update({
               [`${index}`]: line,
-              assingnedBy: this.$store.getters.currentUserEmail
+              assignedby: this.$store.getters.getCurrentUserEmail,
             })
             .then(() => {
               swal.fire({

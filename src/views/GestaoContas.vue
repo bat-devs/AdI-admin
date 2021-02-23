@@ -14,17 +14,22 @@
           placeholder="Procurar pela referência..."
         ></base-input>
       </div>
-      <download-excel
-        :data="data.json_data"
-        :fields="data.json_fields"
-        class="mt-3 ml-5 mb-3"
-        name="Relatório de transações.xls"
-        style="width: 230px"
-      >
-        <button class="btn btn-primary">
-          <i class="fas fa-file-excel"></i> Baixar relatório (Excel)
-        </button>
-      </download-excel>
+      <div v-if="data.json_data.length != 0">
+        <download-excel
+          :data="data.json_data"
+          :fields="data.json_fields"
+          class="mt-3 ml-5 mb-3"
+          name="Relatório de transações.xls"
+          style="width: 230px"
+        >
+          <button class="btn btn-primary">
+            <i class="fas fa-file-excel"></i> Baixar relatório (Excel)
+          </button>
+        </download-excel>
+      </div>
+      <div v-else>
+        <p>Não tem nenhuma transação</p>
+      </div>
     </div>
 
     <div class="d-flex justify-content-center">
@@ -60,14 +65,20 @@
               <td class="budget">{{ account.name }}</td>
               <td class="budget">
                 <div class="row">
-                  <button v-if="$store.getters.getRoleAdmin || $store.getters.getRoleEditor || $store.getters.getRoleViewer"
+                  <button
+                    v-if="
+                      $store.getters.getRoleAdmin ||
+                      $store.getters.getRoleEditor ||
+                      $store.getters.getRoleViewer
+                    "
                     type="button"
                     @click="accountData(account.accountNumber)"
                     class="btn btn-primary"
                   >
                     <i class="fas fa-eye"></i>
                   </button>
-                  <button v-if="$store.getters.getRoleAdmin"
+                  <button
+                    v-if="$store.getters.getRoleAdmin"
                     type="button"
                     @click="accountDataEdit(account.accountNumber)"
                     class="btn btn-info"
@@ -76,7 +87,10 @@
                   </button>
                   <router-link
                     class="btn btn-warning"
-                    :to="{name:'Transações',params:{id:account.accountNumber}}"
+                    :to="{
+                      name: 'Transações',
+                      params: { id: account.accountNumber },
+                    }"
                   >
                     <i class="fas fa-exchange-alt"></i>
                   </router-link>
@@ -87,7 +101,14 @@
         </table>
       </div>
     </div>
-    <modal :show.sync="modal" v-if="$store.getters.getRoleAdmin || $store.getters.getRoleEditor || $store.getters.getRoleViewer">
+    <modal
+      :show.sync="modal"
+      v-if="
+        $store.getters.getRoleAdmin ||
+        $store.getters.getRoleEditor ||
+        $store.getters.getRoleViewer
+      "
+    >
       <h5
         slot="header"
         modal-classes="modal-dialog-centered modal-xl"
@@ -146,7 +167,11 @@
         </base-button>
       </template>
     </modal>
-    <modal :show.sync="modal1" modal-classes="modal-dialog-centered modal-xl" v-if="$store.getters.getRoleAdmin">
+    <modal
+      :show.sync="modal1"
+      modal-classes="modal-dialog-centered modal-xl"
+      v-if="$store.getters.getRoleAdmin"
+    >
       <h5
         slot="header"
         modal-classes="modal-dialog-centered modal-xl"
@@ -302,7 +327,7 @@ export default {
           "Valor depois da transação": "fundAfter",
           "Descrição": "description",
           "Data da transação": "createdSim",
-          "Feita por":"assingnedBy"
+          "Feita por": "assignedby",
         },
         json_data: [],
         json_meta: [
@@ -364,8 +389,8 @@ export default {
             gender: this.updateAccount.gender,
             nationality: this.updateAccount.nationality,
             phone: this.updateAccount.phone,
-            assingnedBy: this.$store.getters.currentUserEmail
           },
+          assignedby: this.$store.getters.getCurrentUserEmail,
         })
         .then(function () {
           swal.fire({
@@ -395,13 +420,13 @@ export default {
             });
           transactions.push({
             ...f,
-            createdSim : new Date(f.createdAt).toLocaleString(),
+            createdSim: new Date(f.createdAt).toLocaleString(),
             user: dataUser,
           });
         });
 
         this.allTransactions = transactions;
-        this.data.json_data=transactions;
+        this.data.json_data = transactions;
       });
     },
   },

@@ -179,7 +179,7 @@ export default {
  
 
     await db.collection("simulation")
-      .orderBy("createdAt")
+      .orderBy("createdAt","desc")
       .onSnapshot((querySnapshot) => {
         var aplicationsArray = [];
         

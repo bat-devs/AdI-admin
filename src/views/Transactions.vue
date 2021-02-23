@@ -27,7 +27,7 @@
       <base-input
         v-model="description"
         label="Descrição"
-        placeholder="Descriçaõ"
+        placeholder="Descrição"
         input-classes="form-control"
       />
       <base-input
@@ -112,6 +112,7 @@
 import firebase from "firebase";
 import { HalfCircleSpinner } from "epic-spinners";
 import swal from "sweetalert2";
+
 const db = firebase.firestore();
 export default {
   components: {
@@ -188,7 +189,7 @@ export default {
           fundAfter: parseInt(this.value) + money,
           reference: parseInt(this.$route.params.id),
           value: parseInt(this.value),
-          assingnedBy: this.$store.getters.currentUserEmail
+          assignedby: this.$store.getters.getCurrentUserEmail,
         })
         .then(() => {
           swal.fire({
@@ -216,6 +217,8 @@ export default {
             reference: parseInt(this.$route.params.id),
             value: parseInt(this.value),
           });
+          this.value='';
+          this.description='';
         });
     },
   },
