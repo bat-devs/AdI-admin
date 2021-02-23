@@ -297,7 +297,7 @@ export default {
 
                   if (this.facebook)
                     for (var i1 = 0; i1 < imagesURL.length; i1++) {
-                      console.log(this.pageToken);
+                      
                       await this.FB.api(
                         "/100632798699325/photos",
                         "post",
@@ -393,7 +393,7 @@ export default {
         .doc("id")
         .delete()
         .then(function () {
-          console.log("apagdao");
+          
         })
         .catch(function (error) {
           console.error("Erro ", error);
