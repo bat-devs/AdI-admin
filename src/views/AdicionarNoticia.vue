@@ -20,14 +20,14 @@
       <h2>
         Aonde deseja publicar a notícia? <b> (Além de publicar no site)</b>
       </h2>
-      <base-checkbox class="mb-3" v-model="verify.facebook">
+      <base-checkbox class="mb-3" v-model="facebook" >
         <i class="fab fa-facebook"></i> Facebook
       </base-checkbox>
-      <base-checkbox class="mb-3" v-model="verify.instagram">
+      <base-checkbox class="mb-3" v-model="instagram" >
         <i class="fab fa-instagram"></i> Instagram
       </base-checkbox>
       <facebook-login
-        v-if="(verify.facebook || verify.instagram) && !isConnected"
+        v-if="(facebook || instagram) && !isConnected"
         class="facebook-button"
         appId="200688768464937"
         @login="login"
@@ -184,6 +184,7 @@ import firebase from "firebase";
 import facebookLogin from "facebook-login-vuejs";
 //const db = firebase.firestore();
 Vue.use(VueClipboard);
+ 
 export default {
   components: {
     facebookLogin,
@@ -199,10 +200,10 @@ export default {
       isConnected: false,
       Pubfacebook: false,
       loader: false,
-      verify: {
-        facebook: false,
-        instagram: false,
-      },
+      
+      facebook: false,
+      instagram: false,
+      
       // name: '',
       //email: '',
       // personalID: '',
@@ -223,18 +224,25 @@ export default {
     //não mexer
 
     async postar(imagesURL, titulo, texto, id) {
-      this.FB.getLoginStatus(function (response) {
+
+      
+      
+     await this.FB.getLoginStatus( async  (response) =>{
         if (response.status === "connected") {
+
           var accessToken = response.authResponse.accessToken;
-          this.FB.api(
+
+          await this.FB.api(
             "/me/accounts",
             "get",
             {
               access_token: accessToken,
             },
-            async function (response) {
+            async  (response)=> {
+
               for (var i = 0; i < response.data.length; i++) {
                 if (response.data[i].id == 100632798699325) {
+
                   this.pageToken = response.data[i].access_token;
                   var conteudo = titulo + "\n\n" + texto;
                   var fotos = [];
@@ -242,13 +250,14 @@ export default {
                     access_token: this.pageToken,
                     message: conteudo,
                   };
-                  if (this.verify.instagram) {
+                 
+                  if (this.instagram) {
                     var caminho =
                       "https://storage.googleapis.com/academiadeinvestimento-ba1c3.appspot.com/images/" +
                       id +
                       "/0.jpg";
 
-                    this.FB.api(
+                    await this.FB.api(
                       "/17841445161723909/media?image_url=" +
                         caminho +
                         "&caption=" +
@@ -257,23 +266,28 @@ export default {
                       {
                         access_token: this.pageToken,
                       },
-                      async function (response) {
-                        console.log(response);
+                      async (response) =>{
+                      
                         if (response.id) {
-                          this.FB.api(
+                          await this.FB.api(
                             "/17841445161723909/media_publish?creation_id=" +
                               response.id,
                             "post",
                             {
                               access_token: this.pageToken,
                             },
-                            function () {}
+                            ()=>{
+                                if(!this.facebook)
+                                this.loader=false;
+                            }
                           );
                         }
                       }
                     );
                   }
-                  if (this.verify.facebook)
+                 
+
+                  if (this.facebook)
                     for (var i1 = 0; i1 < imagesURL.length; i1++) {
                       console.log(this.pageToken);
                       await this.FB.api(
@@ -285,7 +299,7 @@ export default {
                           message: "teste",
                           published: false,
                         },
-                        async function (response) {
+                        async (response)=> {
                           if (response && response.id) {
                             fotos.push(await response.id);
                             dados[
@@ -294,13 +308,14 @@ export default {
                                 "]"
                             ] = { media_fbid: await response.id };
                           }
-                          console.log(response);
+                          
                           if (imagesURL.length == fotos.length) {
-                            this.FB.api(
+                            await this.FB.api(
                               "/100632798699325/feed",
                               "post",
                               dados,
-                              function (response) {
+                               (response)=> {
+                                this.loader=false;
                                 console.log("ola", dados);
                                 console.log(response);
                               }
@@ -311,19 +326,27 @@ export default {
                     }
                 }
               }
+              
             }
           );
         }
       });
+      
+       
     },
-    async getTokenPage() {},
+    closeModal() {
+      this.loader=false;
+    },
     sdkLoaded(payload) {
       this.isConnected = payload.isConnected;
       this.FB = payload.FB;
+     
     },
     async login() {
       this.Pubfacebook = false;
       this.isConnected = true;
+      this.Pubfacebook = true;
+      this.loader = false;
     },
     logout() {
       this.isConnected = false;
@@ -430,7 +453,7 @@ export default {
                             // terminar o loader
                             imagesURL.push(mainImageURL);
 
-                            if (this.isConnected)
+                            if (this.isConnected && this.loader)
                               this.postar(
                                 imagesURL,
                                 this.noticia.title,
@@ -457,7 +480,7 @@ export default {
                 // terminar o loader
                 imagesURL.push(mainImageURL);
 
-                if (this.isConnected)
+                if (this.isConnected && this.loader )
                   this.postar(
                     imagesURL,
                     this.noticia.title,
