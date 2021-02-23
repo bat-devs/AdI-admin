@@ -38,7 +38,7 @@
       >
       </facebook-login>
       <template slot="footer">
-        <base-button type="primary" class="ml-auto" @click="loader = true"
+        <base-button type="primary" class="ml-auto" @click="toPost()"
           >Publicar notícia
         </base-button>
         <base-button
@@ -203,13 +203,14 @@ export default {
       currentUserEmail:'',
       facebook: false,
       instagram: false,
+      imagesURL:[],
       
       // name: '',
       //email: '',
       // personalID: '',
       // picture: '',
       // FB: undefined,
-      te: "",
+      
       noticia: {
         content: "",
         title: "",
@@ -228,7 +229,7 @@ export default {
 
     async postar(imagesURL, titulo, texto, id) {
 
-      console.log("fixe");
+      
       
      await this.FB.getLoginStatus( async  (response) =>{
         if (response.status === "connected") {
@@ -280,6 +281,7 @@ export default {
                               access_token: this.pageToken,
                             },
                             ()=>{
+                              
                                 if(!this.facebook)
                                 this.loader=false;
                             }
@@ -349,7 +351,7 @@ export default {
       this.Pubfacebook = false;
       this.isConnected = true;
       this.Pubfacebook = true;
-      this.loader = false;
+      
     },
     logout() {
       this.isConnected = false;
@@ -410,7 +412,7 @@ export default {
         .then(async (id) => {
          
           this.id = id.id;
-          var imagesURL = [];
+          
           var mainImageURL;
           var lengthMainImage = this.noticia.mainImage.name.split(".").length;
           var mainType = this.noticia.mainImage.name.split(".")[
@@ -442,32 +444,23 @@ export default {
                   .put(image)
                   .then(async (image) => {
                     await image.ref.getDownloadURL().then((url) => {
-                      imagesURL.push(url);
+                      this.imagesURL.push(url);
 
                       if (
-                        imagesURL.length == this.noticia.othersfiles[0].length
+                        this.imagesURL.length == this.noticia.othersfiles[0].length
                       )
                         firebase
                           .firestore()
                           .collection("news")
                           .doc(this.id)
                           .update({
-                            images: imagesURL,
+                            images: this.imagesURL,
                             mainImage: mainImageURL,
                           })
                           .then(async () => {
                             // terminar o loader
-                            imagesURL.push(mainImageURL);
-                            
-                            if (this.isConnected ){
-                              this.postar(
-                                imagesURL,
-                                this.noticia.title,
-                                this.noticia.content,
-                                this.id
-                              );
-                            }
-                            //-------------------------------------
+                            this.imagesURL.push(mainImageURL);
+
                           });
 
                     });
@@ -480,25 +473,27 @@ export default {
               .collection("news")
               .doc(this.id)
               .update({
-                images: imagesURL,
+                images: this.imagesURL,
                 mainImage: mainImageURL,
               })
               .then(async () => {
                 // terminar o loader
-                imagesURL.push(mainImageURL);
+                this.imagesURL.push(mainImageURL);
 
-                if (this.isConnected )
-                  this.postar(
-                    imagesURL,
-                    this.noticia.title,
-                    this.noticia.content,
-                    this.id
-                  );
-
-                // -----------------------------------------
               });
         });
     },
+    toPost(){
+      this.loader=true;
+if (this.isConnected && this.loader){
+this.postar(
+   this.imagesURL,
+     this.noticia.title,
+       this.noticia.content,
+          this.id
+          );
+                            }
+    }
   },
 };
 </script>
