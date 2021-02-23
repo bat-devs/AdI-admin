@@ -415,7 +415,6 @@ export default {
         })
         .then(async (id) => {
           this.id = id.id;
-
           var mainImageURL;
           var lengthMainImage = this.noticia.mainImage.name.split(".").length;
           var mainType = this.noticia.mainImage.name.split(".")[
