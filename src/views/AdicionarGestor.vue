@@ -106,6 +106,7 @@ export default {
                           .add({
                             email: this.email,
                             role: this.role,
+                            assingnedBy: this.$store.getters.currentUserEmail
                           })
                           .then(() =>
                             firebase
