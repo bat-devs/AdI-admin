@@ -286,6 +286,7 @@ export default {
                                   showConfirmButton: false,
                                   timer: 1500,
                                 });
+                                this.$router.push("/noticias");
                               }
                             }
                           );
@@ -330,6 +331,7 @@ export default {
                                   showConfirmButton: false,
                                   timer: 1500,
                                 });
+                                this.$router.push("/noticias");
                               }
                             );
                           }
@@ -478,6 +480,7 @@ export default {
                                 showConfirmButton: false,
                                 timer: 1500,
                               });
+                              this.$router.push("/noticias");
                             }
                           });
                     });
@@ -513,6 +516,7 @@ export default {
                     showConfirmButton: false,
                     timer: 1500,
                   });
+                  this.$router.push("/noticias");
                 }
               });
         });
