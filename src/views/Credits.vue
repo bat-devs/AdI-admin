@@ -243,6 +243,7 @@ export default {
             .doc(`${index}`)
             .update({
               [`${index}`]: line,
+              assingnedBy: this.$store.getters.currentUserEmail
             })
             .then(() => {
               swal.fire({

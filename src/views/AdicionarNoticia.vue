@@ -378,6 +378,7 @@ export default {
           keywords: "fixe",
           title: this.noticia.title,
           published: firebase.firestore.Timestamp.now(),
+          assingnedBy: this.$store.getters.currentUserEmail
         })
         .then(async (id) => {
           this.id = id.id;

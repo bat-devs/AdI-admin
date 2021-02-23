@@ -302,6 +302,7 @@ export default {
           "Valor depois da transação": "fundAfter",
           "Descrição": "description",
           "Data da transação": "createdSim",
+          "Feita por":"assingnedBy"
         },
         json_data: [],
         json_meta: [
@@ -363,6 +364,7 @@ export default {
             gender: this.updateAccount.gender,
             nationality: this.updateAccount.nationality,
             phone: this.updateAccount.phone,
+            assingnedBy: this.$store.getters.currentUserEmail
           },
         })
         .then(function () {
