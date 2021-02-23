@@ -207,13 +207,7 @@ export default {
       facebook: false,
       instagram: false,
       imagesURL: [],
-
-      // name: '',
-      //email: '',
-      // personalID: '',
-      // picture: '',
-      // FB: undefined,
-
+      pageToken: "",
       noticia: {
         content: "",
         title: "",
@@ -228,8 +222,26 @@ export default {
     this.currentUserEmail = firebase.auth().currentUser.email;
   },
   methods: {
-    //não mexer
+    cleanData(){
+      this.mainImage= "img/others/add-image.jpg"
+      this.allImages=[];
+      this.isConnected= false;
+      this.Pubfacebook= false;
+      this.loader= false;
+      this.currentUserEmail= "";
+      this.facebook= false;
+      this.instagram= false;
+      this.imagesURL= [];
+      this.noticia= {
+        content: "",
+        title: "",
+        mainImage: null,
+        keywords: [],
+        othersfiles: [],
+      };
+      
 
+    },
     async postar(imagesURL, titulo, texto, id) {
       await this.FB.getLoginStatus(async (response) => {
         if (response.status === "connected") {
@@ -286,6 +298,7 @@ export default {
                                   showConfirmButton: false,
                                   timer: 1500,
                                 });
+                                this.cleanData();
                                 this.$router.push("/noticias");
                               }
                             }
@@ -331,7 +344,9 @@ export default {
                                   showConfirmButton: false,
                                   timer: 1500,
                                 });
+                                this.cleanData();
                                 this.$router.push("/noticias");
+                                
                               }
                             );
                           }
@@ -393,7 +408,7 @@ export default {
         .doc("id")
         .delete()
         .then(function () {
-          
+         
         })
         .catch(function (error) {
           console.error("Erro ", error);
@@ -479,6 +494,7 @@ export default {
                                 showConfirmButton: false,
                                 timer: 1500,
                               });
+                              this.cleanData();
                               this.$router.push("/noticias");
                             }
                           });
@@ -515,6 +531,7 @@ export default {
                     showConfirmButton: false,
                     timer: 1500,
                   });
+                  this.cleanData();
                   this.$router.push("/noticias");
                 }
               });
