@@ -97,6 +97,9 @@ export default {
       sidebarBackground: "vue", //vue|blue|orange|green|red|primary
     };
   },
+  created() {
+    this.$store.commit("refresh");
+  },
   methods: {
     toggleSidebar() {
       if (this.$sidebar.showSidebar) {
