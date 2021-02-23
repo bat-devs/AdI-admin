@@ -200,7 +200,7 @@ export default {
       isConnected: false,
       Pubfacebook: false,
       loader: false,
-      
+      currentUserEmail:'',
       facebook: false,
       instagram: false,
       
@@ -220,12 +220,15 @@ export default {
       },
     };
   },
+  beforeCreate(){
+    this.currentUserEmail=firebase.auth().currentUser.email;
+  },
   methods: {
     //não mexer
 
     async postar(imagesURL, titulo, texto, id) {
 
-      
+      console.log("fixe");
       
      await this.FB.getLoginStatus( async  (response) =>{
         if (response.status === "connected") {
@@ -393,6 +396,7 @@ export default {
     // Função para adicionar noticia
     async addNews() {
       this.Pubfacebook = true;
+      console.log(this.currentUserEmail);
       await firebase
         .firestore()
         .collection("news")
@@ -401,9 +405,10 @@ export default {
           keywords: "fixe",
           title: this.noticia.title,
           published: firebase.firestore.Timestamp.now(),
-          assingnedBy: this.$store.getters.currentUserEmail
+          assingnedBy: this.currentUserEmail
         })
         .then(async (id) => {
+         
           this.id = id.id;
           var imagesURL = [];
           var mainImageURL;
@@ -453,17 +458,18 @@ export default {
                           .then(async () => {
                             // terminar o loader
                             imagesURL.push(mainImageURL);
-
-                            if (this.isConnected && this.loader)
+                            
+                            if (this.isConnected ){
                               this.postar(
                                 imagesURL,
                                 this.noticia.title,
                                 this.noticia.content,
                                 this.id
                               );
-
+                            }
                             //-------------------------------------
                           });
+
                     });
                   });
               }
@@ -481,7 +487,7 @@ export default {
                 // terminar o loader
                 imagesURL.push(mainImageURL);
 
-                if (this.isConnected && this.loader )
+                if (this.isConnected )
                   this.postar(
                     imagesURL,
                     this.noticia.title,
