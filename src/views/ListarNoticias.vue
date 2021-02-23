@@ -49,9 +49,7 @@
               </td>
               <td>
                 <div class="row">
-                  <button type="button" class="btn btn-warning">
-                    <i class="far fa-edit"></i>
-                  </button>
+                 
                   <button
                     type="button"
                     @click="deleteNew(noticia.id)"
