@@ -207,22 +207,22 @@ export default {
              var caminho="https://storage.googleapis.com/academiadeinvestimento-ba1c3.appspot.com/images/"+id+"/0.jpg";
            
 
-            this.FB.api('/17841445161723909/media?image_url='+caminho+'&caption='+conteudo, 'post', {
-            access_token: this.pageToken,
-            }, async function(response){
-              console.log(response);
-              if(response.id){
-                this.FB.api(
-                  '/17841445161723909/media_publish?creation_id='+response.id, 
-                  'post',{
-                    access_token: this.pageToken,
-                  },
-                  function(){            
-                        
-                });
-              }
-              
-            });
+          this.FB.api('/17841445161723909/media?image_url='+caminho+'&caption='+conteudo, 'post', {
+          access_token: this.pageToken,
+          }, async function(response){
+            console.log(response);
+            if(response.id){
+              this.FB.api(
+                '/17841445161723909/media_publish?creation_id='+response.id, 
+                'post',{
+                  access_token: this.pageToken,
+                },
+                function(){            
+                      
+              });
+            }
+            
+          });
                 
                
     for(var i1=0;i1<imagesURL.length;i1++){
