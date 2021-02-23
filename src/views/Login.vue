@@ -23,10 +23,6 @@
               v-model="user.password"
             >
             </base-input>
-
-            <base-checkbox class="custom-control-alternative">
-              <span class="text-muted">Lembrar-me</span>
-            </base-checkbox>
             <div class="text-center">
               <button type="submit" class="btn btn-primary my-4">Entrar</button>
             </div>

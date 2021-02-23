@@ -5,11 +5,6 @@
       class="pb-6 pb-8 pt-5 pt-md-8"
     >
     </base-header>
-    <div class="mt-3 ml-3 mb-3" v-if="!loader">
-      <button class="btn btn-primary" v-if="this.$store.getters.getRoleAdmin" @click="insertCodeModal = true">
-        Fazer download do relatório
-      </button>
-    </div>
     <modal :show.sync="insertCodeModal" v-if="this.$store.getters.getRoleAdmin">
       <h5
         slot="header"
@@ -38,36 +33,19 @@
         <base-button type="primary" @click="modalChange()">Entrar</base-button>
       </template>
     </modal>
-    <modal :show.sync="downloadExcelModal" v-if="this.$store.getters.getRoleAdmin">
-      <h5
-        slot="header"
-        modal-classes="modal-dialog-centered modal-xl"
-        class="modal-title"
-        id="modal-title-default"
-      >
-        Download do relatório
-        <span style="font-weight: bold"></span>
-      </h5>
-      <download-excel
-        :data="data.json_data"
-        :fields="data.json_fields"
-        class="mt-3 ml-3 mb-3"
-        name="Relatório.xls"
-        style="width: 230px"
-      >
-        <button class="btn btn-primary">
-          <i class="fas fa-file-excel"></i> Baixar ficheiro excel
-        </button>
-      </download-excel>
-      <template slot="footer">
-        <base-button
-          type="secondary"
-          class="ml-auto"
-          @click="downloadExcelModal = false"
-          >Fechar
-        </base-button>
-      </template>
-    </modal>
+
+    <download-excel
+      v-if="this.$store.getters.getRoleAdmin"
+      :data="data.json_data"
+      :fields="data.json_fields"
+      class="mt-3 ml-3 mb-3"
+      name="Relatório.xls"
+      style="width: 230px"
+    >
+      <button class="btn btn-primary">
+        <i class="fas fa-file-excel"></i> Baixar ficheiro excel
+      </button>
+    </download-excel>
 
     <div class="d-flex justify-content-center mt-3">
       <half-circle-spinner
@@ -121,7 +99,7 @@
               <td class="budget">{{ aplication.duration }} meses</td>
               <td class="budget">{{ aplication.result }} AKZ</td>
               <td class="budget">
-                {{  new Date(aplication.createdAt).toLocaleString()}}
+                {{ new Date(aplication.createdAt).toLocaleString() }}
               </td>
             </tr>
           </tbody>
@@ -133,7 +111,7 @@
 <script>
 import firebase from "firebase";
 import JsonExcel from "vue-json-excel";
-import swal from "sweetalert2";
+//import swal from "sweetalert2";
 import { HalfCircleSpinner } from "epic-spinners";
 const db = firebase.firestore();
 
@@ -150,14 +128,14 @@ export default {
         json_fields: {
           "Nome do cliente": "name",
           "E-mail": "email",
-          "Telefone": "phone",
+          Telefone: "phone",
           "Data de registo": "createdSim",
           "Abertura de conta": "accountCreationUser",
           "Tipo da Aplicação": "type",
-          "Aplicação": "productName",
-          "Capital": "capital",
+          Aplicação: "productName",
+          Capital: "capital",
           "Duração (meses)": "duration",
-          "Resultado": "result",
+          Resultado: "result",
         },
         json_data: [],
         json_meta: [
@@ -175,14 +153,12 @@ export default {
     };
   },
   async created() {
-
- 
-
-    await db.collection("simulation")
-      .orderBy("createdAt")
+    await db
+      .collection("simulation")
+      .orderBy("createdAt", "desc")
       .onSnapshot((querySnapshot) => {
         var aplicationsArray = [];
-        
+
         querySnapshot.forEach(async (doc) => {
           let f = doc.data();
           let name, email, createdSim, phone, accountCreationUser;
@@ -191,14 +167,15 @@ export default {
             .doc(f.uid)
             .get()
             .then((document) => {
-              const userData =  document.data();
-              
+              const userData = document.data();
+
               name = userData.name;
               email = userData.email;
               createdSim = new Date(f.createdAt).toLocaleString();
               phone = userData.account?.phone || "";
-              accountCreationUser =
-               userData.account?.createdAt ? new Date(userData.account?.createdAt).toLocaleString() : "";
+              accountCreationUser = userData.account?.createdAt
+                ? new Date(userData.account?.createdAt).toLocaleString()
+                : "";
             });
 
           aplicationsArray.push({
@@ -209,35 +186,14 @@ export default {
             phone,
             accountCreationUser,
           });
-            
-
-         
         });
-        
+
         this.aplications = aplicationsArray;
         this.data.json_data = aplicationsArray;
         this.loader = false;
-        
       });
-      console.log(this.aplications.length);
+    console.log(this.aplications.length);
   },
-  methods: {
-    modalChange() {
-      if (this.EnterCode === "123456") {
-        this.EnterCode = "";
-        this.insertCodeModal = false;
-        this.downloadExcelModal = true;
-      } else {
-        this.EnterCode = "";
-        swal.fire({
-          position: "top-end",
-          icon: "error",
-          title: "A referência inserida está errada!",
-          showConfirmButton: false,
-          timer: 1200,
-        });
-      }
-    },
-  },
+ 
 };
 </script>

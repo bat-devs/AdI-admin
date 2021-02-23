@@ -169,6 +169,7 @@ export default {
             name: name,
             email: email,
           });
+          creditsArray.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
         });
         this.credits = creditsArray;
         this.loader = false;
@@ -224,6 +225,7 @@ export default {
             .doc(`${index}`)
             .update({
               [`${index}`]: line,
+              assingnedBy: this.$store.getters.currentUserEmail
             })
             .then(() => {
               swal.fire({

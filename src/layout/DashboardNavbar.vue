@@ -39,11 +39,10 @@ export default {
       activeNotifications: false,
       showMenu: false,
       searchQuery: "",
+      currentUserEmail: this.$store.getters.getCurrentUserEmail,
     };
   },
-  beforeMount() {
-    this.$store.commit("refresh");
-  },
+  
   methods: {
     toggleSidebar() {
       this.$sidebar.displaySidebar(!this.$sidebar.showSidebar);

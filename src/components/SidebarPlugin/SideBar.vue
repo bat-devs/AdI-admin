@@ -20,13 +20,12 @@
         <ul class="nav align-items-center d-md-none">
           <base-dropdown class="nav-item" position="right">
             <a slot="title" class="nav-link" href="#" role="button">
-              <div class="media align-items-center">
-                <span class="avatar avatar-sm rounded-circle">
-                  <img
-                    alt="Image placeholder"
-                    src="img/theme/team-1-800x800.jpg"
-                  />
-                </span>
+              <div
+                class="media align-items-center"
+                slot="title"
+                style="cursor: pointer"
+              >
+                <i class="fas fa-user"></i>
               </div>
             </a>
             <li @click="logOut()" class="dropdown-item" style="cursor: pointer">

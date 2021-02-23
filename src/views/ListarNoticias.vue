@@ -7,7 +7,7 @@
       <!-- Card stats -->
     </base-header>
     <div class="d-flex justify-content-start" style="margin: 20px">
-      <router-link v-if="this.$store.getters.getRoleAdmin" to="/noticias/adicionar-noticia" class="btn btn-primary">
+      <router-link v-if="this.$store.getters.getRoleEditor" to="/noticias/adicionar-noticia" class="btn btn-primary">
         <i class="fas fa-plus"></i> Adicionar Notícia
       </router-link>
     </div>
@@ -49,9 +49,7 @@
               </td>
               <td>
                 <div class="row">
-                  <button type="button" class="btn btn-warning">
-                    <i class="far fa-edit"></i>
-                  </button>
+                 
                   <button
                     type="button"
                     @click="deleteNew(noticia.id)"
