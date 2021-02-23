@@ -153,7 +153,6 @@ export default {
   created() {
     db.collection("simulation")
       .where("type", "==", "Aplicação")
-      .orderBy("createdAt", "desc")
       .onSnapshot((querySnapshot) => {
         var creditsArray = [];
         querySnapshot.forEach(async (doc) => {
@@ -169,6 +168,7 @@ export default {
             name: name,
             email: email,
           });
+          creditsArray.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
         });
         this.credits = creditsArray;
         this.loader = false;
@@ -224,6 +224,7 @@ export default {
             .doc(`${index}`)
             .update({
               [`${index}`]: line,
+              assingnedBy: this.$store.getters.currentUserEmail
             })
             .then(() => {
               swal.fire({
