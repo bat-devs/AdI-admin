@@ -38,7 +38,7 @@
       >
       </facebook-login>
       <template slot="footer">
-        <base-button type="primary" class="ml-auto" @click="toPost()"
+        <base-button type="primary" class="ml-auto" @click="addNews"
           >Publicar notícia
         </base-button>
         <base-button
@@ -162,7 +162,7 @@
                   </textarea>
                 </div>
               </div>
-              <button @click="addNews" class="btn btn-success btn-lg btn-block">
+              <button @click="Pubfacebook = true" class="btn btn-success btn-lg btn-block">
                 Publicar notícia
               </button>
             </form>
@@ -319,10 +319,9 @@ export default {
                               "/100632798699325/feed",
                               "post",
                               dados,
-                               (response)=> {
+                               ()=> {
                                 this.loader=false;
-                                console.log("ola", dados);
-                                console.log(response);
+                               
                               }
                             );
                           }
@@ -397,8 +396,8 @@ export default {
     },
     // Função para adicionar noticia
     async addNews() {
-      this.Pubfacebook = true;
-      console.log(this.currentUserEmail);
+     this.loader=true;
+      
       await firebase
         .firestore()
         .collection("news")
@@ -407,7 +406,7 @@ export default {
           keywords: "fixe",
           title: this.noticia.title,
           published: firebase.firestore.Timestamp.now(),
-          assingnedBy: this.currentUserEmail
+          assignedby: this.$store.getters.getCurrentUserEmail,
         })
         .then(async (id) => {
          
@@ -460,7 +459,16 @@ export default {
                           .then(async () => {
                             // terminar o loader
                             this.imagesURL.push(mainImageURL);
-
+                            if (this.isConnected && this.loader){
+                              this.postar(
+                              this.imagesURL,
+                              this.noticia.title,
+                              this.noticia.content,
+                              this.id
+                              );
+                            }else
+                            this.loader=false;
+            
                           });
 
                     });
@@ -479,21 +487,21 @@ export default {
               .then(async () => {
                 // terminar o loader
                 this.imagesURL.push(mainImageURL);
-
+                  
+              if (this.isConnected && this.loader){
+                this.postar(
+                this.imagesURL,
+                this.noticia.title,
+                this.noticia.content,
+                this.id
+                );
+              }else
+              this.loader=false;
+            
               });
         });
     },
-    toPost(){
-      this.loader=true;
-if (this.isConnected && this.loader){
-this.postar(
-   this.imagesURL,
-     this.noticia.title,
-       this.noticia.content,
-          this.id
-          );
-                            }
-    }
+
   },
 };
 </script>
