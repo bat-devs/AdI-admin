@@ -7,7 +7,7 @@
       <!-- Card stats -->
     </base-header>
 
-    <modal :show.sync="Pubfacebook" >
+    <modal :show.sync="Pubfacebook">
       <h5
         slot="header"
         modal-classes="modal-dialog-centered modal-xl"
@@ -20,10 +20,10 @@
       <h2>
         Aonde deseja publicar a notícia? <b> (Além de publicar no site)</b>
       </h2>
-      <base-checkbox class="mb-3" v-model="facebook" >
+      <base-checkbox class="mb-3" v-model="facebook">
         <i class="fab fa-facebook"></i> Facebook
       </base-checkbox>
-      <base-checkbox class="mb-3" v-model="instagram" >
+      <base-checkbox class="mb-3" v-model="instagram">
         <i class="fab fa-instagram"></i> Instagram
       </base-checkbox>
       <facebook-login
@@ -162,7 +162,10 @@
                   </textarea>
                 </div>
               </div>
-              <button @click="Pubfacebook = true" class="btn btn-success btn-lg btn-block">
+              <button
+                @click="Pubfacebook = true"
+                class="btn btn-success btn-lg btn-block"
+              >
                 Publicar notícia
               </button>
             </form>
@@ -179,12 +182,12 @@ import VueClipboard from "vue-clipboard2";
 import BTooltipDirective from "bootstrap-vue/esm/directives/tooltip";
 import { HalfCircleSpinner } from "epic-spinners";
 import firebase from "firebase";
-
+import Swal from "sweetalert2";
 //import swal from "sweetalert2";
 import facebookLogin from "facebook-login-vuejs";
 //const db = firebase.firestore();
 Vue.use(VueClipboard);
- 
+
 export default {
   components: {
     facebookLogin,
@@ -200,17 +203,17 @@ export default {
       isConnected: false,
       Pubfacebook: false,
       loader: false,
-      currentUserEmail:'',
+      currentUserEmail: "",
       facebook: false,
       instagram: false,
-      imagesURL:[],
-      
+      imagesURL: [],
+
       // name: '',
       //email: '',
       // personalID: '',
       // picture: '',
       // FB: undefined,
-      
+
       noticia: {
         content: "",
         title: "",
@@ -221,19 +224,15 @@ export default {
       },
     };
   },
-  beforeCreate(){
-    this.currentUserEmail=firebase.auth().currentUser.email;
+  beforeCreate() {
+    this.currentUserEmail = firebase.auth().currentUser.email;
   },
   methods: {
     //não mexer
 
     async postar(imagesURL, titulo, texto, id) {
-
-      
-      
-     await this.FB.getLoginStatus( async  (response) =>{
+      await this.FB.getLoginStatus(async (response) => {
         if (response.status === "connected") {
-
           var accessToken = response.authResponse.accessToken;
 
           await this.FB.api(
@@ -242,11 +241,9 @@ export default {
             {
               access_token: accessToken,
             },
-            async  (response)=> {
-
+            async (response) => {
               for (var i = 0; i < response.data.length; i++) {
                 if (response.data[i].id == 100632798699325) {
-
                   this.pageToken = response.data[i].access_token;
                   var conteudo = titulo + "\n\n" + texto;
                   var fotos = [];
@@ -254,7 +251,7 @@ export default {
                     access_token: this.pageToken,
                     message: conteudo,
                   };
-                 
+
                   if (this.instagram) {
                     var caminho =
                       "https://storage.googleapis.com/academiadeinvestimento-ba1c3.appspot.com/images/" +
@@ -270,8 +267,7 @@ export default {
                       {
                         access_token: this.pageToken,
                       },
-                      async (response) =>{
-                      
+                      async (response) => {
                         if (response.id) {
                           await this.FB.api(
                             "/17841445161723909/media_publish?creation_id=" +
@@ -280,17 +276,23 @@ export default {
                             {
                               access_token: this.pageToken,
                             },
-                            ()=>{
-                              
-                                if(!this.facebook)
-                                this.loader=false;
+                            () => {
+                              if (!this.facebook) {
+                                this.loader = false;
+                                Swal.fire({
+                                  position: "top-end",
+                                  icon: "success",
+                                  title: "A notícia foi publicada!",
+                                  showConfirmButton: false,
+                                  timer: 1500,
+                                });
+                              }
                             }
                           );
                         }
                       }
                     );
                   }
-                 
 
                   if (this.facebook)
                     for (var i1 = 0; i1 < imagesURL.length; i1++) {
@@ -304,7 +306,7 @@ export default {
                           message: "teste",
                           published: false,
                         },
-                        async (response)=> {
+                        async (response) => {
                           if (response && response.id) {
                             fotos.push(await response.id);
                             dados[
@@ -313,15 +315,21 @@ export default {
                                 "]"
                             ] = { media_fbid: await response.id };
                           }
-                          
+
                           if (imagesURL.length == fotos.length) {
                             await this.FB.api(
                               "/100632798699325/feed",
                               "post",
                               dados,
-                               ()=> {
-                                this.loader=false;
-                               
+                              () => {
+                                this.loader = false;
+                                Swal.fire({
+                                  position: "top-end",
+                                  icon: "success",
+                                  title: "A notícia foi publicada!",
+                                  showConfirmButton: false,
+                                  timer: 1500,
+                                });
                               }
                             );
                           }
@@ -330,27 +338,22 @@ export default {
                     }
                 }
               }
-              
             }
           );
         }
       });
-      
-       
     },
     closeModal() {
-      this.loader=false;
+      this.loader = false;
     },
     sdkLoaded(payload) {
       this.isConnected = payload.isConnected;
       this.FB = payload.FB;
-     
     },
     async login() {
       this.Pubfacebook = false;
       this.isConnected = true;
       this.Pubfacebook = true;
-      
     },
     logout() {
       this.isConnected = false;
@@ -396,8 +399,8 @@ export default {
     },
     // Função para adicionar noticia
     async addNews() {
-     this.loader=true;
-      
+      this.loader = true;
+
       await firebase
         .firestore()
         .collection("news")
@@ -409,9 +412,8 @@ export default {
           assignedby: this.$store.getters.getCurrentUserEmail,
         })
         .then(async (id) => {
-         
           this.id = id.id;
-          
+
           var mainImageURL;
           var lengthMainImage = this.noticia.mainImage.name.split(".").length;
           var mainType = this.noticia.mainImage.name.split(".")[
@@ -446,7 +448,8 @@ export default {
                       this.imagesURL.push(url);
 
                       if (
-                        this.imagesURL.length == this.noticia.othersfiles[0].length
+                        this.imagesURL.length ==
+                        this.noticia.othersfiles[0].length
                       )
                         firebase
                           .firestore()
@@ -459,18 +462,24 @@ export default {
                           .then(async () => {
                             // terminar o loader
                             this.imagesURL.push(mainImageURL);
-                            if (this.isConnected && this.loader){
+                            if (this.isConnected && this.loader) {
                               this.postar(
-                              this.imagesURL,
-                              this.noticia.title,
-                              this.noticia.content,
-                              this.id
+                                this.imagesURL,
+                                this.noticia.title,
+                                this.noticia.content,
+                                this.id
                               );
-                            }else
-                            this.loader=false;
-            
+                            } else {
+                              this.loader = false;
+                              Swal.fire({
+                                position: "top-end",
+                                icon: "success",
+                                title: "A notícia foi publicada!",
+                                showConfirmButton: false,
+                                timer: 1500,
+                              });
+                            }
                           });
-
                     });
                   });
               }
@@ -487,21 +496,27 @@ export default {
               .then(async () => {
                 // terminar o loader
                 this.imagesURL.push(mainImageURL);
-                  
-              if (this.isConnected && this.loader){
-                this.postar(
-                this.imagesURL,
-                this.noticia.title,
-                this.noticia.content,
-                this.id
-                );
-              }else
-              this.loader=false;
-            
+
+                if (this.isConnected && this.loader) {
+                  this.postar(
+                    this.imagesURL,
+                    this.noticia.title,
+                    this.noticia.content,
+                    this.id
+                  );
+                } else {
+                  this.loader = false;
+                  Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "A notícia foi publicada!",
+                    showConfirmButton: false,
+                    timer: 1500,
+                  });
+                }
               });
         });
     },
-
   },
 };
 </script>
