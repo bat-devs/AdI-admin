@@ -26,13 +26,29 @@
             <tr>
               <th scope="col" class="sort" data-sort="name">Email</th>
               <th scope="col" class="sort" data-sort="name">Nível de acesso</th>
+              <th scope="col" class="sort" data-sort="name">Acções</th>
+              <th scope="col" class="sort" data-sort="name">Inscrição feita por:</th>
               <th scope="col"></th>
             </tr>
           </thead>
           <tbody class="list">
-            <tr v-for="(conta,index) in contas" :key="index">
+            <tr v-for="(conta, index) in contas" :key="index">
               <td class="budget">{{ conta.email }}</td>
-              <td class="budget">{{ conta.role === 0 ? 'Administrador' : conta.role === 1 ? 'Editor' : 'Visualizador'}}</td>
+              <td class="budget">
+                {{
+                  conta.role === 0
+                    ? "Administrador"
+                    : conta.role === 1
+                    ? "Editor"
+                    : "Visualizador"
+                }}
+              </td>
+              <td class="budget">
+                <button @click="deleteGestor(conta.id)" class="btn btn-danger">
+                  Apagar
+                </button>
+              </td>
+              <td class="budget">{{ conta.assignedby }}</td>
             </tr>
           </tbody>
         </table>
@@ -41,32 +57,70 @@
   </div>
 </template>
 <script>
-
 import { HalfCircleSpinner } from "epic-spinners";
 import firebase from "firebase";
-const db=firebase.firestore();
+import Swal from "sweetalert2";
+const db = firebase.firestore();
 export default {
   components: {
-      HalfCircleSpinner
+    HalfCircleSpinner,
   },
   data() {
     return {
       loader: false,
-      contas:[]
+      contas: [],
     };
   },
-  created(){
-    db.collection("admin").get().then(snapshot => {
-      const contas = [];
-      snapshot.forEach(doc =>{
-        contas.push(doc.data());
+  created() {
+    /*db.collection("admin")
+      .get()
+      .then((snapshot) => {
+        const contas = [];
+        snapshot.forEach((doc) => {
+          let f = doc.data();
+          contas.push({ ...f, id: doc.id });
+        });
+        this.contas = contas;
+        console.log("Conta ::: ", contas);
+      });*/
+    db.collection("admin").onSnapshot((querySnapshot) => {
+      var contas = [];
+      querySnapshot.forEach(function (doc) {
+        let f = doc.data();
+        contas.push({
+          ...f,
+          id: doc.id,
+        });
       });
-      this.contas=contas;
-      console.log('Conta ::: ', contas);
-    })
+      this.contas = contas;
+      console.log("Conta ::: ", contas);
+    });
   },
   methods: {
-    //
+    deleteGestor(id) {
+      console.log(id);
+      Swal.fire({
+        title: "Tem a certeza que deseja eliminar este gestor?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sim!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          db.collection("admin")
+            .doc(id)
+            .delete()
+            .then(function () {
+              Swal.fire("Apagado!", "O gestor foi apagado", "success");
+            })
+            .catch(function (error) {
+              Swal.fire(error.message, "warning");
+            });
+          
+        }
+      });
+    },
   },
 };
 </script>

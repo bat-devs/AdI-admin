@@ -85,7 +85,7 @@
           password: ''
         }
       }
-    }
+    },
   }
 </script>
 <style>
