@@ -192,7 +192,7 @@ export default {
         this.data.json_data = aplicationsArray;
         this.loader = false;
       });
-    console.log(this.aplications.length);
+   
   },
  
 };

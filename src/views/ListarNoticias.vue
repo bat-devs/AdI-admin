@@ -91,6 +91,7 @@ export default {
             ...f,
             id: doc.id,
           });
+           noticiasfirebase.sort((a, b) => (a.published.toDate() > b.published.toDate() ? -1 : 1));
         });
         this.noticias = noticiasfirebase;
         this.loader=false;
