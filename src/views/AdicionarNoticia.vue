@@ -90,7 +90,6 @@
                       name="title"
                       label="Escreva aqui o título da notícia"
                       placeholder="Título.."
-                      input-classes="form-control-alternative"
                     />
                   </div>
                 </div>
@@ -108,6 +107,7 @@
                 type="file"
                 @change="teste"
                 accept="image/x-png,image/gif,image/jpeg"
+                style="border: 1px solid red"
               />
               <hr class="my-4" />
               <!-- Address -->
@@ -156,14 +156,14 @@
                   <textarea
                     v-model="noticia.content"
                     rows="4"
-                    class="form-control form-control-alternative"
-                    placeholder="Escreve aqui o conteúdo da sua notícia"
+                    class="form-control"
+                    placeholder="Escreve aqui o conteúdo da sua notícia..."
                   >
                   </textarea>
                 </div>
               </div>
               <button
-                @click="Pubfacebook = true"
+                @click="validations"
                 class="btn btn-success btn-lg btn-block"
               >
                 Publicar notícia
@@ -208,6 +208,9 @@ export default {
       instagram: false,
       imagesURL: [],
       pageToken: "",
+      Vtitle: false,
+      VmainImage: false,
+      Vcontent: false,
       noticia: {
         content: "",
         title: "",
@@ -221,25 +224,41 @@ export default {
     this.currentUserEmail = firebase.auth().currentUser.email;
   },
   methods: {
-    cleanData(){
-      this.mainImage= "img/others/add-image.jpg"
-      this.allImages=[];
-      this.isConnected= false;
-      this.Pubfacebook= false;
-      this.loader= false;
-      this.currentUserEmail= "";
-      this.facebook= false;
-      this.instagram= false;
-      this.imagesURL= [];
-      this.noticia= {
+    validations() {
+      if (!this.noticia.tile == "") this.Vtitle = true;
+
+
+      if (!this.mainImage == "img/others/add-image.jpg") this.VmainImage = true;
+
+      if (!this.noticia.content == "") this.Vcontent = true;
+
+      if (!this.Vtitle || !this.VmainImage || !this.Vcontent) {
+        Swal.fire({
+          icon: "error",
+          title: "Verifique os erros antes de publicar a notícia!",
+          text: "Os campos principais (título, imagem principal e o conteúdo), não podem estar vázios!",
+        });
+      } else {
+        this.Pubfacebook = true;
+      }
+    },
+    cleanData() {
+      this.mainImage = "img/others/add-image.jpg";
+      this.allImages = [];
+      this.isConnected = false;
+      this.Pubfacebook = false;
+      this.loader = false;
+      this.currentUserEmail = "";
+      this.facebook = false;
+      this.instagram = false;
+      this.imagesURL = [];
+      this.noticia = {
         content: "",
         title: "",
         mainImage: null,
         keywords: [],
         othersfiles: [],
       };
-      
-
     },
     async postar(imagesURL, titulo, texto, id) {
       await this.FB.getLoginStatus(async (response) => {
@@ -309,7 +328,6 @@ export default {
 
                   if (this.facebook)
                     for (var i1 = 0; i1 < imagesURL.length; i1++) {
-                      
                       await this.FB.api(
                         "/102394148583669/photos",
                         "post",
@@ -345,7 +363,6 @@ export default {
                                 });
                                 this.cleanData();
                                 this.$router.push("/noticias");
-                                
                               }
                             );
                           }
@@ -399,17 +416,18 @@ export default {
       this.mainImage = fakeImageURL;
 
       var img = new Image();
-      img.src = fakeImageURL; 
-      img.onload = event=>
-        {
-          var result=event.currentTarget.naturalWidth/event.currentTarget.naturalHeight;
-          if((result>=0.8 && result<=1.91))
-            console.log("pode "+result+"  "+event.currentTarget.naturalWidth);
-          else
-            console.log("não pode ",result+"  "+event.currentTarget.naturalWidth);
-       }
-
-
+      img.src = fakeImageURL;
+      img.onload = (event) => {
+        var result =
+          event.currentTarget.naturalWidth / event.currentTarget.naturalHeight;
+        if (!(result >= 0.8 && result <= 1.91))
+          Swal.fire({
+            icon: "error",
+            title: "ERRO",
+            text:
+              "Imagem principal com resolução incompatível, por favor tente outra imagem!",
+          });
+      };
     },
 
     deleNew() {
@@ -419,9 +437,7 @@ export default {
         .collection("news")
         .doc("id")
         .delete()
-        .then(function () {
-         
-        })
+        .then(function () {})
         .catch(function (error) {
           console.error("Erro ", error);
         });
@@ -586,5 +602,8 @@ input[type="file"] {
 }
 .loading-modal .close {
   display: none;
+}
+.border-error {
+  border: 1px solid red;
 }
 </style>
