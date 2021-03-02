@@ -254,7 +254,7 @@ export default {
             },
             async (response) => {
               for (var i = 0; i < response.data.length; i++) {
-                if (response.data[i].id == 100632798699325) {
+                if (response.data[i].id == 102394148583669) {
                   this.pageToken = response.data[i].access_token;
                   var conteudo = titulo + "\n\n" + texto;
                   var fotos = [];
@@ -270,7 +270,7 @@ export default {
                       "/0.jpg";
 
                     await this.FB.api(
-                      "/17841445161723909/media?image_url=" +
+                      "/17841446126037923/media?image_url=" +
                         caminho +
                         "&caption=" +
                         conteudo,
@@ -281,7 +281,7 @@ export default {
                       async (response) => {
                         if (response.id) {
                           await this.FB.api(
-                            "/17841445161723909/media_publish?creation_id=" +
+                            "/17841446126037923/media_publish?creation_id=" +
                               response.id,
                             "post",
                             {
@@ -311,7 +311,7 @@ export default {
                     for (var i1 = 0; i1 < imagesURL.length; i1++) {
                       
                       await this.FB.api(
-                        "/100632798699325/photos",
+                        "/102394148583669/photos",
                         "post",
                         {
                           access_token: this.pageToken,
@@ -331,7 +331,7 @@ export default {
 
                           if (imagesURL.length == fotos.length) {
                             await this.FB.api(
-                              "/100632798699325/feed",
+                              "/102394148583669/feed",
                               "post",
                               dados,
                               () => {
@@ -397,6 +397,19 @@ export default {
       this.noticia.mainImage = newFile;
       const fakeImageURL = URL.createObjectURL(this.noticia.mainImage);
       this.mainImage = fakeImageURL;
+
+      var img = new Image();
+      img.src = fakeImageURL; 
+      img.onload = event=>
+        {
+          var result=event.currentTarget.naturalWidth/event.currentTarget.naturalHeight;
+          if((result>=0.8 && result<=1.91))
+            console.log("pode "+result+"  "+event.currentTarget.naturalWidth);
+          else
+            console.log("não pode ",result+"  "+event.currentTarget.naturalWidth);
+       }
+
+
     },
 
     deleNew() {
