@@ -90,16 +90,19 @@
                       name="title"
                       label="Escreva aqui o título da notícia"
                       placeholder="Título.."
-                      inputClasses="border-error"
+                      required
                     />
                   </div>
                 </div>
               </div>
               <hr class="my-4" />
               <!-- Address -->
-              <h6 class="heading-small text-muted mb-4">
-                Imagem Principal da notícia
-              </h6>
+              <div class="row ml-4">
+                <h6 class="heading-small mb-4">Imagem principal da notícia</h6>
+                <h6 class="heading-small mb-4" style="color: red">
+                  (Campo obrigatório)
+                </h6>
+              </div>
               <label for="main" class="image-wrapper">
                 <img id="image" v-bind:src="mainImage" />
               </label>
@@ -113,9 +116,7 @@
               <hr class="my-4" />
               <!-- Address -->
               <div class="others-files-header-wrapper">
-                <h6 class="heading-small text-muted mb-4">
-                  Outras fotos sobre a notícia
-                </h6>
+                <h6 class="heading-small mb-4 ml-4">Outras fotos sobre a notícia</h6>
                 <button
                   @click="clearOthersImages"
                   class="btn btn-warning btn btn"
@@ -151,7 +152,12 @@
               </div>
               <hr class="my-4" />
               <!-- Description -->
-              <h6 class="heading-small text-muted mb-4">Conteúdo da notícia</h6>
+              <div class="row ml-4" >
+                <h6 class="heading-small mb-4">Conteúdo da notícia</h6>
+                <h6 class="heading-small mb-4" style="color: red">
+                  (Campo obrigatório)
+                </h6>
+              </div>
               <div class="pl-lg-4">
                 <div class="form-group">
                   <textarea
@@ -228,7 +234,6 @@ export default {
     validations() {
       if (!this.noticia.tile == "") this.Vtitle = true;
 
-
       if (!this.mainImage == "img/others/add-image.jpg") this.VmainImage = true;
 
       if (!this.noticia.content == "") this.Vcontent = true;
@@ -237,7 +242,8 @@ export default {
         Swal.fire({
           icon: "error",
           title: "Verifique os campos antes de publicar a notícia!",
-          text: "Os campos principais (título, imagem principal e o conteúdo), não podem estar vázios!",
+          text:
+            "Os campos principais (título, imagem principal e o conteúdo), não podem estar vázios!",
         });
       } else {
         this.Pubfacebook = true;
