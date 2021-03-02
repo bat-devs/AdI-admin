@@ -243,7 +243,7 @@ export default {
           icon: "error",
           title: "Verifique os campos antes de publicar a notícia!",
           text:
-            "Os campos principais (título, imagem principal e o conteúdo), não podem estar vázios!",
+            "Os campos obrigatórios não podem estar vázios!",
         });
       } else {
         this.Pubfacebook = true;
