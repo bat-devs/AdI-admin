@@ -90,6 +90,7 @@
                       name="title"
                       label="Escreva aqui o título da notícia"
                       placeholder="Título.."
+                      inputClasses="border-error"
                     />
                   </div>
                 </div>
@@ -235,7 +236,7 @@ export default {
       if (!this.Vtitle || !this.VmainImage || !this.Vcontent) {
         Swal.fire({
           icon: "error",
-          title: "Verifique os erros antes de publicar a notícia!",
+          title: "Verifique os campos antes de publicar a notícia!",
           text: "Os campos principais (título, imagem principal e o conteúdo), não podem estar vázios!",
         });
       } else {
