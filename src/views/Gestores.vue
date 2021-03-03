@@ -62,7 +62,7 @@ export default {
         contas.push(doc.data());
       });
       this.contas=contas;
-      console.log('Conta ::: ', contas);
+      
     })
   },
   methods: {

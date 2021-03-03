@@ -232,11 +232,11 @@ export default {
   },
   methods: {
     validations() {
-      if (!this.noticia.tile == "") this.Vtitle = true;
+      if (!(this.noticia.tile == "")) this.Vtitle = true;
 
-      if (!this.mainImage == "img/others/add-image.jpg") this.VmainImage = true;
+      if (!(this.mainImage == "img/others/add-image.jpg")) this.VmainImage = true;
 
-      if (!this.noticia.content == "") this.Vcontent = true;
+      if (!(this.noticia.content == "")) this.Vcontent = true;
 
       if (!this.Vtitle || !this.VmainImage || !this.Vcontent) {
         Swal.fire({
@@ -483,7 +483,7 @@ export default {
                   .then((url) => (mainImageURL = url))
             );
 
-          if (this.noticia.othersfiles[0].length > 0)
+          if ( this.noticia.othersfiles.length>0 && this.noticia.othersfiles[0].length > 0)
             Object.entries(this.noticia.othersfiles[0]).forEach(
               async ([index, image]) => {
                 var lengthImage = image.name.split(".").length;
