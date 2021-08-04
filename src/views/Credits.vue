@@ -192,6 +192,7 @@ export default {
       });
 
     db.collection("credits")
+      .limit(7)
       .get()
       .then((querySnapshot) =>
         querySnapshot.forEach((doc) => creditsTaxes.push(doc))
