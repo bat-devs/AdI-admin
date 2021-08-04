@@ -92,9 +92,8 @@ export default {
           id: doc.id,
         });
       });
-      this.contas = contas;
-      console.log("Conta ::: ", contas);
-    });
+      this.contas=contas;      
+    })
   },
   methods: {
     deleteGestor(id) {

@@ -11,7 +11,7 @@
         <slot name="label">
             <label v-if="label" class="form-control-label" :class="labelClasses">
                 {{label}}
-                <span v-if="required">*</span>
+                <span v-if="required" style="color:red">(Campo obrigatório)</span>
             </label>
         </slot>
 

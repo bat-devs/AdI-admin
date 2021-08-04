@@ -90,16 +90,19 @@
                       name="title"
                       label="Escreva aqui o título da notícia"
                       placeholder="Título.."
-                      input-classes="form-control-alternative"
+                      required
                     />
                   </div>
                 </div>
               </div>
               <hr class="my-4" />
               <!-- Address -->
-              <h6 class="heading-small text-muted mb-4">
-                Imagem Principal da notícia
-              </h6>
+              <div class="row ml-4">
+                <h6 class="heading-small mb-4">Imagem principal da notícia</h6>
+                <h6 class="heading-small mb-4" style="color: red">
+                  (Campo obrigatório)
+                </h6>
+              </div>
               <label for="main" class="image-wrapper">
                 <img id="image" v-bind:src="mainImage" />
               </label>
@@ -108,13 +111,12 @@
                 type="file"
                 @change="teste"
                 accept="image/x-png,image/gif,image/jpeg"
+                style="border: 1px solid red"
               />
               <hr class="my-4" />
               <!-- Address -->
               <div class="others-files-header-wrapper">
-                <h6 class="heading-small text-muted mb-4">
-                  Outras fotos sobre a notícia
-                </h6>
+                <h6 class="heading-small mb-4 ml-4">Outras fotos sobre a notícia</h6>
                 <button
                   @click="clearOthersImages"
                   class="btn btn-warning btn btn"
@@ -150,20 +152,25 @@
               </div>
               <hr class="my-4" />
               <!-- Description -->
-              <h6 class="heading-small text-muted mb-4">Conteúdo da notícia</h6>
+              <div class="row ml-4" >
+                <h6 class="heading-small mb-4">Conteúdo da notícia</h6>
+                <h6 class="heading-small mb-4" style="color: red">
+                  (Campo obrigatório)
+                </h6>
+              </div>
               <div class="pl-lg-4">
                 <div class="form-group">
                   <textarea
                     v-model="noticia.content"
                     rows="4"
-                    class="form-control form-control-alternative"
-                    placeholder="Escreve aqui o conteúdo da sua notícia"
+                    class="form-control"
+                    placeholder="Escreve aqui o conteúdo da sua notícia..."
                   >
                   </textarea>
                 </div>
               </div>
               <button
-                @click="Pubfacebook = true"
+                @click="validations"
                 class="btn btn-success btn-lg btn-block"
               >
                 Publicar notícia
@@ -208,6 +215,9 @@ export default {
       instagram: false,
       imagesURL: [],
       pageToken: "",
+      Vtitle: false,
+      VmainImage: false,
+      Vcontent: false,
       noticia: {
         content: "",
         title: "",
@@ -222,25 +232,41 @@ export default {
     this.currentUserEmail = firebase.auth().currentUser.email;
   },
   methods: {
-    cleanData(){
-      this.mainImage= "img/others/add-image.jpg"
-      this.allImages=[];
-      this.isConnected= false;
-      this.Pubfacebook= false;
-      this.loader= false;
-      this.currentUserEmail= "";
-      this.facebook= false;
-      this.instagram= false;
-      this.imagesURL= [];
-      this.noticia= {
+    validations() {
+      if (!(this.noticia.tile == "")) this.Vtitle = true;
+
+      if (!(this.mainImage == "img/others/add-image.jpg")) this.VmainImage = true;
+
+      if (!(this.noticia.content == "")) this.Vcontent = true;
+
+      if (!this.Vtitle || !this.VmainImage || !this.Vcontent) {
+        Swal.fire({
+          icon: "error",
+          title: "Verifique os campos antes de publicar a notícia!",
+          text:
+            "Os campos obrigatórios não podem estar vázios!",
+        });
+      } else {
+        this.Pubfacebook = true;
+      }
+    },
+    cleanData() {
+      this.mainImage = "img/others/add-image.jpg";
+      this.allImages = [];
+      this.isConnected = false;
+      this.Pubfacebook = false;
+      this.loader = false;
+      this.currentUserEmail = "";
+      this.facebook = false;
+      this.instagram = false;
+      this.imagesURL = [];
+      this.noticia = {
         content: "",
         title: "",
         mainImage: null,
         keywords: [],
         othersfiles: [],
       };
-      
-
     },
     async postar(imagesURL, titulo, texto, id) {
       await this.FB.getLoginStatus(async (response) => {
@@ -255,7 +281,7 @@ export default {
             },
             async (response) => {
               for (var i = 0; i < response.data.length; i++) {
-                if (response.data[i].id == 100632798699325) {
+                if (response.data[i].id == 102394148583669) {
                   this.pageToken = response.data[i].access_token;
                   var conteudo = titulo + "\n\n" + texto;
                   var fotos = [];
@@ -271,7 +297,7 @@ export default {
                       "/0.jpg";
 
                     await this.FB.api(
-                      "/17841445161723909/media?image_url=" +
+                      "/17841446126037923/media?image_url=" +
                         caminho +
                         "&caption=" +
                         conteudo,
@@ -282,7 +308,7 @@ export default {
                       async (response) => {
                         if (response.id) {
                           await this.FB.api(
-                            "/17841445161723909/media_publish?creation_id=" +
+                            "/17841446126037923/media_publish?creation_id=" +
                               response.id,
                             "post",
                             {
@@ -310,9 +336,8 @@ export default {
 
                   if (this.facebook)
                     for (var i1 = 0; i1 < imagesURL.length; i1++) {
-                      
                       await this.FB.api(
-                        "/100632798699325/photos",
+                        "/102394148583669/photos",
                         "post",
                         {
                           access_token: this.pageToken,
@@ -332,7 +357,7 @@ export default {
 
                           if (imagesURL.length == fotos.length) {
                             await this.FB.api(
-                              "/100632798699325/feed",
+                              "/102394148583669/feed",
                               "post",
                               dados,
                               () => {
@@ -346,7 +371,6 @@ export default {
                                 });
                                 this.cleanData();
                                 this.$router.push("/noticias");
-                                
                               }
                             );
                           }
@@ -398,6 +422,20 @@ export default {
       this.noticia.mainImage = newFile;
       const fakeImageURL = URL.createObjectURL(this.noticia.mainImage);
       this.mainImage = fakeImageURL;
+
+      var img = new Image();
+      img.src = fakeImageURL;
+      img.onload = (event) => {
+        var result =
+          event.currentTarget.naturalWidth / event.currentTarget.naturalHeight;
+        if (!(result >= 0.8 && result <= 1.91))
+          Swal.fire({
+            icon: "error",
+            title: "ERRO",
+            text:
+              "Imagem principal com resolução incompatível, por favor tente outra imagem!",
+          });
+      };
     },
 
     deleNew() {
@@ -407,9 +445,7 @@ export default {
         .collection("news")
         .doc("id")
         .delete()
-        .then(function () {
-         
-        })
+        .then(function () {})
         .catch(function (error) {
           console.error("Erro ", error);
         });
@@ -448,7 +484,7 @@ export default {
                   .then((url) => (mainImageURL = url))
             );
 
-          if (this.noticia.othersfiles[0].length > 0)
+          if ( this.noticia.othersfiles.length>0 && this.noticia.othersfiles[0].length > 0)
             Object.entries(this.noticia.othersfiles[0]).forEach(
               async ([index, image]) => {
                 var lengthImage = image.name.split(".").length;
@@ -574,5 +610,8 @@ input[type="file"] {
 }
 .loading-modal .close {
   display: none;
+}
+.border-error {
+  border: 1px solid red;
 }
 </style>
