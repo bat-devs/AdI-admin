@@ -166,8 +166,9 @@ export default {
       id: "",
     };
   },
-  created() {
-    db.collection("simulation")
+  async created() {
+    await db
+      .collection("simulation")
       .where("type", "==", "Aplicação")
       .onSnapshot((querySnapshot) => {
         var creditsArray = [];
@@ -187,15 +188,15 @@ export default {
           creditsArray.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
         });
         this.credits = creditsArray;
-        this.loader = false;
       });
 
-    db.collection("applications")
-      .limit(8)
+    await db
+      .collection("applications")
       .get()
       .then((querySnapshot) =>
         querySnapshot.forEach((doc) => creditsTaxes.push(doc))
       );
+    this.loader = false;
   },
   methods: {
     async getCredit(id) {
@@ -249,7 +250,7 @@ export default {
               swal.fire({
                 position: "top-end",
                 icon: "success",
-                title: "Your work has been saved",
+                title: "Alteração feita",
                 showConfirmButton: false,
                 timer: 1500,
               });
