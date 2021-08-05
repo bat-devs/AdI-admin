@@ -224,6 +224,7 @@ export default {
         mainImage: null,
         keywords: [],
         othersfiles: [],
+        pageToken: "",
       },
     };
   },

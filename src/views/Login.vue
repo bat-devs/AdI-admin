@@ -34,7 +34,7 @@
 <script>
 import firebase from "firebase";
 import swal from "sweetalert2";
-import store from "@/store/index"
+import store from "@/store/index";
 const db = firebase.firestore();
 
 export default {
@@ -53,27 +53,46 @@ export default {
         .auth()
         .signInWithEmailAndPassword(this.user.email, this.user.password)
         .then(() => {
-          db.collection("admin").where("email", "==", this.user.email).get().then(async snapshot => {
-            const admin = snapshot.docs[0].data();
-            if(admin) {
-              sessionStorage.setItem('role', admin.role);
-              store.commit("setCurrentUser", {
-                email: this.user.email,
-                password: this.user.password,
-                role: admin.role,
+          db.collection("admin")
+            .where("email", "==", this.user.email)
+            .get()
+            .then(async (snapshot) => {
+              const admin = snapshot.docs[0].data();
+              if (admin) {
+                sessionStorage.setItem("role", admin.role);
+                store.commit("setCurrentUser", {
+                  email: this.user.email,
+                  password: this.user.password,
+                  role: admin.role,
+                });
+                this.$router.push("/home");
+              } else {
+                firebase
+                  .auth()
+                  .signOut()
+                  .then(() => {
+                    firebase.auth().onAuthStateChanged(() => {
+                      //
+                    });
+                  });
+                swal.fire({
+                  title: 'Os dados inseridos estão errados!',
+                  buttonsStyling: false,
+                  customClass: {
+                    confirmButton: "btn btn-success btn-fill",
+                  },
+                });
+              }
+            })
+            .catch((error) => {
+              swal.fire({
+                title: error.message,
+                buttonsStyling: false,
+                customClass: {
+                  confirmButton: "btn btn-success btn-fill",
+                },
               });
-              this.$router.push("/home");
-            }
-          })
-          .catch((error) => {
-            swal.fire({
-              title: error.message,
-              buttonsStyling: false,
-              customClass: {
-                confirmButton: "btn btn-success btn-fill",
-              },
             });
-          });
         })
         .catch((error) => {
           swal.fire({
@@ -85,9 +104,8 @@ export default {
           });
         });
     },
-  },validation(){
-    
-  }
+  },
+  validation() {},
 };
 </script>
 <style>
