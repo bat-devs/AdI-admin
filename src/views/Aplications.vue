@@ -62,7 +62,16 @@
         Editar
         <span style="font-weight: bold"></span>
       </h5>
-      <form @submit.prevent="editCredit">
+      <div class="d-flex justify-content-center">
+        <half-circle-spinner
+          class="mt-4"
+          v-if="loaderAplications"
+          :animation-duration="1000"
+          :size="60"
+          color="#113855"
+        />
+      </div>
+      <form @submit.prevent="editCredit" v-if="!loaderAplications">
         <table class="list">
           <tr v-for="(valor, juroIndex) in juros" :key="juroIndex">
             <th>{{ valor[0] }}</th>
@@ -81,7 +90,10 @@
             </td>
           </tr>
         </table>
-        <div class="mt-2 d-flex justify-content-around">
+        <div
+          class="mt-2 d-flex justify-content-around"
+          v-if="!loaderAplications"
+        >
           <base-button
             type="secondary"
             value="not"
@@ -164,6 +176,7 @@ export default {
       creditsTaxes,
       juros: [],
       id: "",
+      loaderAplications: false,
     };
   },
   async created() {
@@ -201,6 +214,9 @@ export default {
   methods: {
     async getCredit(id) {
       this.id = id;
+      this.changeTax = false;
+      this.loaderAplications = true;
+      this.editTax = true;
       juros1 = [];
       await db
         .collection("applications")
@@ -212,9 +228,8 @@ export default {
             juros1.push(doc.data()[doc.id]);
           });
           this.juros = juros1;
+          this.loaderAplications = false;
         });
-      this.changeTax = false;
-      this.editTax = true;
     },
     editCredit(submitEvent) {
       const elements = submitEvent.target.elements;
